@@ -32,6 +32,12 @@ public class IntListTest {
 
     @Test
     public void testDcatenate() {
+        IntList a = IntList.list(1, 2);
+        IntList b = IntList.list(3, 4);
+        IntList answer = IntList.list(1,2,3,4);
+        assertEquals(answer, IntList.dcatenate(a, b));
+        assertEquals(IntList.list(1,2,3,4), a);
+        assert(a.tail.head == 2);
 
     }
 
@@ -42,7 +48,11 @@ public class IntListTest {
 
     @Test
     public void testSubtail() {
-
+        IntList first_list = IntList.list(1,2,3,4);
+        IntList answer = IntList.list(3,4);
+        IntList helper = IntList.subTail(first_list, 2);
+        assertEquals(answer, helper);
+        assert(helper.head == 3);
     }
 
     /** Tests that sublist works properly. Again, don't use new.
@@ -53,16 +63,25 @@ public class IntListTest {
     @Test
     public void testSublist() {
 
-    }
 
-    /** Tests that dSublist works properly. Again, don't use new.
-     *
-     *  As with testDcatenate, it is not safe to assume that list passed
-     *  to dSublist is the same after any call to dSublist
-     */
+        /** Tests that dSublist works properly. Again, don't use new.
+         *
+         *  As with testDcatenate, it is not safe to assume that list passed
+         *  to dSublist is the same after any call to dSublist
+         */
+        IntList tester = IntList.list(1, 2, 3, 4, 5);
+        IntList answer_test = IntList.list(3, 4);
+        assertEquals(answer_test, IntList.sublist(tester, 2, 2));
+        //assert(answer_test == IntList.sublist(tester, 2, 3));
+    }
 
     @Test
     public void testDsublist() {
+        IntList a = IntList.list(1,2,3,4,5);
+        IntList b = IntList.list(3,4);
+        IntList c = IntList.dsublist(a, 2, 2);
+        assertEquals(b, c);
+        assert(a.head == 3);
     }
 
 

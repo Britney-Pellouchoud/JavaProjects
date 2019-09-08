@@ -4,21 +4,30 @@ import java.util.Formatter;
  *  @author P. N. Hilfinger, with some modifications by Josh Hug
  */
 public class IntList {
-    /** First element of list. */
+    /**
+     * First element of list.
+     */
     public int head;
-    /** Remaining elements of list. */
+    /**
+     * Remaining elements of list.
+     */
     public IntList tail;
 
-    /** A List with head HEAD0 and tail TAIL0. */
+    /**
+     * A List with head HEAD0 and tail TAIL0.
+     */
     public IntList(int head0, IntList tail0) {
         head = head0;
         tail = tail0;
     }
 
-    /** A List with null tail, and head = 0. */
+
+    /**
+     * A List with null tail, and head = 0.
+     */
     public IntList() {
         /* NOTE: public IntList () { }  would also work. */
-        this (0, null);
+        this(0, null);
     }
 
     /* YOU DO NOT NEED TO LOOK AT ANY CODE BELOW THIS LINE UNTIL
@@ -26,8 +35,10 @@ public class IntList {
        and you'll be where you need to go. */
 
 
-    /** Returns a new IntList containing the ints in ARGS. */
-    public static IntList list(Integer ... args) {
+    /**
+     * Returns a new IntList containing the ints in ARGS.
+     */
+    public static IntList list(Integer... args) {
         IntList result, p;
 
         if (args.length > 0) {
@@ -43,8 +54,10 @@ public class IntList {
         return result;
     }
 
-    /** Returns true iff X is an IntList containing the same sequence of ints
-     *  as THIS. Cannot handle IntLists with cycles. */
+    /**
+     * Returns true iff X is an IntList containing the same sequence of ints
+     * as THIS. Cannot handle IntLists with cycles.
+     */
     @Override
     public boolean equals(Object x) {
         if (!(x instanceof IntList)) {
@@ -70,11 +83,12 @@ public class IntList {
     }
 
 
-    /** If a cycle exists in the IntList headed by A,
-     *  return an integer equal to the item number of the
-     *  location where the cycle is detected (i.e. the smallest item
-     *  number of an item that is the same as a preceding one.  If
-     *  there is no cycle, return 0.
+    /**
+     * If a cycle exists in the IntList headed by A,
+     * return an integer equal to the item number of the
+     * location where the cycle is detected (i.e. the smallest item
+     * number of an item that is the same as a preceding one.  If
+     * there is no cycle, return 0.
      */
     private int detectCycles(IntList A) {
         IntList tortoise = A;
@@ -134,53 +148,104 @@ public class IntList {
 
 
     /* 2a. */
-    /** Returns a list consisting of the elements of A followed by the
-     *  elements of B.  May modify items of A. Don't use 'new'. */
+
+    /**
+     * Returns a list consisting of the elements of A followed by the
+     * elements of B.  May modify items of A. Don't use 'new'.
+     */
 
     static IntList dcatenate(IntList A, IntList B) {
-        return null; // REPLACE WITH YOUR CODE */
+        if (A == null) {
+            return B;
+        }
+        IntList tail_of = A;
+        while (tail_of.tail != null) {
+            tail_of = tail_of.tail;
+        }
+        tail_of.tail = B;
+        return A;
 
     }
 
     /* 2b. */
-    /** Returns a list consisting of the elements of L starting from
-      * position START, and going all the way to the end. The head of the
-      * list L is the 0th element of the list.
-      *
-      * This method should NOT modify the items in L. */
+
+    /**
+     * Returns a list consisting of the elements of L starting from
+     * position START, and going all the way to the end. The head of the
+     * list L is the 0th element of the list.
+     * <p>
+     * This method should NOT modify the items in L.
+     */
 
     static IntList subTail(IntList L, int start) {
-        return null; // REPLACE WITH YOUR CODE
+        if (start < 0 || L == null) {
+            return null;
+        } else {
+            if (start == 0) {
+                return new IntList(L.head, subTail(L.tail, start));
+            } else {
+                return subTail(L.tail, start - 1);
+            }
+        }
+
     }
 
 
 
     /* 2c. */
-    /** Returns the sublist consisting of LEN items from list L,
-     *  beginning with item #START (where the first item is #0).
-     *  Does not modify the original list elements.
-     *
-     *  If the desired items don't exist, or the program
-     *  receives negative START or LEN parameters, the behavior
-     *  of this function is undefined, i.e. you can assume
-     *  that start and len are always >= 0.
+
+    /**
+     * Returns the sublist consisting of LEN items from list L,
+     * beginning with item #START (where the first item is #0).
+     * Does not modify the original list elements.
+     * <p>
+     * If the desired items don't exist, or the program
+     * receives negative START or LEN parameters, the behavior
+     * of this function is undefined, i.e. you can assume
+     * that start and len are always >= 0.
      */
     static IntList sublist(IntList L, int start, int len) {
-        return null;  // REPLACE WITH YOUR SOLUTION
+            if (start == 0 && len > 0) {
+                return new IntList(L.head, sublist(L.tail, 0, len-1));
+            }
+            if (start == 0 || len == 0) {
+                //System.out.println("Checker");
+                return null;
+            }
+            else {
+                //System.out.println("Checker");
+                return IntList.sublist(L.tail, start-1, len);
+            }
+        }
 
-    }
+
 
     /* 2d. */
-    /** Returns the sublist consisting of LEN items from list L,
-     *  beginning with item #START (where the first item is #0).
-     *  May modify the original list elements. Don't use 'new'
-     *  or the sublist method.
-     *  As with sublist, you can assume the items requested
-     *  exist, and that START and LEN are >= 0. */
+
+    /**
+     * Returns the sublist consisting of LEN items from list L,
+     * beginning with item #START (where the first item is #0).
+     * May modify the original list elements. Don't use 'new'
+     * or the sublist method.
+     * As with sublist, you can assume the items requested
+     * exist, and that START and LEN are >= 0.
+     */
+
+
+
     static IntList dsublist(IntList L, int start, int len) {
-        return null; // REPLACE WITH YOUR SOLUTION
-
-    }
-
+        IntList tracker = L;
+        for(int count1 = 0; count1<start; count1++)
+        {
+            L.head = L.tail.head;
+            L.tail = L.tail.tail;
+        }
+        IntList dummy = L;
+        for(int count2 = 0; L.tail!= null && count2<len-1; count2++, L = L.tail) ;
+        L.tail = null;
+        return dummy;
 
 }
+}
+
+

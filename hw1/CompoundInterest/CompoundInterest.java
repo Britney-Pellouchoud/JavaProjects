@@ -10,19 +10,28 @@ public class CompoundInterest {
      *  should be 1. Throughout the assignment it is OK to assume that
      *  TARGETYEAR is >= THIS_YEAR. */
     static int numYears(int targetYear) {
-        return 0;
+
+        /** Suppose we have an asset worth PRESENTVALUE that appreciates
+         *  by RATE compounded annually. This method returns the value of that
+         *  asset in the year given by TARGETYEAR.
+         *
+         *  RATE is given as a percentage return. For example, if
+         *  PRESENTVALUE is 10, the rate is 12, and the TARGETYEAR is 2021,
+         *  then the futureValue will be 10*1.12*1.12 = 12.544. */
+        return (targetYear - THIS_YEAR);
     }
 
-    /** Suppose we have an asset worth PRESENTVALUE that appreciates
-     *  by RATE compounded annually. This method returns the value of that
-     *  asset in the year given by TARGETYEAR.
-     *
-     *  RATE is given as a percentage return. For example, if
-     *  PRESENTVALUE is 10, the rate is 12, and the TARGETYEAR is 2021,
-     *  then the futureValue will be 10*1.12*1.12 = 12.544. */
     static double futureValue(double presentValue, double rate,
                               int targetYear) {
-        return 0;
+        double total = presentValue;
+        int i = 0;
+        int diff_years = numYears(targetYear);
+        //System.out.println("debugger");
+        while (i < diff_years) {
+            total *= (1 + rate/100);
+            i++;}
+        return total;
+        //return 0;
     }
 
     /** Returns returns the value, in THIS_YEAR dollars, of an asset
@@ -36,7 +45,15 @@ public class CompoundInterest {
      *  2019 dollars, we get 12.544 * 0.97 * 0.97 = 11.8026496 dollars. */
     static double futureValueReal(double presentValue, double rate,
                                   int targetYear, double inflationRate) {
-        return 0;
+        double before_inflation = futureValue(presentValue, rate, targetYear);
+        double after_inflation = before_inflation;
+        int difference_years = numYears(targetYear);
+        int i = 0;
+        while (i < difference_years) {
+            after_inflation = after_inflation * (1 - inflationRate/100);
+            i++;
+        }
+        return after_inflation;
     }
 
     /** Suppose you invest PERYEAR dollars at the end of every year until
@@ -47,16 +64,41 @@ public class CompoundInterest {
      *  then the result will be 5000*1.1*1.1 + 5000*1.1 + 5000 =
      *  16550. */
     static double totalSavings(double perYear, int targetYear, double rate) {
-        return 0;
+        double helper_rate = 1 + rate/100;
+        int counter = 0;
+        double start = 0;
+        while (counter <= numYears(targetYear)) {
+            start += perYear * power(helper_rate, counter);
+            counter++;
+        }
+        return start;
     }
+    static double power(double first_num, int second_num) {
+        int count = 0;
+        double final_answer = first_num;
+        if (second_num == 0) {
+            return 1;
+        }
+        else {
+            return first_num * power(first_num, second_num - 1);
+            }
+        }
+
 
     /** Returns totalSavings(PERYEAR, TARGETYEAR, RATE) converted to
      *  current year dollars, assuming a uniform inflation rate of
      *  INFLATIONRATE. */
     static double totalSavingsReal(double perYear, int targetYear, double rate,
                                double inflationRate) {
-        return 0;
-
+        double total_savings = totalSavings(perYear, targetYear, rate);
+        double adj_rate = 1 - inflationRate/100;
+        int i = 0;
+        double adjusted = total_savings;
+        while (i < numYears(targetYear)) {
+            adjusted *= adj_rate;
+            i++;
+        }
+        return adjusted;
     }
 
     /** Prints out the future inflation-adjusted value of a dollar in
@@ -65,8 +107,8 @@ public class CompoundInterest {
      *  INFLATIONRATE. */
     static void printDollarFV(int targetYear, double returnRate,
                               double inflationRate) {
-        double nominalDollarValue = 0; // replace 0 with your code
-        double realDollarValue = 0;    // replace 0 with your code
+        double nominalDollarValue = futureValue(1, returnRate, targetYear); // replace 0 with your code
+        double realDollarValue = futureValueReal(1, returnRate, targetYear, inflationRate);    // replace 0 with your code
 
         // Do not change anything in this method below this line
         String dollarSummary =
@@ -75,7 +117,6 @@ public class CompoundInterest {
                           + " %.2f dollars in the year %d, or %.2f dollars"
                           + " adjusted for inflation.", returnRate,
                           nominalDollarValue, targetYear, realDollarValue);
-
         System.out.println(dollarSummary);
     }
 
@@ -85,8 +126,10 @@ public class CompoundInterest {
     static void printSavingsFV(int targetYear, double returnRate,
                                double inflationRate, double perYear) {
 
-        double nominalSavings = 0; // replace 0 with your code
-        double realSavings = 0;    // replace 0 with your code
+        //double perYear, int targetYear, double rate
+
+        double nominalSavings = totalSavings(perYear, targetYear, returnRate); // replace 0 with your code
+        double realSavings = totalSavingsReal(perYear, targetYear, returnRate, inflationRate);    // replace 0 with your code
         // Do not change anything in this method below this line
 
         String savingsSummary =
