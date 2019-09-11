@@ -51,7 +51,9 @@ class Place {
     }
 
     /** Returns the direction from (X0, Y0) to (X1, Y1), if we are a queen
-     *  move apart.  If not, returns 0. */
+     *  move apart.  If not, returns 0. The direction returned (if not 0)
+     *  will be an integer 1 <= dir <= 8 corresponding to the definitions
+     *  in Model.java */
     static int dirOf(int x0, int y0, int x1, int y1) {
         int dx = x1 < x0 ? -1 : x0 == x1 ? 0 : 1;
         int dy = y1 < y0 ? -1 : y0 == y1 ? 0 : 1;

@@ -19,7 +19,8 @@ import static signpost.Utils.*;
  *  A constructor initializes the squares according to a particular
  *  solution.  A solution is an assignment of sequence numbers from 1 to
  *  size() == width() * height() to square positions so that squares with
- *  adjacent numbers are separated by queen moves.  The effect
+ *  adjacent numbers are separated by queen moves. A queen move is a move from
+ *  one square to another horizontally, vertically, or diagonally. The effect
  *  is to give each square whose number in the solution is less than
  *  size() an <i>arrow direction</i>, 1 <= d <= 8, indicating the direction
  *  of the next higher numbered square in the solution: d * 45 degrees clockwise
@@ -59,7 +60,7 @@ class Model implements Iterable<Model.Sq> {
      *      1. It must have dimensions w x h such that w * h >= 2.
      *      2. There must be a sequence of chess-queen moves such that
      *         the sequence of values in the cells reached is 1, 2, ... w * h.
-     *  The contents of SOLUTION is copied into this Model, so that subsequent
+     *  The contents of SOLUTION are copied into this Model, so that subsequent
      *  changes to it have no effect on the Model.
      */
     Model(int[][] solution) {
@@ -500,7 +501,7 @@ class Model implements Iterable<Model.Sq> {
          *  + S1 does not have a current predecessor, and I do not have a
          *    current successor.
          *  + If S1 and I both have sequence numbers, then mine is
-         *    sequenceNum() == C1.sequenceNum() + 1.
+         *    sequenceNum() == S1.sequenceNum() - 1.
          *  + If neither S1 nor I have sequence numbers, then we are not part
          *    of the same connected sequence.
          */
@@ -561,7 +562,7 @@ class Model implements Iterable<Model.Sq> {
                 //        set group to -1).
                 // FIXME: If neither next nor any square in its group that
                 //        follows it has a fixed sequence number, set all
-                //        their sequence numbers to 0 and creat a new
+                //        their sequence numbers to 0 and create a new
                 //        group for them if next has a current successor
                 //        (otherwise set next's group to -1.)
             }
@@ -599,7 +600,7 @@ class Model implements Iterable<Model.Sq> {
         /** If _head == this, then the group number of the group of which this
          *  is a member.  Numbered sequences have a group number of 0,
          *  regardless of the value of _group. Unnumbered one-member groups
-         *  have a group number of -1.  Undefined if _head != this. */
+         *  have a group number of -1.   */
         private int _group;
         /** True iff assigned a fixed sequence number. */
         private boolean _hasFixedNum;

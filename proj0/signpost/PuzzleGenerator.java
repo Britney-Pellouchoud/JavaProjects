@@ -30,7 +30,7 @@ class PuzzleGenerator implements PuzzleSource {
 
     /** Return an array representing a WIDTH x HEIGHT Signpost puzzle.
      *  The first array index indicates x-coordinates (column numbers) on
-     *  the board, and the second index represents y-coordinates (row numberss).
+     *  the board, and the second index represents y-coordinates (row numbers).
      *  Its values will be the sequence numbers (1 to WIDTH x HEIGHT)
      *  appearing in a sequence queen moves on the resulting board.
      *  Unless ALLOWFREEENDS, the first and last sequence numbers will
@@ -67,7 +67,7 @@ class PuzzleGenerator implements PuzzleSource {
 
     /** Try to find a random path of queen moves through VALS from (X0, Y0)
      *  to the cell with number LAST.  Assumes that
-     *    + The dimensions of VALS conforms to those of MOCEL;
+     *    + The dimensions of VALS conforms to those of MODEL;
      *    + There are cells (separated by queen moves) numbered from 1 up to
      *      and including the number in (X0, Y0);
      *    + There is a cell numbered LAST;
@@ -97,7 +97,7 @@ class PuzzleGenerator implements PuzzleSource {
     }
 
     /** Extend unambiguous paths in MODEL (add all connections where there is
-     *  a single possible succcessor or predecessor). Return 2 if any change
+     *  a single possible successor or predecessor). Return 2 if any change
      *  was made, 1 if no change was made, 0 if unconnectable
      *  square encountered. */
     private int extendSimple(Model model) {
