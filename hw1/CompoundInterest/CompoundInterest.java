@@ -20,6 +20,7 @@ public class CompoundInterest {
          *  then the futureValue will be 10*1.12*1.12 = 12.544. */
         return (targetYear - THIS_YEAR);
     }
+    //check to see if this is the correct submission
 
     static double futureValue(double presentValue, double rate,
                               int targetYear) {
