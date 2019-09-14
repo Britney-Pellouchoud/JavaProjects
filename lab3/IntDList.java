@@ -136,8 +136,9 @@ public class IntDList {
      * System.out.println(a); //prints ab
      */
     public String toString() {
+        checkup
         if (_front._next == null){
-            
+            //System.out.println("debugger");
         }
         else {
 
