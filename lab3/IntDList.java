@@ -46,7 +46,13 @@ public class IntDList {
      * @return The number of elements in this list.
      */
     public int size() {
-        return 0;   // Your code here
+       int counter = 0;
+      DNode dummy = _front;
+        while (dummy != null) {
+            counter = counter + 1;
+            dummy = dummy._next;
+        }
+        return counter;
     }
 
     /**
@@ -60,21 +66,52 @@ public class IntDList {
      * @return The integer value at index i
      */
     public int get(int i) {
-        return 0;   // Your code here
+        DNode dummy = _front;
+        if (i >= 0) {
+            while (i > 0) {
+                dummy = dummy._next;
+                i -= 1;
+            }
+        }
+        else {
+            dummy = _back;
+            while (i < -1) {
+                dummy = dummy._prev;
+                i += 1;
+            }
+        }
+        return dummy._val;
+           // Your code here
     }
 
     /**
      * @param d value to be inserted in the front
      */
     public void insertFront(int d) {
-        // Your code here
+        _front = new DNode(null, d, _front);
+    if (_back == null) {
+        _back = _front;
+    }
+    else {
+        _front._next._prev = _front;
     }
 
+
+    }
     /**
-     * @param d value to be inserted in the back
+     *
+     *
      */
     public void insertBack(int d) {
         // Your code here
+        _back = new DNode(_back, d, null);
+        if (_front == null) {
+            _front = _back;
+            //System.out.println("debug");
+        }
+        else{
+            _back._prev._next = _back;
+        }
     }
 
     /**
@@ -83,8 +120,11 @@ public class IntDList {
      * @return the item that was deleted
      */
     public int deleteBack() {
-        return 0;   // Your code here
-
+        int x = _back._val;
+        //_back._prev._next = null;
+        _back = _back._prev;
+        _back._next = null;
+        return x;
     }
 
     /**
@@ -96,7 +136,12 @@ public class IntDList {
      * System.out.println(a); //prints ab
      */
     public String toString() {
-        return null;   // Your code here
+        if (_front._next == null){
+            
+        }
+        else {
+
+        }
     }
 
     /**

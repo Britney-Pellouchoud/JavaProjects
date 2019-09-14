@@ -18,7 +18,13 @@ public class BuggyIntDListSolution extends IntDList {
      */
     public void insertBack(int d) {
         _back = new DNode(_back, d, null);
-        _back._prev._next = _back;
+        if (_front == null) {
+            _front = _back;
+            //System.out.println("debug");
+        }
+        else{
+            _back._prev._next = _back;
+        }
     }
 
     /**

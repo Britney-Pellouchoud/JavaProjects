@@ -24,4 +24,8 @@ public class BuggyIntDListSolutionTest {
         assertEquals("getFront after inserting 15 should be 5", 5, d.getFront());
 
     }
+    @Test(expected = NullPointerException.class)
+    public void test2InsertBack() {
+        BuggyIntDListSolution x = new BuggyIntDListSolution(19);
+    }
 }
