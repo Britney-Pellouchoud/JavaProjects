@@ -30,7 +30,7 @@ import static signpost.Utils.*;
  *  are those with the lowest and highest sequence numbers in the solution.
  *
  *  At any given time after initialization, a square whose value is not fixed
- *  may have an unknown value, represented as 0, or a tentative number (not
+ *  may have an unknown value, represented as 0, or a tentative number (no t
  *  necessarily that of the solution) between 1 and size(). Squares may be
  *  connected together, indicating that their sequence numbers (unknown or not)
  *  are consecutive.
@@ -77,28 +77,41 @@ class Model implements Iterable<Model.Sq> {
 
         // DUMMY SETUP
         // FIXME: Remove everything down "// END DUMMY SETUP".
-        _board = new Sq[][] {
-            { new Sq(0, 0, 0, false, 2, -1), new Sq(0, 1, 0, false, 2, -1),
-              new Sq(0, 2, 0, false, 4, -1), new Sq(0, 3, 1, true, 2, 0) },
-            { new Sq(1, 0, 0, false, 2, -1), new Sq(1, 1, 0, false, 2, -1),
-              new Sq(1, 2, 0, false, 6, -1), new Sq(1, 3, 0, false, 2, -1) },
-            { new Sq(2, 0, 0, false, 6, -1), new Sq(2, 1, 0, false, 2, -1),
-              new Sq(2, 2, 0, false, 6, -1), new Sq(2, 3, 0, false, 2, -1) },
-            { new Sq(3, 0, 16, true, 0, 0), new Sq(3, 1, 0, false, 5, -1),
-              new Sq(3, 2, 0, false, 6, -1), new Sq(3, 3, 0, false, 4, -1) }
-        };
-        for (Sq[] col: _board) {
+        // END DUMMY SETUP
+
+        _board = new Sq[width()][height()];
+        int column_num = solution.width; // determine how many rows there are
+        int column_counter = -1;
+        while (column_counter < column_num - 1) { // iterate through columns
+            column_counter += 1;
+            int row_num = solution.height(); //determine how many rows there are
+            int row_counter = -1; // must do this inside first while, needs to reset for each column
+            while (row_counter < column_num - 1) { // iterate through rows
+                row_counter += 1;
+                 if (solution[column_num][row_num] == 1 || solution[column_num][row_num] == solution.size()) {
+                     _allSqaures.add(new Sq(column_num, row_num, solution[column_num][row_num], true, 0, 0));
+            } // if it's the first or last tile (1 or the end), the position is fixed
+                 else {
+                     _allSqaures.add(new Sq(column_num, row_num, solution[column_num][row_num], false, 0, -1));
+                 }
+                 // all other tiles will not have fixed positions (so you can play the game)
+        }
+        }
+
+        for (Sq[] col: _board) { // iterate through
             for (Sq sq : col) {
-                _allSquares.add(sq);
+
             }
         }
-        // END DUMMY SETUP
+
+
 
         // FIXME: Initialize _board so that _board[x][y] contains the Sq object
         //        representing the contents at cell (x, y), _allSquares
         //        contains the list of all Sq objects on the board, and
         //        _solnNumToPlace[k] contains the Place in _solution that
-        //        contains sequence number k.  Check that all numbers from
+        //        contains sequence number k.
+            //        Check that all numbers from
         //        1 - last appear; else throw IllegalArgumentException (see
         //        badArgs utility).
 
