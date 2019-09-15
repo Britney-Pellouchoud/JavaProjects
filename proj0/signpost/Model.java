@@ -98,11 +98,7 @@ class Model implements Iterable<Model.Sq> {
         }
         }
 
-        for (Sq[] col: _board) { // iterate through
-            for (Sq sq : col) {
 
-            }
-        }
 
 
 
