@@ -1,5 +1,6 @@
 package signpost;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Formatter;
@@ -51,7 +52,7 @@ import static signpost.Utils.*;
  *
  *  @author
  */
-class Model implements Iterable<Model.Sq> {
+class Model<last> implements Iterable<Model.Sq> {
 
     /** A Model whose solution is SOLUTION, initialized to its starting,
      *  unsolved state (where only cells with fixed numbers currently
@@ -67,7 +68,8 @@ class Model implements Iterable<Model.Sq> {
         if (solution.length == 0 || solution.length * solution[0].length < 2) {
             throw badArgs("must have at least 2 squares");
         }
-        _width = solution.length; _height = solution[0].length;
+        _width = solution.length;
+        _height = solution[0].length;
         int last = _width * _height;
         BitSet allNums = new BitSet();
 
@@ -78,28 +80,27 @@ class Model implements Iterable<Model.Sq> {
         // DUMMY SETUP
         // FIXME: Remove everything down "// END DUMMY SETUP".
         // END DUMMY SETUP
-
-        _board = new Sq[width()][height()];
-        int column_num = solution.width; // determine how many rows there are
-        int column_counter = -1;
-        while (column_counter < column_num - 1) { // iterate through columns
-            column_counter += 1;
-            int row_num = solution.height(); //determine how many rows there are
-            int row_counter = -1; // must do this inside first while, needs to reset for each column
-            while (row_counter < column_num - 1) { // iterate through rows
-                row_counter += 1;
-                 if (solution[column_num][row_num] == 1 || solution[column_num][row_num] == solution.size()) {
-                     _allSqaures.add(new Sq(column_num, row_num, solution[column_num][row_num], true, 0, 0));
-            } // if it's the first or last tile (1 or the end), the position is fixed
-                 else {
-                     _allSqaures.add(new Sq(column_num, row_num, solution[column_num][row_num], false, 0, -1));
-                 }
-                 // all other tiles will not have fixed positions (so you can play the game)
-        }
+       _board = new Sq[][] {
+               { new Sq(0, 0, 0, false, 2, -1), new Sq(0, 1, 0, false, 2, -1),
+                       new Sq(0, 2, 0, false, 4, -1), new Sq(0, 3, 1, true, 2, 0) },
+               { new Sq(1, 0, 0, false, 2, -1), new Sq(1, 1, 0, false, 2, -1),
+                       new Sq(1, 2, 0, false, 6, -1), new Sq(1, 3, 0, false, 2, -1) },
+               { new Sq(2, 0, 0, false, 6, -1), new Sq(2, 1, 0, false, 2, -1),
+                       new Sq(2, 2, 0, false, 6, -1), new Sq(2, 3, 0, false, 2, -1) },
+               { new Sq(3, 0, 16, true, 0, 0), new Sq(3, 1, 0, false, 5, -1),
+                       new Sq(3, 2, 0, false, 6, -1), new Sq(3, 3, 0, false, 4, -1) }
+       };
+        for (Sq[] col : _board) {
+            for (Sq sq : col) {
+                _allSquares.add(sq);
+            }
         }
 
 
-
+        // [][] pass in solution, initialize board
+        // allsquares contains list of all sq objects on the board
+        //board is a two d matrix, all squares is just a list
+    //sq.successor = allsuccessors
 
 
         // FIXME: Initialize _board so that _board[x][y] contains the Sq object
@@ -120,7 +121,13 @@ class Model implements Iterable<Model.Sq> {
         _unconnected = last - 1;
     }
 
+
+
+
+
+
     /** Initializes a copy of MODEL. */
+
     Model(Model model) {
         _width = model.width(); _height = model.height();
         _unconnected = model._unconnected;
@@ -136,6 +143,7 @@ class Model implements Iterable<Model.Sq> {
 
         // FIXME: Fill in the _successor, _predecessor, and _head fields of the
         //        copied Sq objects.
+
     }
 
     /** Returns the width (number of columns of cells) of the board. */

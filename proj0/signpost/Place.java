@@ -43,9 +43,12 @@ class Place {
                                  _places.length);
             }
             _places = newPlaces;
+            // if your new entry is out of bounds for the current size, make a new place by copying
+            // all the old place values and adding the new entry
         }
         if (_places[x][y] == null) {
             _places[x][y] = new Place(x, y);
+            // if there's nothing in the place, put the new input in
         }
         return _places[x][y];
     }
@@ -81,8 +84,8 @@ class Place {
 
     /** If (x1, y1) is the adjacent square in  direction DIR from me, returns
      *  y1 - y. */
-    static int dy(int dir) {
-        return DY[dir];
+    static int dy(int dxir) {
+        return DY[dxir];
     }
 
     /** Return an array, M, such that M[x][y][dir] is a list of Places that are
@@ -93,7 +96,12 @@ class Place {
     static PlaceList[][][] successorCells(int width, int height) {
         PlaceList[][][] M = new PlaceList[width][height][9];
         int lim = Math.max(width, height);
+        //m will be a list of lists of lists (columns, entries in columns, directions of those entries)
+        //the first item of the first entry are all the places one queen move away from (x,y) in any direction
+        //Array[] m = new Array[];
         // FIXME
+
+
         return M;
     }
 
