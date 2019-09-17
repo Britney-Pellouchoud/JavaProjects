@@ -76,3 +76,7 @@ class Arrays {
 
     }
 }
+
+
+
+//go over this weekend to really understand arrays
