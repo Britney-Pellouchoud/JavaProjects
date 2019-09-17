@@ -22,7 +22,6 @@ public class IntListList {
     /** Return a new IntListList containing the lists in ARGS. */
     public static IntListList list(IntList ... args) {
         IntListList sentinel = new IntListList(null, null);
-
         IntListList p;
         p = sentinel;
         for (IntList x : args) {

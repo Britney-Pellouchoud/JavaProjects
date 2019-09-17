@@ -19,6 +19,9 @@ public class ListsTest {
     // few lines of code! Make note of the IntListList.list method that
     // takes as input a 2D array.
 
+    assert Lists.naturalRuns((1, 3, 7, 5, 4, 6, 9, 10, 10, 11)) == ((1, 3, 7), (5), (4, 6, 9, 10), (10, 11));
+
+
     public static void main(String[] args) {
         System.exit(ucb.junit.textui.runClasses(ListsTest.class));
     }
