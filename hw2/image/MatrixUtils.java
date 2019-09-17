@@ -55,35 +55,30 @@ public class MatrixUtils {
      */
 
     public static double[][] accumulateVertical(double[][] m) {
-        return null; //your code here
+        double[][] help = new double[][] MatrixUtils.copy(m);
+        for (int x = 0; x < m.length; x++) {
+            for (y = 0; y < i.length; y++) {
+                double minValue = min(x,y
+                        );
+            }
+        }
     }
 
-    /** Non-destructively accumulates a matrix M along the specified
-     *  ORIENTATION.
-     *
-     *  If the orientation is Orientation.VERTICAL, function is identical to
-     *  accumulateVertical. If Orientation.HORIZONTAL, function is
-     *  the same, but with roles of r and c reversed.
-     *
-     *  Do NOT copy and paste a bunch of code! Instead, you should write
-     *  a helper function that creates a new matrix mT that contains all
-     *  the information from m, but with the property that
-     *  accumulateVertical(mT) returns the correct result.
-     *
-     *  accumulate should be very short (only a few lines). Most of the
-     *  work should be done in creaing the helper function (and even
-     *  that function should be pretty short and straightforward).
-     *
-     *  The important lesson here is that you should never have big
-     *  copy and pastes of any code. Instead, find the right
-     *  abstraction that lets you avoid this mess. You'll need to do this
-     *  for project 1, but in a more complex way.
-     *
-     */
+
+
+
+
 
     public static double[][] accumulate(double[][] m, Orientation orientation) {
-        return null; //your code here
+        if ( 0 <= x <= m.length) {
+            System.out.println("Does this work");
+            return m[orientation];
+        } else {
+            return double.inf;
+        }
     }
+
+}
 
     /** Finds the vertical seam VERTSEAM of the given matrix M.
      *
