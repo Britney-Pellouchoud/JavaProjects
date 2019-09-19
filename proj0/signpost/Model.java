@@ -1,6 +1,5 @@
 package signpost;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Formatter;
@@ -11,6 +10,7 @@ import java.util.Arrays;
 import static signpost.Place.pl;
 import static signpost.Place.PlaceList;
 import static signpost.Utils.*;
+
 
 /** The state of a Signpost puzzle.  Each cell has coordinates (x, y),
  *  where 0 <= x < width(),  0 <= y < height().  The upper-left corner of
@@ -52,17 +52,18 @@ import static signpost.Utils.*;
  *
  *  @author
  */
-class Model<last> implements Iterable<Model.Sq> {
+class Model implements Iterable<Model.Sq> {
 
-    /** A Model whose solution is SOLUTION, initialized to its starting,
-     *  unsolved state (where only cells with fixed numbers currently
-     *  have sequence numbers and no unnumbered cells are connected).
-     *  SOLUTION must be a proper solution:
-     *      1. It must have dimensions w x h such that w * h >= 2.
-     *      2. There must be a sequence of chess-queen moves such that
-     *         the sequence of values in the cells reached is 1, 2, ... w * h.
-     *  The contents of SOLUTION are copied into this Model, so that subsequent
-     *  changes to it have no effect on the Model.
+    /**
+     * A Model whose solution is SOLUTION, initialized to its starting,
+     * unsolved state (where only cells with fixed numbers currently
+     * have sequence numbers and no unnumbered cells are connected).
+     * SOLUTION must be a proper solution:
+     * 1. It must have dimensions w x h such that w * h >= 2.
+     * 2. There must be a sequence of chess-queen moves such that
+     * the sequence of values in the cells reached is 1, 2, ... w * h.
+     * The contents of SOLUTION are copied into this Model, so that subsequent
+     * changes to it have no effect on the Model.
      */
     Model(int[][] solution) {
         if (solution.length == 0 || solution.length * solution[0].length < 2) {
@@ -76,25 +77,25 @@ class Model<last> implements Iterable<Model.Sq> {
         _allSuccessors = Place.successorCells(_width, _height);
         _solution = new int[_width][_height];
         deepCopy(solution, _solution);
-
-        // DUMMY SETUP
-        // FIXME: Remove everything down "// END DUMMY SETUP".
-        // END DUMMY SETUP
-       _board = new Sq[][] {
-               { new Sq(0, 0, 0, false, 2, -1), new Sq(0, 1, 0, false, 2, -1),
-                       new Sq(0, 2, 0, false, 4, -1), new Sq(0, 3, 1, true, 2, 0) },
-               { new Sq(1, 0, 0, false, 2, -1), new Sq(1, 1, 0, false, 2, -1),
-                       new Sq(1, 2, 0, false, 6, -1), new Sq(1, 3, 0, false, 2, -1) },
-               { new Sq(2, 0, 0, false, 6, -1), new Sq(2, 1, 0, false, 2, -1),
-                       new Sq(2, 2, 0, false, 6, -1), new Sq(2, 3, 0, false, 2, -1) },
-               { new Sq(3, 0, 16, true, 0, 0), new Sq(3, 1, 0, false, 5, -1),
-                       new Sq(3, 2, 0, false, 6, -1), new Sq(3, 3, 0, false, 4, -1) }
-       };
+        _board = new Sq[][]{
+                {new Sq(0, 0, 0, false, 2, -1), new Sq(0, 1, 0, false, 2, -1),
+                        new Sq(0, 2, 0, false, 4, -1), new Sq(0, 3, 1, true, 2, 0)},
+                {new Sq(1, 0, 0, false, 2, -1), new Sq(1, 1, 0, false, 2, -1),
+                        new Sq(1, 2, 0, false, 6, -1), new Sq(1, 3, 0, false, 2, -1)},
+                {new Sq(2, 0, 0, false, 6, -1), new Sq(2, 1, 0, false, 2, -1),
+                        new Sq(2, 2, 0, false, 6, -1), new Sq(2, 3, 0, false, 2, -1)},
+                {new Sq(3, 0, 16, true, 0, 0), new Sq(3, 1, 0, false, 5, -1),
+                        new Sq(3, 2, 0, false, 6, -1), new Sq(3, 3, 0, false, 4, -1)}
+        };
         for (Sq[] col : _board) {
             for (Sq sq : col) {
                 _allSquares.add(sq);
             }
         }
+        // DUMMY SETUP
+        // FIXME: Remove everything down "// END DUMMY SETUP".
+        // END DUMMY SETUP
+
 
 
         // [][] pass in solution, initialize board
@@ -524,6 +525,7 @@ class Model<last> implements Iterable<Model.Sq> {
          */
         boolean connectable(Sq s1) {
             // FIXME
+            
             return true;
         }
 
