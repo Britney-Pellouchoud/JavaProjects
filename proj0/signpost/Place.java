@@ -99,7 +99,33 @@ class Place {
         //m will be a list of lists of lists (columns, entries in columns, directions of those entries)
         //the first item of the first entry are all the places one queen move away from (x,y) in any direction
         //Array[] m = new Array[];
-        // FIXME
+
+        //each Place(w, h) will have a Place List of successor cells (here we make sure for each direction there will be a Placelist)
+        for (int w = 0 ; w <= width - 1 ; w ++ ) {
+            for (int h = height - 1 ; h >= 0 ; h --) {
+                for (int direct = 0; direct < 9 ; direct ++) {
+                    M[w][h][direct] = new PlaceList();
+                }
+
+            }
+
+        }
+
+        //now we iterate through each place, find all other possible places and see if the first place points in the direction of the other place
+        //we add each place that could possibly succeed to M[x][y][0], and then to its direction log
+        for (int x = 0 ; x <= width - 1; x ++) {
+            for (int y = height - 1 ; y >= 0 ; y --) {
+                for (int otherx = 0 ; otherx < width ; otherx ++) {
+                    for (int othery = height - 1; othery >= 0; othery --) {
+                        int pointer_direct = pl(x, y).dirOf(pl(otherx, othery));
+                        if (pointer_direct != 0) {
+                            M[x][y][pointer_direct].add(pl(otherx, othery));
+                            M[x][y][0].add(pl(otherx, othery));
+                        }
+                    }
+                }
+            }
+        }
 
 
         return M;

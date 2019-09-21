@@ -132,6 +132,29 @@ class PuzzleGenerator implements PuzzleSource {
             int nFound;
             nFound = 0;
             if (sq.successor() == null && sq.direction() != 0) {
+
+                for (Place s_uccessor : sq.successors()) {
+                    Sq succ_ = model.get(s_uccessor);
+                    if (sq.sequenceNum() > 0) {
+                        if (sq.connectable(succ_) &&succ_.sequenceNum() > 0) {
+                            nFound = 1;
+                            found = succ_;
+                            sq.connect(succ_);
+                            return 2;
+                        }
+                        else if (sq.connectable(succ_)) {
+                            nFound ++;
+                            found = succ_;
+                        }
+                    }
+                    else {
+                        if (sq.connectable(succ_)) {
+                            nFound ++;
+                            found = succ_;
+                        }
+                    }
+                }
+
                 // FIXME: Set nFound to the number of squares in the
                 //        direction sq.direction() from sq that can
                 //        be connected to it and set found to one of those
@@ -169,6 +192,25 @@ class PuzzleGenerator implements PuzzleSource {
                 //        numbered and one of these connectable predecessors
                 //        is numbered, then set nFound to 1 and found
                 //        to that numbered predecessor.
+                for (Place predec : sq.predecessors()) {
+                    Sq pred = model.get(predec);
+                    if (sq.sequenceNum() > 0) {
+                        if (sq.connectable(pred) && pred.sequenceNum() > 0) {
+                            nFound = 1;
+                            found = pred;
+                        }
+                        else if (sq.connectable(pred)) {
+                            nFound ++;
+                            found = pred;
+                        }
+                    }
+                    else {
+                        if (sq.connectable(pred)) {
+                            nFound ++;
+                            found = pred;
+                        }
+                    }
+                }
                 if (nFound == 0) {
                     return 0;
                 } else if (nFound == 1) {

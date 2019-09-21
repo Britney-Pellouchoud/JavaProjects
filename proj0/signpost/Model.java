@@ -77,21 +77,69 @@ class Model implements Iterable<Model.Sq> {
         _allSuccessors = Place.successorCells(_width, _height);
         _solution = new int[_width][_height];
         deepCopy(solution, _solution);
-        _board = new Sq[][]{
-                {new Sq(0, 0, 0, false, 2, -1), new Sq(0, 1, 0, false, 2, -1),
-                        new Sq(0, 2, 0, false, 4, -1), new Sq(0, 3, 1, true, 2, 0)},
-                {new Sq(1, 0, 0, false, 2, -1), new Sq(1, 1, 0, false, 2, -1),
-                        new Sq(1, 2, 0, false, 6, -1), new Sq(1, 3, 0, false, 2, -1)},
-                {new Sq(2, 0, 0, false, 6, -1), new Sq(2, 1, 0, false, 2, -1),
-                        new Sq(2, 2, 0, false, 6, -1), new Sq(2, 3, 0, false, 2, -1)},
-                {new Sq(3, 0, 16, true, 0, 0), new Sq(3, 1, 0, false, 5, -1),
-                        new Sq(3, 2, 0, false, 6, -1), new Sq(3, 3, 0, false, 4, -1)}
-        };
-        for (Sq[] col : _board) {
-            for (Sq sq : col) {
-                _allSquares.add(sq);
+
+        _board = new Sq[width()][height()];
+        _solnNumToPlace = new Place [size() + 1];
+
+        //In these loops we make _solNumToPlace a list of places who's order is the order of the solution
+
+        for (int place = 1; place < size()+1; place ++) {
+            for (int col = 0; col < _width ; col ++) {
+                for (int row = _height - 1; row >= 0; row--) {
+                    int seq_num = _solution[col][row];
+                    _solnNumToPlace[seq_num] = pl(col, row);
+                }
             }
         }
+
+        //Now we initialize our board so it will have the correct solution
+
+        for (int colnum = 0; colnum < _width ; colnum ++) {
+            for (int rownum = _height - 1; rownum >= 0; rownum --) {
+                int seq_num = _solution[colnum][rownum];
+
+                if (seq_num == 1) {
+                    int direction= pl(_solnNumToPlace[seq_num].x,_solnNumToPlace[seq_num].y).dirOf(pl(_solnNumToPlace[seq_num+1].x,_solnNumToPlace[seq_num+1].y));
+
+                    _board[colnum][rownum] = new Sq(colnum, rownum, seq_num, true, direction, 0);
+                    _board[colnum][rownum]._predecessors = new PlaceList();
+                }
+                if (seq_num == size()) {
+                    _board[colnum][rownum] = new Sq(colnum, rownum, seq_num, true, 0, 0);
+                }
+
+                else if (seq_num != size() && seq_num != 1) {
+                    int direction= pl(_solnNumToPlace[seq_num].x,_solnNumToPlace[seq_num].y).dirOf(pl(_solnNumToPlace[seq_num+1].x,_solnNumToPlace[seq_num+1].y));
+
+                    _board[colnum][rownum] = new Sq(colnum, rownum, 0, false, direction, -1);
+                    _board[colnum][rownum]._predecessors = new PlaceList();
+                }
+
+                _allSquares.add(_board[colnum][rownum]);
+            }
+        }
+
+        //making the predecessor and successor lists for each Place in the board
+
+        PlaceList [][][] successors = Place.successorCells(_width,_height) ;
+        for (int wid = 0 ; wid < _width - 1; wid ++) {
+            for (int hei = _height - 1 ; hei >= 0 ; hei --) {
+                Sq position = _board[wid][hei];
+                position._successors = successors[wid][hei][position._dir];
+                if (position._successors != null) {
+                    for (int pos_ind = 0 ; pos_ind < position._successors.size() ; pos_ind ++) {
+                        get(position._successors.get(pos_ind))._predecessors.add(pl(wid, hei));
+                    }
+                }
+            }
+        }
+
+        for (int checker = 1; checker <= last ; checker ++) {
+            if (solution[_solnNumToPlace[checker].x][_solnNumToPlace[checker].y] != checker) {
+                throw badArgs("The solution is missing a place number");
+            }
+        }
+
         // DUMMY SETUP
         // FIXME: Remove everything down "// END DUMMY SETUP".
         // END DUMMY SETUP
@@ -136,6 +184,19 @@ class Model implements Iterable<Model.Sq> {
         _solution = model._solution;
         _usedGroups.addAll(model._usedGroups);
         _allSuccessors = model._allSuccessors;
+
+        _board = new Sq[_width][_height];
+
+        for (int col_num = 0; col_num < _width ; col_num ++) {
+            for (int row_num = _height - 1 ; row_num >= 0 ; row_num --) {
+                this._board[col_num][row_num] = new Sq(model._board[col_num][row_num]);
+                _allSquares.add(this._board[col_num][row_num]);
+                this._board[col_num][row_num]._predecessor=model._board[col_num][row_num].predecessor();
+                this._board[col_num][row_num]._successor=model._board[col_num][row_num].successor();
+                this._board[col_num][row_num]._head=model._board[col_num][row_num].head();
+            }
+
+        }
 
         // FIXME: Initialize _board and _allSquares to contain copies of the
         //        the Sq objects in MODEL other than their _successor,
