@@ -23,8 +23,8 @@ class PuzzleGenerator implements PuzzleSource {
         Model model =
             new Model(makePuzzleSolution(width, height, allowFreeEnds));
         // FIXME: Remove the "//" on the following two lines.
-        // makeSolutionUnique(model);
-        // model.autoconnect();
+         makeSolutionUnique(model);
+         model.autoconnect();
         return model;
     }
 
@@ -54,15 +54,11 @@ class PuzzleGenerator implements PuzzleSource {
         _vals[x1][y1] = last;
         // FIXME: Remove the following return statement and uncomment the
         //        next three lines.
-        return new int[][] {
-            { 14, 9, 8, 1 },
-            { 15, 10, 7, 2 },
-            { 13, 11, 6, 3 },
-            { 16, 12, 5, 4 }
-        };
-        //boolean ok = findSolutionPathFrom(x0, y0);
-        //assert ok;
-        //return _vals;
+
+
+        boolean ok = findSolutionPathFrom(x0, y0);
+        assert ok;
+        return _vals;
     }
 
     /** Try to find a random path of queen moves through VALS from (X0, Y0)
@@ -133,27 +129,27 @@ class PuzzleGenerator implements PuzzleSource {
             nFound = 0;
             if (sq.successor() == null && sq.direction() != 0) {
 
-                for (Place s_uccessor : sq.successors()) {
-                    Sq succ_ = model.get(s_uccessor);
-                    if (sq.sequenceNum() > 0) {
-                        if (sq.connectable(succ_) &&succ_.sequenceNum() > 0) {
-                            nFound = 1;
+                    for (Place s_uccessor : sq.successors()) {
+                        Sq succ_ = model.get(s_uccessor);
+                        if (sq.sequenceNum() > 0) {
+                            if (sq.connectable(succ_) && succ_.sequenceNum() > 0) {
+                                nFound = 1;
+                                sq.connect(succ_);
+                                found = succ_;
+
+                                return 2;
+                            }
+
+
+                        } else {
+                            nFound++;
                             found = succ_;
-                            sq.connect(succ_);
-                            return 2;
                         }
-                        else if (sq.connectable(succ_)) {
-                            nFound ++;
-                            found = succ_;
-                        }
+
                     }
-                    else {
-                        if (sq.connectable(succ_)) {
-                            nFound ++;
-                            found = succ_;
-                        }
-                    }
-                }
+
+            }
+
 
                 // FIXME: Set nFound to the number of squares in the
                 //        direction sq.direction() from sq that can
@@ -163,14 +159,19 @@ class PuzzleGenerator implements PuzzleSource {
                 //        to that numbered square.
                 if (nFound == 0) {
                     return 0;
-                } else if (nFound == 1) {
+                }
+                else if (nFound == 1) {
                     sq.connect(found);
                     result = 2;
+                    System.out.println("Found" + found);
                 }
-            }
-        }
+                }
         return result;
+
     }
+
+
+
 
     /** Make all unique backward connections in MODEL (those in which there is
      *  a single possible predecessor).  Return 2 if changes made, 1 if no
@@ -231,8 +232,8 @@ class PuzzleGenerator implements PuzzleSource {
         do {
             changed = false;
             for (Sq sq : model) {
-                if (sq.hasFixedNum() && sq.sequenceNum() != 1
-                    && sq.direction() != 0) {
+                if (sq.hasFixedNum() && sq.sequenceNum() != 1 && sq.direction() != 0)
+                {
                     model.restart();
                     int n = sq.sequenceNum();
                     sq.unfixNum();
