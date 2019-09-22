@@ -265,6 +265,11 @@ class Model implements Iterable<Model.Sq> {
         _unconnected = _width * _height - 1;
         _solution = null;
         _usedGroups.clear();
+
+        Sq[][] _board = new Sq[_width][_height];
+        _allSquares.clear();
+
+        PlaceList _allSuccessorSq [][][] = Place.successorCells(_width, _height);
         // FIXME: Initialize _board to contain nulls and clear all objects from
         //        _allSquares.
 
@@ -325,13 +330,36 @@ class Model implements Iterable<Model.Sq> {
      *  unconnected and are separated by a queen move.  Returns true iff
      *  any changes were made. */
     boolean autoconnect() {
-        return false; // FIXME
+        boolean changed = false;
+        int count_changed = 0;
+        for (int wi = 0 ; wi < width() ; wi ++) {
+            for (int entry = height() - 1 ; entry >= 0 ; entry --) {
+                if (_board[wi][entry].sequenceNum() != 0) {
+                    for (int wid = 0 ; wid < width() ; wid ++) {
+                        for (int ind = height() - 1 ; ind >= 0 ; ind --) {
+                            if (_board[wi][entry].sequenceNum() == _board[wid][ind].sequenceNum() - 1) {
+                                _board[wi][entry].connect(_board[wid][ind]);
+                                changed = true;
+                                count_changed += 1;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        _unconnected -= count_changed;
+        return changed;
     }
 
     /** Sets the numbers in my squares to the solution from which I was
      *  last initialized by the constructor. */
     void solve() {
-        // FIXME
+        for (int w = 0 ; w < width() ; w ++) {
+            for (int r = height() - 1 ; r >= 0; r--) {
+                _board[w][r]._sequenceNum = this._solution[w][r];
+            }
+        }
+        this.autoconnect();
         _unconnected = 0;
     }
 
@@ -339,7 +367,6 @@ class Model implements Iterable<Model.Sq> {
      *  successor, or 0 if it has none. */
     private int arrowDirection(int x, int y) {
         int seq0 = _solution[x][y];
-        // FIXME
         return 0;
     }
 
