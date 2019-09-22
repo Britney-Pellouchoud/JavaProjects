@@ -101,9 +101,9 @@ class Place {
         //Array[] m = new Array[];
 
         //each Place(w, h) will have a Place List of successor cells (here we make sure for each direction there will be a Placelist)
-        for (int w = 0 ; w <= width - 1 ; w ++ ) {
+        for (int w = 0 ; w < width ; w ++ ) {
             for (int h = height - 1 ; h >= 0 ; h --) {
-                for (int direct = 0; direct < 9 ; direct ++) {
+                for (int direct = 0; direct <= 8 ; direct ++) {
                     M[w][h][direct] = new PlaceList();
                 }
 
@@ -113,7 +113,7 @@ class Place {
 
         //now we iterate through each place, find all other possible places and see if the first place points in the direction of the other place
         //we add each place that could possibly succeed to M[x][y][0], and then to its direction log
-        for (int x = 0 ; x <= width - 1; x ++) {
+        for (int x = 0 ; x < width ; x ++) {
             for (int y = height - 1 ; y >= 0 ; y --) {
                 for (int otherx = 0 ; otherx < width ; otherx ++) {
                     for (int othery = height - 1; othery >= 0; othery --) {

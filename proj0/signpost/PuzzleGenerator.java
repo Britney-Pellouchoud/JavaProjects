@@ -1,5 +1,6 @@
 package signpost;
 
+import java.sql.SQLOutput;
 import java.util.Collections;
 import java.util.Random;
 
@@ -128,8 +129,9 @@ class PuzzleGenerator implements PuzzleSource {
             int nFound;
             nFound = 0;
             if (sq.successor() == null && sq.direction() != 0) {
-
-                    for (Place s_uccessor : sq.successors()) {
+                //System.out.println(sq.sequenceNum());
+                //System.out.println(sq.successors());
+                for (Place s_uccessor : sq.successors()) {
                         Sq succ_ = model.get(s_uccessor);
                         if (sq.sequenceNum() > 0) {
                             if (sq.connectable(succ_) && succ_.sequenceNum() > 0) {
@@ -163,7 +165,7 @@ class PuzzleGenerator implements PuzzleSource {
                 else if (nFound == 1) {
                     sq.connect(found);
                     result = 2;
-                    System.out.println("Found" + found);
+                   // System.out.println("Found" + found);
                 }
                 }
         return result;
