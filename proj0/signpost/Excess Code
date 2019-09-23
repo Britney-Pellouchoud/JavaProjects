@@ -1,3 +1,53 @@
+if (s1.sequenceNum() != 0 && this.sequenceNum() == 0) {
+                Sq s1_predecessor = s1.predecessor();
+                if (this.group() != -1) {
+                    releaseGroup(this.group());
+                }
+                while (s1_predecessor != null) {
+                    s1._head  = this._head;
+                    s1_predecessor._sequenceNum = s1_predecessor.successor().sequenceNum() - 1; //changed from +
+                    s1_predecessor = s1_predecessor.predecessor();
+
+
+
+
+
+
+if (Place.dirOf(this.x, this.y, s1.x, s1.y) != this._dir) {
+                return false;
+            }
+
+            if (s1.predecessor() != null || this.successor() != null) {
+                return false;
+            }
+
+            //Can't already have a successor
+            if (this.successors() == null) {
+                return false;
+            }
+
+            //check to see if both s1 and I have sequence numbers
+            //if they both have sequence numbers, check to make sure they aren't the same number
+            if (s1.sequenceNum() != 0 && this.sequenceNum() != 0) {
+                if (this.sequenceNum() != s1.sequenceNum() - 1) {
+                    return false;
+                }
+            }
+
+            //if neither have sequence numbers
+            if (s1.sequenceNum() == 0 && this.sequenceNum() == 0) {
+                if (s1.group() == this.group()) {
+                    return false;
+                }
+            }
+
+            //if all this is true, check to see if they're in the same group.  If they are, it returns as connectable!
+
+            return this.group() != s1.group();
+        }
+
+
+
 
 this._successor = s1;
             Sq succ_iterator = this.successor();

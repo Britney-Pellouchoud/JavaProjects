@@ -128,6 +128,7 @@ class Model implements Iterable<Model.Sq> {
                 position._successors = successors[wid][hei][position._dir];
                 if (position._successors != null) {
                     for (int pos_ind = 0 ; pos_ind < position._successors.size() -1 ; pos_ind ++) {
+                        //System.out.println("success0rs " + position._successors.get(pos_ind));
                         get(position._successors.get(pos_ind))._predecessors.add(pl(wid, hei));
                     }
                 }
@@ -209,15 +210,13 @@ class Model implements Iterable<Model.Sq> {
             for (int j = _height - 1 ; j >= 0 ; j --) {
                 this._board[i][j]._head = model._board[i][j].head();
                 //System.out.println(this._board[i][j]._head.x);
-                this._board[i][j]._predecessor=model._board[i][j].predecessor();
-                this._board[i][j]._successor=model._board[i][j].successor();
-                this._board[i][j]._successors=model._board[i][j].successors();
-                this._board[i][j]._predecessors=model._board[i][j].predecessors();
-               if (model._board[i][j].group() != -1) {
-                   this._board[i][j]._group = model._board[i][j].group();
-                   //System.out.println(this._board[i][j]._group);
-               }
-                model._allSquares.add(this._board[i][j]);
+                this._board[i][j]._predecessor = model._board[i][j].predecessor();
+                this._board[i][j]._successor = model._board[i][j].successor();
+                this._board[i][j]._successors = model._board[i][j].successors();
+                this._board[i][j]._predecessors = model._board[i][j].predecessors();
+                _allSquares.add(this._board[i][j]);
+                //System.out.println(_allSquares);
+
 
             }
         }
@@ -679,37 +678,53 @@ class Model implements Iterable<Model.Sq> {
 
             //must be in the correct direction
             // FIXME
-            if (Place.dirOf(this.x, this.y, s1.x, s1.y) != this._dir) {
-                return false;
-            }
+            if (Place.dirOf(this.x, this.y, s1.x, s1.y) == this._dir) {
+                if (s1.predecessor() == null && this.successor() == null) {
+                    if (s1.sequenceNum() != this.sequenceNum() + 1 && this.sequenceNum() > 0) {
+                        if (this.sequenceNum() == s1.sequenceNum() - 1) {
+                            return true;
+                        }
+                        if (s1.sequenceNum() == 0) {
+                            return true;
+                        }
+                        else{
+                            return false;
+                        }
+                    }
 
-            if (s1.predecessor() != null || this.successor() != null) {
-                return false;
-            }
+                    if (s1.sequenceNum() != 0 && this.sequenceNum() == 0) {
+                        this._sequenceNum = s1.sequenceNum() - 1;
+                        return true;
+                    }
+                        if (s1.sequenceNum() == 0 && this.sequenceNum() == 0) {
+                            if (s1.group() != this.group()) {
+                                return true;
+                            }
+                            else if (s1.group() == -1 && this.group() != -1){
+                                return true;
+                            }
+                            else if (s1.group() != -1 && this.group() == -1) {
+                                return true;
+                            }
+                            else if (s1.group() == this.group()) {
+                                if (s1.group() == -1) {
+                                    return true;
+                                }
+                                else {
+                                    return false;
+                                }
 
-            //Can't already have a successor
-            if (this.successors() == null) {
-                return false;
-            }
+                            }
+                        }
 
-            //check to see if both s1 and I have sequence numbers
-            //if they both have sequence numbers, check to make sure they aren't the same number
-            if (s1.sequenceNum() != 0 && this.sequenceNum() != 0) {
-                if (this.sequenceNum() != s1.sequenceNum() - 1) {
-                    return false;
                 }
             }
 
-            //if neither have sequence numbers
-            if (s1.sequenceNum() == 0 && this.sequenceNum() == 0) {
-                if (s1.group() == this.group()) {
-                    return false;
-                }
-            }
+        return false;
 
             //if all this is true, check to see if they're in the same group.  If they are, it returns as connectable!
 
-            return this.group() != s1.group();
+
         }
 
         /**
@@ -739,44 +754,92 @@ class Model implements Iterable<Model.Sq> {
             s1._predecessor = this;
             this._successor = s1;
 
-            if (s1.sequenceNum() == 0 && this.sequenceNum() == 0) {
-                Sq head_change = this.successor();
-                while (head_change != null) {
-                    head_change._head = this.head();
-                    head_change._head._group = this.group();
-                    head_change = get(head_change.successor());
-                }
-            }
+             if (this.sequenceNum() == 0 && s1.sequenceNum() == 0) {
+
+                 //Sq my_successor = this.successor();
+
+                 //if I don't have a group but s1 does, give me s1's group
+                 if (this.group() == -1 && s1.group() != -1) {
+                     this._group = s1.group();
+                     Sq track = this;
+                     while (track != null) {
+                         track._head = this;
+                         track._group = this.group();
+                         track = track.successor();
+                     }
+                     return true;
+                 }
+
+                 //if I have a group but s1 doesn't, s1 gets my group
+                 else if (this.group() != -1 && s1.group() == -1) {
+                     s1._group = this.group();
+                     s1._head = this.head();
+                     return true;
+                 }
+
+                 //if both of us don't have groups, give us a new group
+                 else if (this.group() == -1 && s1.group() == -1) {
+                     int group_assign = newGroup();
+                     this._group = group_assign;
+                     s1._group = group_assign;
+                     s1._head = this;
+                     return true;
+                 }
 
 
-            if (s1.sequenceNum() != 0) {
-                Sq s1_predecessor = s1.predecessor();
-                if (this.group() > 0) {
-                    releaseGroup(this.group());
-                }
-                while (s1_predecessor != null) {
-                    s1_predecessor._sequenceNum = s1_predecessor.successor().sequenceNum() + 1;
-                    s1_predecessor = s1_predecessor.predecessor();
-                }
-            }
+                 //if both of us have groups, we use the joingroup to assign our new groups
+                 else if (this.group() != -1 && s1.group() != -1) {
+                     int new_group = joinGroups(this.group(), s1.group());
+                     Sq back_this = this;
+                     while (back_this != null) {
+                         back_this._group = new_group;
+                     }
+                     Sq s1_forward = s1;
+                     while (s1_forward != null) {
+                         s1_forward._group = new_group;
+                     }
+                 }
 
-            if (this.sequenceNum() > 0) {
-                Sq my_successor = this.successor();
 
-                if (s1.sequenceNum() == 2 && this.sequenceNum() == 1) {
-                    this._successor = s1;
-                }
-                if (s1.group() != -1) {
-                    releaseGroup(s1.group());
-                }
 
-                while (my_successor != null) {
-                    my_successor._sequenceNum = my_successor.predecessor().sequenceNum() + 1;
-                    my_successor = my_successor.successor();
-                }
 
-            }
+                 return true;
+             }
 
+
+
+              else if (this.sequenceNum() != 0 && s1.sequenceNum() == 0) {
+                 Sq forwards= this.successor();
+                 while (forwards != null) {
+                     forwards._sequenceNum = forwards.predecessor().sequenceNum() + 1;
+                     forwards._head = this;
+                     forwards._predecessor = forwards;
+                     forwards = forwards.successor();
+                 }
+                 return true;
+             }
+
+             else if (this.sequenceNum() == 0 && s1.sequenceNum() != 0) {
+                 Sq backwards = s1;
+                 while (backwards != null) {
+                     backwards._sequenceNum = backwards.predecessor().sequenceNum() - 1;
+                     //head
+                     backwards._successor = backwards;
+                     backwards._head = this.head();
+                     backwards = backwards.predecessor();
+                 }
+                 return true;
+             }
+
+            //        + Set the _head fields of my successors to my _head. *
+            //        + If either of this or S1 used to be unnumbered and is
+            //          now numbered, release its group of whichever was
+            //          unnumbered, so that it can be reused. *
+
+
+
+            //        + If both this and S1 are unnumbered, set the group of
+            //          my head to the result of joining the two groups. *
 
 
 
