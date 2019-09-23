@@ -195,25 +195,17 @@ class Model implements Iterable<Model.Sq> {
 
         for (int col_num = 0; col_num < _width ; col_num ++) {
             for (int row_num = _height - 1 ; row_num >= 0 ; row_num --) {
-                //not sure if below line is an abstraction barrier
                 this._board[col_num][row_num] = new Sq(model._board[col_num][row_num]);
-                //System.out.println(model._board[col_num][row_num].sequenceNum());
-                //System.out.println(model._board[col_num][row_num]._group);
-
-
-                //this._board[col_num][row_num]._head=model._board[col_num][row_num].head();
             }
-
         }
 
         for (int i = 0; i < _width ; i ++) {
             for (int j = _height - 1 ; j >= 0 ; j --) {
-                this._board[i][j]._head = model._board[i][j].head();
-                //System.out.println(this._board[i][j]._head.x);
-                this._board[i][j]._predecessor = model._board[i][j].predecessor();
-                this._board[i][j]._successor = model._board[i][j].successor();
-                this._board[i][j]._successors = model._board[i][j].successors();
-                this._board[i][j]._predecessors = model._board[i][j].predecessors();
+                if (_board[i][j] != null) {
+                    this._board[i][j]._head = this.get(_board[i][j]).head();
+                    this._board[i][j]._predecessor = this.get(_board[i][j]).predecessor();
+                    this._board[i][j]._successor = this.get(_board[i][j]).successor();
+                }
                 _allSquares.add(this._board[i][j]);
                 //System.out.println(_allSquares);
 
