@@ -73,7 +73,8 @@ class PuzzleGenerator implements PuzzleSource {
      *  Returns true and leaves the path that is found in VALS.  Otherwise
      *  returns false and leaves VALS unchanged. Does not change MODEL. */
     private boolean findSolutionPathFrom(int x0, int y0) {
-        int w = _vals.length, h = _vals[0].length;
+        int w = _vals.length;
+        int h = _vals[0].length;
         int v;
         int start = _vals[x0][y0] + 1;
         PlaceList moves = _successorCells[x0][y0][0];
@@ -125,49 +126,60 @@ class PuzzleGenerator implements PuzzleSource {
         result = 1;
         for (Sq sq : model) {
             Sq found;
-            found = null;
+            found = null; // will be set to a successive square
             int nFound;
-            nFound = 0;
+            nFound = 0; // will be set to number of successive squares
             if (sq.successor() == null && sq.direction() != 0) {
                 //System.out.println(sq.sequenceNum());
                 //System.out.println(sq.successors());
                 for (Place s_uccessor : sq.successors()) {
-                        Sq succ_ = model.get(s_uccessor);
-                        if (sq.sequenceNum() > 0) {
-                            if (sq.connectable(succ_) && succ_.sequenceNum() > 0) {
-                                nFound = 1;
-                                sq.connect(succ_);
-                                found = succ_;
+                    Sq succ_ = model.get(s_uccessor);
 
-                                return 2;
-                            }
+                    //if I have a sequence number, and can be connected to my successor who does have a sequence number, connect us
+                    if (sq.sequenceNum() > 0) {
+                        if (sq.connectable(succ_) && succ_.sequenceNum() > 0) {
+                            nFound = 1;
+                            sq.connect(succ_);
+                            found = succ_;
+                            return 2;
+                        } else if (sq.connectable(succ_)) {
+
+                            nFound++;
+                            found = succ_;
+
+                        }
+                    }
 
 
-                        } else {
+                    //if I am unnumbered, found is my successor
+                    else {
+                        if (sq.connectable(succ_)) {
                             nFound++;
                             found = succ_;
                         }
-
                     }
 
+                }
+
+
+
+
+            // FIXME: Set nFound to the number of squares in the
+            //        direction sq.direction() from sq that can
+            //        be connected to it and set found to one of those
+            //        squares.  If sq is numbered and can be connected to
+            //        a numbered square, then set nFound to 1 and found
+            //        to that numbered square.
+            if (nFound == 0) {
+                return 0;
             }
-
-
-                // FIXME: Set nFound to the number of squares in the
-                //        direction sq.direction() from sq that can
-                //        be connected to it and set found to one of those
-                //        squares.  If sq is numbered and can be connected to
-                //        a numbered square, then set nFound to 1 and found
-                //        to that numbered square.
-                if (nFound == 0) {
-                    return 0;
-                }
-                else if (nFound == 1) {
-                    sq.connect(found);
-                    result = 2;
-                   // System.out.println("Found" + found);
-                }
-                }
+            else if (nFound == 1 && sq != null) {
+                sq.connect(found);
+                result = 2;
+                //System.out.println("Found" + found);
+            }
+        }
+    }
         return result;
 
     }
@@ -196,28 +208,16 @@ class PuzzleGenerator implements PuzzleSource {
                 //        is numbered, then set nFound to 1 and found
                 //        to that numbered predecessor.
                 for (Place predec : sq.predecessors()) {
-                    Sq pred = model.get(predec);
-                    if (sq.sequenceNum() > 0) {
-                        if (sq.connectable(pred) && pred.sequenceNum() > 0) {
-                            nFound = 1;
-                            found = pred;
-                        }
-                        else if (sq.connectable(pred)) {
-                            nFound ++;
-                            found = pred;
-                        }
-                    }
-                    else {
-                        if (sq.connectable(pred)) {
-                            nFound ++;
-                            found = pred;
-                        }
+                    if (model.get(predec).sequenceNum() != 0 && sq.connectable(model.get(predec))) {
+                        nFound = 1;
+                        found = model.get(predec);
                     }
                 }
+
                 if (nFound == 0) {
                     return 0;
                 } else if (nFound == 1) {
-                    found.connect(sq);
+                    sq.connect(found);
                     result = 2;
                 }
             }

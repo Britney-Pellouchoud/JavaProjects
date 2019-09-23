@@ -1,3 +1,118 @@
+//check to see if it's connectable
+            if (!connectable(s1)) {
+                return false;
+            }
+
+            //variable saves sq's group number
+            int sgroup = s1.group();
+
+            //find s1's predecessor
+            //find this's successor
+
+            Sq pred_iter = s1.predecessor();
+            Sq suc_iter = this.successor();
+
+            //set each other to pred/succ
+            s1._predecessor = this;
+            this._successor = s1;
+
+            //connected true/false
+            boolean s1_tf = false;
+            boolean this_tf = false;
+
+            //group numbers of both squares
+            int s1_sec = 0;
+            int group_sec = 0;
+
+            //if both me and s1 don't have sequence numbers, connect us
+            if (this.sequenceNum() != 0) {
+                if (s1.sequenceNum() == 0) {
+                    s1_tf = true;
+                    s1_sec = s1.group();
+                }
+
+                //iterate through the whole board or until there is no successor
+                //set the sequence numbers
+                //reset the successor to the next's successor
+                while (suc_iter.predecessor().sequenceNum() <= size() && suc_iter != null){
+                    suc_iter._sequenceNum = suc_iter.predecessor().sequenceNum() + 1;
+                    suc_iter = suc_iter.successor();
+                }
+            }
+
+            //if s1 is numbered but I am not, I can be connected and my group number can be set
+            if (s1.sequenceNum() != 0) {
+                if (this._sequenceNum == 0) {
+                    this_tf = true;
+                    group_sec = this.group();
+                }
+
+                while (pred_iter.successor().sequenceNum() > 1 && pred_iter != null) {
+                    pred_iter._sequenceNum = pred_iter.successor().sequenceNum() - 1;
+                    pred_iter = pred_iter.predecessor();
+                }
+            }
+
+            //set all the heads of the successors to the same correct head
+
+            Sq second_succ = this.successor();
+            while (second_succ != null) {
+                second_succ._head = this.head();
+                second_succ = second_succ.successor();
+            }
+
+
+            //remove s1's group number now that they are in my group
+            if (s1_tf) {
+                _usedGroups.remove(s1_sec);
+            }
+
+            //remove my group's number now that I am in s1's group
+            if (this_tf) {
+                _usedGroups.remove(group_sec);
+            }
+
+            //if neither of us are numbered, iterate through our successors and assign them to our group number
+            if (s1.sequenceNum() == 0 && this.sequenceNum() == 0) {
+                Sq index = s1;
+                _usedGroups.remove(s1.group());
+                while (index != null) {
+                    index._group = this.group();
+                    index = index.successor();
+                }
+
+
+
+Sq pred = model.get(predec);
+                    if (sq.sequenceNum() > 0) {
+                        if (sq.connectable(pred) && pred.sequenceNum() > 0) {
+                            nFound = 1;
+                            found = pred;
+                        }
+                        else if (sq.connectable(pred)) {
+                            nFound ++;
+                            found = pred;
+                        }
+                    }
+                    else {
+                        if (sq.connectable(pred)) {
+                            nFound ++;
+                            found = pred;
+                        }
+                    }
+                }
+                if (nFound == 0) {
+                    return 0;
+                } else if (nFound == 1) {
+                    found.connect(sq);
+                    result = 2;
+                }
+            }
+        }
+
+
+
+
 
 _board = new Sq[][];
         int column = -1;
