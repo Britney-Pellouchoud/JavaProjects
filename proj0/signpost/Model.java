@@ -848,6 +848,57 @@ class Model implements Iterable<Model.Sq> {
                         pred_iter = pred_iter.predecessor();
                     }
                 }
+
+                if (!this_fixed) {
+                    this._sequenceNum = 0;
+                    if (this.predecessor() != null) {
+                        int this_grouped = newGroup();
+                        Sq pred_backwards = this;
+                        while (pred_backwards != null) {
+                            this._group= this_group;
+                            pred_backwards._sequenceNum = 0;
+                            pred_backwards = pred_backwards.predecessor();
+
+                        }
+                    }
+                    else {
+                        this._group = -1;
+                    }
+                }
+
+                boolean next_fixed_check = next.hasFixedNum();
+                if (next.successor() != null) {
+                    Sq next_suc = next.successor();
+                    while (next_suc != null) {
+                        if (next_suc.hasFixedNum()) {
+                            next_fixed_check = true;
+                        }
+                        next_suc = next_suc.successor();
+                    }
+                }
+
+                if (! next_fixed_check) {
+                    next._sequenceNum = 0;
+                    if (next.successor() != null) {
+                        int nxt_g = newGroup();
+                        Sq nxt_itr = next;
+                        _usedGroups.add(next_group);
+                        while (nxt_itr != null) {
+                            nxt_itr._group = next_group;
+                            nxt_itr._sequenceNum = 0;
+                            nxt_itr = nxt_itr.successor();
+                        }
+                    }
+                    else {
+                        next._group = -1;
+                    }
+                }
+            }
+
+            Sq head_find = next;
+            while (head_find != null) {
+                head_find._head = next;
+                head_find = head_find.successor();
             }
 
 
