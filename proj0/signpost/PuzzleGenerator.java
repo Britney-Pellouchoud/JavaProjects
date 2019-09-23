@@ -132,54 +132,40 @@ class PuzzleGenerator implements PuzzleSource {
             if (sq.successor() == null && sq.direction() != 0) {
                 //System.out.println(sq.sequenceNum());
                 //System.out.println(sq.successors());
+
                 for (Place s_uccessor : sq.successors()) {
-                    Sq succ_ = model.get(s_uccessor);
-
+                    //System.out.println(s_uccessor);
+                    
+                    if (model.get(s_uccessor).sequenceNum() != 0 && sq.connectable(model.get(s_uccessor))) {
+                        nFound = 1;
+                        found = model.get(s_uccessor);
+                        //System.out.println(found);
+                        //sq.connect(found);
+                    }
+                    else if (sq.connectable(model.get(s_uccessor))) {
+                        nFound ++;
+                        found = model.get(s_uccessor);
+                    }
                     //if I have a sequence number, and can be connected to my successor who does have a sequence number, connect us
-                    if (sq.sequenceNum() > 0) {
-                        if (sq.connectable(succ_) && succ_.sequenceNum() > 0) {
-                            nFound = 1;
-                            sq.connect(succ_);
-                            found = succ_;
-                            return 2;
-                        } else if (sq.connectable(succ_)) {
 
-                            nFound++;
-                            found = succ_;
-
-                        }
-                    }
-
-
-                    //if I am unnumbered, found is my successor
-                    else {
-                        if (sq.connectable(succ_)) {
-                            nFound++;
-                            found = succ_;
-                        }
-                    }
-
+                if (nFound == 0 || found == null) {
+                    return 0;
+                } else if (nFound == 1) {
+                    sq.connect(found);
+                    result = 2;
                 }
-
-
-
-
-            // FIXME: Set nFound to the number of squares in the
-            //        direction sq.direction() from sq that can
-            //        be connected to it and set found to one of those
-            //        squares.  If sq is numbered and can be connected to
-            //        a numbered square, then set nFound to 1 and found
-            //        to that numbered square.
-            if (nFound == 0) {
-                return 0;
             }
-            else if (nFound == 1 && sq != null) {
-                sq.connect(found);
-                result = 2;
-                //System.out.println("Found" + found);
+
+
+                // FIXME: Set nFound to the number of squares in the
+                //        direction sq.direction() from sq that can
+                //        be connected to it and set found to one of those
+                //        squares.
+                //        If sq is numbered and can be connected to
+                //        a numbered square, then set nFound to 1 and found
+                //        to that numbered square.
             }
         }
-    }
         return result;
 
     }

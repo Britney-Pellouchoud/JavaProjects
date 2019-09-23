@@ -143,6 +143,46 @@ this._successor = s1;
 
 
 
+
+Sq succ_ = model.get(s_uccessor);
+ if (nFound == 0) {
+                return 0;
+            }
+            else if (nFound == 1 && sq != null) {
+                sq.connect(found);
+                result = 2;
+                //System.out.println("Found" + found);
+            }
+        }
+    }
+if (sq.sequenceNum() > 0) {
+                        if (sq.connectable(succ_) && succ_.sequenceNum() > 0) {
+                            nFound = 1;
+                            sq.connect(succ_);
+                            found = succ_;
+                            return 2;
+                        } else if (sq.connectable(succ_)) {
+
+                            nFound++;
+                            found = succ_;
+
+                        }
+                    }
+
+
+                    //if I am unnumbered, found is my successor
+                    else {
+                        if (sq.connectable(succ_)) {
+                            nFound++;
+                            found = succ_;
+                        }
+                    }
+
+                }
+
+
+
+
 Sq pred = model.get(predec);
                     if (sq.sequenceNum() > 0) {
                         if (sq.connectable(pred) && pred.sequenceNum() > 0) {

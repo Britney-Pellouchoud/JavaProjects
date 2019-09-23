@@ -196,10 +196,11 @@ class Model implements Iterable<Model.Sq> {
             for (int row_num = _height - 1 ; row_num >= 0 ; row_num --) {
                 //not sure if below line is an abstraction barrier
                 this._board[col_num][row_num] = new Sq(model._board[col_num][row_num]);
+                //System.out.println(model._board[col_num][row_num].sequenceNum());
+                //System.out.println(model._board[col_num][row_num]._group);
 
 
                 //this._board[col_num][row_num]._head=model._board[col_num][row_num].head();
-
             }
 
         }
@@ -207,10 +208,15 @@ class Model implements Iterable<Model.Sq> {
         for (int i = 0; i < _width ; i ++) {
             for (int j = _height - 1 ; j >= 0 ; j --) {
                 this._board[i][j]._head = model._board[i][j].head();
+                //System.out.println(this._board[i][j]._head.x);
                 this._board[i][j]._predecessor=model._board[i][j].predecessor();
                 this._board[i][j]._successor=model._board[i][j].successor();
                 this._board[i][j]._successors=model._board[i][j].successors();
                 this._board[i][j]._predecessors=model._board[i][j].predecessors();
+               if (model._board[i][j].group() != -1) {
+                   this._board[i][j]._group = model._board[i][j].group();
+                   //System.out.println(this._board[i][j]._group);
+               }
                 model._allSquares.add(this._board[i][j]);
 
             }
@@ -733,6 +739,16 @@ class Model implements Iterable<Model.Sq> {
             s1._predecessor = this;
             this._successor = s1;
 
+            if (s1.sequenceNum() == 0 && this.sequenceNum() == 0) {
+                Sq head_change = this.successor();
+                while (head_change != null) {
+                    head_change._head = this.head();
+                    head_change._head._group = this.group();
+                    head_change = get(head_change.successor());
+                }
+            }
+
+
             if (s1.sequenceNum() != 0) {
                 Sq s1_predecessor = s1.predecessor();
                 if (this.group() > 0) {
@@ -761,13 +777,11 @@ class Model implements Iterable<Model.Sq> {
 
             }
 
-            Sq head_finder = this.successor();
-            while (head_finder != null) {
-                head_finder._head = this.head();
-                head_finder._group = this.group();
-                head_finder = head_finder.successor();
-            }
+
+
+
             //System.out.println(_usedGroups);
+
             _unconnected -= 1;
             return true;
         }
