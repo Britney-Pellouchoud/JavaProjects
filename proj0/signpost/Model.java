@@ -677,13 +677,12 @@ class Model implements Iterable<Model.Sq> {
                 return false;
             }
 
-            //Can't already have a successor
-            if (this.successors() == null) {
+            if (s1.predecessor() != null || this.successor() != null) {
                 return false;
             }
 
-            //S1 can't already have a predecessor and I can't already have a successor
-            if (!(s1.predecessor() == null) && !(this.successor() == null)) {
+            //Can't already have a successor
+            if (this.successors() == null) {
                 return false;
             }
 
@@ -697,7 +696,9 @@ class Model implements Iterable<Model.Sq> {
 
             //if neither have sequence numbers
             if (s1.sequenceNum() == 0 && this.sequenceNum() == 0) {
-                return false;
+                if (s1.group() == this.group()) {
+                    return false;
+                }
             }
 
             //if all this is true, check to see if they're in the same group.  If they are, it returns as connectable!
@@ -711,34 +712,6 @@ class Model implements Iterable<Model.Sq> {
          * arrow direction from me.
          */
         boolean connect(Sq s1) {
-
-            //check to see if it's connectable
-            if (!connectable(s1)) {
-                return false;
-            }
-            this._successor = s1;
-            s1._predecessor = this;
-
-            if (this._sequenceNum > 0 && s1._sequenceNum == 0) {
-                Sq succ = this;
-                while(this.successors() != null) {
-                    succ._successor._sequenceNum = this.sequenceNum() + 1;
-                    this._successor._head = this.head();
-                }
-            }
-
-            if (s1._sequenceNum > 0 && this._sequenceNum == 0) {
-                for (Place prede : s1.predecessors()) {
-                    prede._predecessor._sequenceNum = prede.sequenceNum() - 1;
-
-                }
-
-            }
-
-                _unconnected -=1;
-
-
-
             // FIXME: Connect me to my successor:
             //        + Set my _successor field and S1's _predecessor field. *
             //        + If I have a number, number all my successors
@@ -748,14 +721,68 @@ class Model implements Iterable<Model.Sq> {
             //        + Set the _head fields of my successors to my _head. *
             //        + If either of this or S1 used to be unnumbered and is
             //          now numbered, release its group of whichever was
-            //          unnumbered, so that it can be reused.
+            //          unnumbered, so that it can be reused. *
             //        + If both this and S1 are unnumbered, set the group of
-            //          my head to the result of joining the two groups.
+            //          my head to the result of joining the two groups. *
 
+            //check to see if it's connectable
+            if (!connectable(s1)) {
+                return false;
+            }
+
+            s1._predecessor = this;
+            this._successor = s1;
+
+            if (s1.sequenceNum() != 0) {
+                Sq s1_predecessor = s1.predecessor();
+                if (this.group() > 0) {
+                    releaseGroup(this.group());
+                }
+                while (s1_predecessor != null) {
+                    s1_predecessor._sequenceNum = s1_predecessor.successor().sequenceNum() + 1;
+                    s1_predecessor = s1_predecessor.predecessor();
+                }
+            }
+
+            if (this.sequenceNum() > 0) {
+                Sq my_successor = this.successor();
+
+                if (s1.sequenceNum() == 2 && this.sequenceNum() == 1) {
+                    this._successor = s1;
+                }
+                if (s1.group() != -1) {
+                    releaseGroup(s1.group());
+                }
+
+                while (my_successor != null) {
+                    my_successor._sequenceNum = my_successor.predecessor().sequenceNum() + 1;
+                    my_successor = my_successor.successor();
+                }
+
+            }
+
+            Sq head_finder = this.successor();
+            while (head_finder != null) {
+                head_finder._head = this.head();
+                head_finder._group = this.group();
+                head_finder = head_finder.successor();
+            }
+            //System.out.println(_usedGroups);
+            _unconnected -= 1;
             return true;
         }
 
         /** Disconnect me from my current successor, if any. */
+
+        // FIXME: If both this and next are now one-element groups,
+        //        release their former group and set both group
+        //        numbers to -1.
+        //        Otherwise, if either is now a one-element group, set
+        //        its group number to -1 without releasing the group
+        //        number.
+        //        Otherwise, the group has been split into two multi-
+        //        element groups.  Create a new group for next.
+
         void disconnect() {
             Sq next = _successor;
             if (next == null) {
@@ -767,150 +794,66 @@ class Model implements Iterable<Model.Sq> {
             //if I am unnumbered
             if (this._sequenceNum == 0) {
 
-                //if I don't have a predecessor, remove my group number, and leave me without a group
-                if (this._predecessor == null) {
-                    _usedGroups.remove(this.group());
-                    this._group = -1;
+                int this_group = 1;
+                int next_group = 1;
+
+                Sq this_pred = this.predecessor();
+                Sq next_succ = next.successor();
+
+                while (next_succ != null) {
+                    next_group += 1;
+                    next_succ = next_succ.successor();
                 }
 
-                //If my successor doesn't have a successor, remove my successor's group and leave my successor without a group
-                if (next._successor == null) {
-                    _usedGroups.remove(next.group());
-                    next._group = -1;
+                while (this_pred != null) {
+                    this_group += 1;
+                    this_pred = this_pred.predecessor();
                 }
 
-
-                //If I do have a number
-                else {
-
-                    //check what my number is
-                    int counter = 0;
-                    while (!_usedGroups.add(counter)) {
-                        counter += 1;
-                    }
-
-
-                    Sq n_ext = next;
-                    next._group = counter;
-
-
-                    //set all my successors to the same group as me
-                    while(n_ext != null) {
-                        n_ext._group = counter;
-                        n_ext = n_ext.successor();
-                    }
-                }
-                // FIXME: If both this and next are now one-element groups,
-                //        release their former group and set both group
-                //        numbers to -1.
-                //        Otherwise, if either is now a one-element group, set
-                //        its group number to -1 without releasing the group
-                //        number.
-                //        Otherwise, the group has been split into two multi-
-                //        element groups.  Create a new group for next.
+            if (next_group == 1 && this_group == 1) {
+                releaseGroup(this.group());
+                next._group = -1;
+                this._group = -1;
             }
 
-            //if I am numbered
+            else if (next_group != 1 && this_group == 1) {
+                releaseGroup(this.group());
+                this._group = -1;
+            }
+
+            else if (this_group > 1 && next_group > 1) {
+                next._group = newGroup() + 1;
+                _usedGroups.add(next._group + 1);
+            }
+
+            else if (next_group > 1 && this_group > 1) {
+                releaseGroup(next.group());
+                next._group = -1;
+            }
+
+
+
+
+
             else {
+                boolean this_fixed = this.hasFixedNum();
 
-
-                Sq this_one = this;
-                Sq next_one = next;
-
-                //check if our position is fixed, and if we have predecessors and successors
-                boolean is_fixed = false;
-                boolean curr_pred = false;
-                boolean n_succ = false;
-
-                //if my next doesn't have a successor
-                if (next.successor() != null) {
-                    n_succ = true;
-                }
-
-                //if my predecessor doesn't exist,
                 if (this.predecessor() != null) {
-                    curr_pred = true;
-                }
-
-
-                boolean next_fixed = false;
-
-               //check whether any of my succcessors have fixed positions
-                while (next_one != null) {
-                    if (next_one.hasFixedNum()){
-                        next_fixed = false;
-                    }
-                }
-
-                //check if I have a fixed number
-                while (this_one != null) {
-                    if (this_one.hasFixedNum()) {
-                        is_fixed = true;
-                    }
-                }
-
-
-                //if I am not fixed
-                if (! is_fixed) {
-                    this_one = this;
-
-                    //if I have a predecessor, change it's group to one that's unused
-                    if (curr_pred) {
-                        int grouper = 0;
-                        while (!_usedGroups.add(grouper)) {
-                            grouper ++;
+                    Sq pred_iter = this.predecessor();
+                    while (pred_iter != null) {
+                        if (pred_iter.hasFixedNum()) {
+                            this_fixed = true;
+                            break;
                         }
-
-                        //work backwards and set all predecessor's group numbers to the unused one
-                        while (this_one != null) {
-                            this_one._sequenceNum = 0;
-                            this_one._group = grouper;
-                            this_one = this_one.predecessor();
-
-                        }
-
-                    }
-
-                    //otherwise, work backwards and set all sequence numbers to 0 (so that they are all unnumbered)
-                    else {
-                        while (this_one != null) {
-                            this_one._sequenceNum = 0;
-                            this_one = this_one.predecessor();
-                        }
+                        pred_iter = pred_iter.predecessor();
                     }
                 }
-
-                //if my successor's position isn't fixed, and my successor has a successor, find an unused group number
-                if (!next_fixed) {
-                   Sq next_sq = next;
-                   if (n_succ) {
-                       int grouped = 0;
-                       while (!_usedGroups.add(grouped)) {
-                           grouped++;
-                       }
+            }
 
 
-                       //set the next square's sequence number to 0, but give it the correct group
-                       while (next_sq != null) {
-                           next_sq._sequenceNum = 0;
-                           next_sq._group = grouped;
 
-                       }
-                   }
 
-                   //while I am not null, set my sequence number to 0
-                   while (this_one != null) {
-                       this._sequenceNum = 0;
-                   }
 
-                }
-
-                //set all of my successor's head to the correct head
-                Sq next_iter = next;
-                while (next_iter != null) {
-                    next_iter._head = next;
-                    next_iter = next_iter.successor();
-                }
                 // FIXME: If neither this nor any square in its group that
                 //        precedes it has a fixed sequence number, set all
                 //        their sequence numbers to 0 and create a new group

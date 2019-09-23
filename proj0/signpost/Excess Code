@@ -1,3 +1,64 @@
+
+this._successor = s1;
+            Sq succ_iterator = this.successor();
+            s1._predecessor = this;
+            Sq s1_pred_iterator = s1.predecessor();
+            //int s1_group = s1.group();
+
+
+            if (this._sequenceNum > 0 && s1._sequenceNum == 0) {
+                _usedGroups.remove(s1._group);
+                while(succ_iterator != null) {
+                    succ_iterator._sequenceNum = succ_iterator._predecessor.sequenceNum() + 1;
+                    succ_iterator._head = this.head();
+                    if (succ_iterator._successor != null) {
+                        succ_iterator = succ_iterator._successor;
+                    }
+                    else {
+                        break;
+                    }
+                }
+
+            }
+
+            if (s1._sequenceNum > 0 && this._sequenceNum == 0) {
+                _usedGroups.remove(this._group);
+                while (s1_pred_iterator != null) {
+                    s1_pred_iterator._sequenceNum = s1_pred_iterator._successor.sequenceNum() + 1;
+
+                    if (s1_pred_iterator._predecessor != null) {
+                        s1_pred_iterator = s1_pred_iterator._predecessor;
+                    }
+                    else {
+                        Sq helper = s1_pred_iterator;
+                        while (helper != null) {
+                            helper._head = s1_pred_iterator._head;
+                            helper = helper._successor;
+                        }
+                        break;
+                    }
+                }
+
+            }
+
+            if (this._sequenceNum == 0 && s1._sequenceNum == 0) {
+                for (int i : _usedGroups) {
+                    if (i == this.group()) {
+
+                    }
+                }
+            }
+
+
+
+
+
+
+
+
+
+
+
 //check to see if it's connectable
             if (!connectable(s1)) {
                 return false;
@@ -20,7 +81,6 @@
             boolean s1_tf = false;
             boolean this_tf = false;
 
-            //group numbers of both squares
             int s1_sec = 0;
             int group_sec = 0;
 
