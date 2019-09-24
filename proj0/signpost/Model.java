@@ -86,22 +86,20 @@ class Model implements Iterable<Model.Sq> {
                 }
             }
         }
-        for (int colnum = 0; colnum < _width ; colnum ++) {
-            for (int rownum = _height - 1; rownum >= 0; rownum --) {
-                int seq_num = _solution[colnum][rownum];
-
-                if (seq_num == 1) {
-                    int direction= pl(_solnNumToPlace[seq_num].x,_solnNumToPlace[seq_num].y).dirOf(pl(_solnNumToPlace[seq_num+1].x,_solnNumToPlace[seq_num+1].y));
-
-                    _board[colnum][rownum] = new Sq(colnum, rownum, seq_num, true, direction, 0);
+        for (int colnum = 0; colnum < _width; colnum++) {
+            for (int rownum = _height - 1; rownum >= 0; rownum--) {
+                int seqnum = _solution[colnum][rownum];
+                if (seqnum == 1) {
+                    int direction = pl(_solnNumToPlace[seqnum].x, _solnNumToPlace[seqnum].y).dirOf(pl(_solnNumToPlace[seqnum+1].x, _solnNumToPlace[seqnum+1].y));
+                    _board[colnum][rownum] = new Sq(colnum, rownum, seqnum, true, direction, 0);
                     _board[colnum][rownum]._predecessors = new PlaceList();
                 }
-                if (seq_num == size()) {
-                    _board[colnum][rownum] = new Sq(colnum, rownum, seq_num, true, 0, 0);
+                if (seqnum == size()) {
+                    _board[colnum][rownum] = new Sq(colnum, rownum, seqnum, true, 0, 0);
                 }
 
-                else if (seq_num != size() && seq_num != 1) {
-                    int direction= pl(_solnNumToPlace[seq_num].x,_solnNumToPlace[seq_num].y).dirOf(pl(_solnNumToPlace[seq_num+1].x,_solnNumToPlace[seq_num+1].y));
+                else if (seqnum != size() && seqnum != 1) {
+                    int direction= pl(_solnNumToPlace[seqnum].x,_solnNumToPlace[seqnum].y).dirOf(pl(_solnNumToPlace[seqnum+1].x,_solnNumToPlace[seqnum+1].y));
 
                     _board[colnum][rownum] = new Sq(colnum, rownum, 0, false, direction, -1);
                     _board[colnum][rownum]._predecessors = new PlaceList();
