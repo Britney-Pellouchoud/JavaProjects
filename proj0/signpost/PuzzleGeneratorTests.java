@@ -22,8 +22,8 @@ public class PuzzleGeneratorTests {
                     continue;
                 }
                 assertTrue("Value out of range", v >= 1 && v <= last);
-                int c;
-                for (int x1 = c = 0; x1 < width; x1 += 1) {
+                int c = 0;
+                for (int x1 = 0; x1 < width; x1 += 1) {
                     for (int y1 = 0; y1 < height; y1 += 1) {
                         if (soln[x1][y1] == v + 1) {
                             assertTrue("Values not in line",
