@@ -68,8 +68,7 @@ class Model implements Iterable<Model.Sq> {
         if (solution.length == 0 || solution.length * solution[0].length < 2) {
             throw badArgs("must have at least 2 squares");
         }
-        _width = solution.length;
-        _height = solution[0].length;
+        _width = solution.length; _height = solution[0].length;
         int last = _width * _height;
         BitSet allNums = new BitSet();
         _allSuccessors = Place.successorCells(_width, _height);
@@ -87,23 +86,22 @@ class Model implements Iterable<Model.Sq> {
         }
         for (int colnum = 0; colnum < _width; colnum++) {
             for (int rownum = _height - 1; rownum >= 0; rownum--) {
-                int seqnum = _solution[colnum][rownum];
-                if (seqnum == 1) {
-                    Place la = pl(_solnNumToPlace[seqnum].x, _solnNumToPlace[seqnum].y);
-                    Place ny = pl(_solnNumToPlace[seqnum + 1].x, _solnNumToPlace[seqnum + 1].y);
-                    int direction = la.dirOf(ny);
-                    _board[colnum][rownum] = new Sq(colnum, rownum, seqnum, true, direction, 0);
-                    _board[colnum][rownum]._predecessors = new PlaceList();
+                int s = _solution[colnum][rownum];
+                Sq b = _board[colnum][rownum];
+                Place l = pl(_solnNumToPlace[s].x, _solnNumToPlace[s].y);
+                if (s == 1) {
+                    Place n = pl(_solnNumToPlace[s + 1].x, _solnNumToPlace[s + 1].y); int direction = l.dirOf(n);
+                    b = new Sq(colnum, rownum, s, true, direction, 0);
+                    b._predecessors = new PlaceList();
                 }
-                if (seqnum == size()) {
-                    _board[colnum][rownum] = new Sq(colnum, rownum, seqnum, true, 0, 0);
+                if (s == size()) {
+                    b = new Sq(colnum, rownum, s, true, 0, 0);
+                } else if (s != size() && s != 1) {
+                    int direction = l.dirOf(pl(_solnNumToPlace[s + 1].x, _solnNumToPlace[s + 1].y));
+                    b = new Sq(colnum, rownum, 0, false, direction, -1);
+                    b._predecessors = new PlaceList();
                 }
-                else if (seqnum != size() && seqnum != 1) {
-                    int direction = pl(_solnNumToPlace[seqnum].x,_solnNumToPlace[seqnum].y).dirOf(pl(_solnNumToPlace[seqnum+1].x,_solnNumToPlace[seqnum+1].y));
-                    _board[colnum][rownum] = new Sq(colnum, rownum, 0, false, direction, -1);
-                    _board[colnum][rownum]._predecessors = new PlaceList();
-                }
-                _allSquares.add(_board[colnum][rownum]);
+                _allSquares.add(b);
             }
         }
         PlaceList [][][] successors = Place.successorCells(_width, _height);
@@ -112,8 +110,8 @@ class Model implements Iterable<Model.Sq> {
                 Sq position = _board[wid][hei];
                 position._successors = successors[wid][hei][position._dir];
                 if (position._successors != null) {
-                    for (int pos = 0; pos < position._successors.size() - 1; pos++) {
-                        get(position._successors.get(pos))._predecessors.add(pl(wid, hei));
+                    for (int p = 0; p < position._successors.size() - 1; p++) {
+                        get(position._successors.get(p))._predecessors.add(pl(wid, hei));
                     }
                 }
             }
@@ -642,50 +640,47 @@ class Model implements Iterable<Model.Sq> {
                         track._group = this.group();
                         track = track.successor();
                     }
-                     return true;
-                }
-                else if (this.group() != -1 && s1.group() == -1) {
+                    return true;
+                } else if (this.group() != -1 && s1.group() == -1) {
                     s1._group = this.group();
                     s1._head = this.head();
                     return true;
                 } else if (this.group() == -1 && s1.group() == -1) {
-                     int group_assign = newGroup();
-                     this._group = group_assign;
-                     s1._group = group_assign;
-                     s1._head = this;
-                     return true;
+                    int groupassign = newGroup();
+                    this._group = groupassign;
+                    s1._group = groupassign;
+                    s1._head = this;
+                    return true;
                 } else if (this.group() != -1 && s1.group() != -1) {
-                     int new_group = joinGroups(this.group(), s1.group());
-                     Sq back_this = this;
-                     while (back_this != null) {
-                         back_this._group = new_group;
-                     }
-                     Sq s1_forward = s1;
-                     while (s1_forward != null) {
-                         s1_forward._group = new_group;
-                     }
+                    int newgroup = joinGroups(this.group(), s1.group());
+                    Sq backthis = this;
+                    while (backthis != null) {
+                        backthis._group = newgroup;
+                    }
+                    Sq s1forward = s1;
+                    while (s1forward != null) {
+                        s1forward._group = newgroup;
+                    }
                 }
-                 return true;
-             }
-            else if (this.sequenceNum() != 0 && s1.sequenceNum() == 0) {
-                 Sq forwards= this.successor();
-                 while (forwards != null) {
-                     forwards._sequenceNum = forwards.predecessor().sequenceNum() + 1;
-                     forwards._head = this;
-                     forwards._predecessor = forwards;
-                     forwards = forwards.successor();
-                 }
-                 return true;
-            }
-            else if (this.sequenceNum() == 0 && s1.sequenceNum() != 0) {
-                 Sq backwards = s1;
-                 while (backwards != null) {
-                     backwards._sequenceNum = backwards.predecessor().sequenceNum() - 1;
-                     backwards._successor = backwards;
-                     backwards._head = this.head();
-                     backwards = backwards.predecessor();
-                 }
-                 return true;
+                return true;
+            } else if (this.sequenceNum() != 0 && s1.sequenceNum() == 0) {
+                Sq forwards = this.successor();
+                while (forwards != null) {
+                    forwards._sequenceNum = forwards.predecessor().sequenceNum() + 1;
+                    forwards._head = this;
+                    forwards._predecessor = forwards;
+                    forwards = forwards.successor();
+                }
+                return true;
+            } else if (this.sequenceNum() == 0 && s1.sequenceNum() != 0) {
+                Sq backwards = s1;
+                while (backwards != null) {
+                    backwards._sequenceNum = backwards.predecessor().sequenceNum() - 1;
+                    backwards._successor = backwards;
+                    backwards._head = this.head();
+                    backwards = backwards.predecessor();
+                }
+                return true;
             }
             _unconnected -= 1;
             return true;
@@ -714,87 +709,73 @@ class Model implements Iterable<Model.Sq> {
                     thispred = thispred.predecessor();
                 }
 
-                        if (nextgroup == 1 && thisgroup == 1) {
-                            releaseGroup(this.group());
-                            next._group = -1;
+                if (nextgroup == 1 && thisgroup == 1) {
+                    releaseGroup(this.group());
+                    next._group = -1;
+                    this._group = -1;
+                } else if (nextgroup != 1 && thisgroup == 1) {
+                    releaseGroup(this.group());
+                    this._group = -1;
+                } else if (thisgroup > 1 && nextgroup > 1) {
+                    next._group = newGroup() + 1;
+                    _usedGroups.add(next._group + 1);
+                } else if (nextgroup > 1 && thisgroup > 1) {
+                    releaseGroup(next.group());
+                    next._group = -1;
+                } else {
+                    boolean thisfixed = this.hasFixedNum();
+                    if (this.predecessor() != null) {
+                        Sq prediter = this.predecessor();
+                        while (prediter != null) {
+                            if (prediter.hasFixedNum()) {
+                                thisfixed = true;
+                                break;
+                            }
+                            prediter = prediter.predecessor();
+                        }
+                    }
+                    if (!thisfixed) {
+                        this._sequenceNum = 0;
+                        if (this.predecessor() != null) {
+                            int thisgrouped = newGroup();
+                            Sq predbackwards = this;
+                            while (predbackwards != null) {
+                                this._group = thisgroup;
+                                predbackwards._sequenceNum = 0;
+                                predbackwards = predbackwards.predecessor();
+
+                            }
+                        } else {
                             this._group = -1;
                         }
-
-            else if (nextgroup != 1 && thisgroup == 1) {
-                releaseGroup(this.group());
-                this._group = -1;
-            }
-
-            else if (thisgroup > 1 && nextgroup > 1) {
-                next._group = newGroup() + 1;
-                _usedGroups.add(next._group + 1);
-            }
-
-            else if (nextgroup > 1 && thisgroup > 1) {
-                releaseGroup(next.group());
-                next._group = -1;
-            }
-
-
-
-
-
-            else {
-                boolean thisfixed = this.hasFixedNum();
-
-                if (this.predecessor() != null) {
-                    Sq prediter = this.predecessor();
-                    while (prediter != null) {
-                        if (prediter.hasFixedNum()) {
-                            thisfixed = true;
-                            break;
-                        }
-                        prediter = prediter.predecessor();
                     }
-                }
-                if (!thisfixed) {
-                    this._sequenceNum = 0;
-                    if (this.predecessor() != null) {
-                        int thisgrouped = newGroup();
-                        Sq predbackwards = this;
-                        while (predbackwards != null) {
-                            this._group= thisgroup;
-                            predbackwards._sequenceNum = 0;
-                            predbackwards = predbackwards.predecessor();
-
-                        }
-                    }
-                    else {
-                        this._group = -1;
-                    }
-                }
-                boolean nextfixedcheck = next.hasFixedNum();
-                if (next.successor() != null) {
-                    Sq nextsuc = next.successor();
-                    while (nextsuc != null) {
+                    boolean nextfixedcheck = next.hasFixedNum();
+                    if (next.successor() != null) {
+                        Sq nextsuc = next.successor();
+                        while (nextsuc != null) {
                             if (nextsuc.hasFixedNum()) {
                                 nextfixedcheck = true;
                             }
                             nextsuc = nextsuc.successor();
-                            }
+                        }
                     }
                     if (!nextfixedcheck) {
                         next._sequenceNum = 0;
                         if (next.successor() != null) {
-                                int nxt_g = newGroup();
-                                Sq nxtitr = next;
-                                _usedGroups.add(nextgroup);
-                        while (nxtitr != null) {
-                            nxtitr._group = nextgroup;
-                            nxtitr._sequenceNum = 0;
-                            nxtitr = nxtitr.successor();
-                        }
-                            } else {
-                                next._group = -1;
+                            int nxtg = newGroup();
+                            Sq nxtitr = next;
+                            _usedGroups.add(nextgroup);
+                            while (nxtitr != null) {
+                                nxtitr._group = nextgroup;
+                                nxtitr._sequenceNum = 0;
+                                nxtitr = nxtitr.successor();
                             }
+                        } else {
+                            next._group = -1;
+                        }
                     }
                 }
-            Sq headfind = next;
+                Sq headfind = next;
                 while (headfind != null) {
                     headfind._head = next;
                     headfind = headfind.successor();
