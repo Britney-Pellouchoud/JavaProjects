@@ -50,7 +50,7 @@ import static signpost.Utils.*;
  *  with fixed sequence numbers appear at the corresponding position
  *  in that sequence.
  *
- * @author Britney Pellouchoud*/
+ *  @author Britney Pellouchoud */
 class Model implements Iterable<Model.Sq> {
 
     /**
@@ -68,9 +68,11 @@ class Model implements Iterable<Model.Sq> {
         if (solution.length == 0 || solution.length * solution[0].length < 2) {
             throw badArgs("must have at least 2 squares");
         }
-        _width = solution.length; _height = solution[0].length;
+        _width = solution.length;
+        _height = solution[0].length;
         int last = _width * _height;
         BitSet allNums = new BitSet();
+
         _allSuccessors = Place.successorCells(_width, _height);
         _solution = new int[_width][_height];
         deepCopy(solution, _solution);
@@ -84,43 +86,81 @@ class Model implements Iterable<Model.Sq> {
                 }
             }
         }
-        for (int colnum = 0; colnum < _width; colnum++) {
-            for (int rownum = _height - 1; rownum >= 0; rownum--) {
-                int s = _solution[colnum][rownum];
-                Sq b = _board[colnum][rownum];
-                Place l = pl(_solnNumToPlace[s].x, _solnNumToPlace[s].y);
-                if (s == 1) {
-                    Place n = pl(_solnNumToPlace[s + 1].x, _solnNumToPlace[s + 1].y); int direction = l.dirOf(n);
-                    b = new Sq(colnum, rownum, s, true, direction, 0);
-                    b._predecessors = new PlaceList();
+        for (int colnum = 0; colnum < _width ; colnum ++) {
+            for (int rownum = _height - 1; rownum >= 0; rownum --) {
+                int seq_num = _solution[colnum][rownum];
+
+                if (seq_num == 1) {
+                    int direction= pl(_solnNumToPlace[seq_num].x,_solnNumToPlace[seq_num].y).dirOf(pl(_solnNumToPlace[seq_num+1].x,_solnNumToPlace[seq_num+1].y));
+
+                    _board[colnum][rownum] = new Sq(colnum, rownum, seq_num, true, direction, 0);
+                    _board[colnum][rownum]._predecessors = new PlaceList();
                 }
-                if (s == size()) {
-                    b = new Sq(colnum, rownum, s, true, 0, 0);
-                } else if (s != size() && s != 1) {
-                    int direction = l.dirOf(pl(_solnNumToPlace[s + 1].x, _solnNumToPlace[s + 1].y));
-                    b = new Sq(colnum, rownum, 0, false, direction, -1);
-                    b._predecessors = new PlaceList();
+                if (seq_num == size()) {
+                    _board[colnum][rownum] = new Sq(colnum, rownum, seq_num, true, 0, 0);
                 }
-                _allSquares.add(b);
+
+                else if (seq_num != size() && seq_num != 1) {
+                    int direction= pl(_solnNumToPlace[seq_num].x,_solnNumToPlace[seq_num].y).dirOf(pl(_solnNumToPlace[seq_num+1].x,_solnNumToPlace[seq_num+1].y));
+
+                    _board[colnum][rownum] = new Sq(colnum, rownum, 0, false, direction, -1);
+                    _board[colnum][rownum]._predecessors = new PlaceList();
+                }
+
+                _allSquares.add(_board[colnum][rownum]);
             }
         }
-        PlaceList [][][] successors = Place.successorCells(_width, _height);
-        for (int wid = 0; wid < _width - 1; wid++) {
-            for (int hei = _height - 1; hei >= 0; hei--) {
+
+        //making the predecessor and successor lists for each Place in the board
+
+        PlaceList [][][] successors = Place.successorCells(_width,_height) ;
+        for (int wid = 0 ; wid < _width - 1; wid ++) {
+            for (int hei = _height - 1 ; hei >= 0 ; hei --) {
                 Sq position = _board[wid][hei];
                 position._successors = successors[wid][hei][position._dir];
                 if (position._successors != null) {
-                    for (int p = 0; p < position._successors.size() - 1; p++) {
-                        get(position._successors.get(p))._predecessors.add(pl(wid, hei));
+                    for (int pos_ind = 0 ; pos_ind < position._successors.size() -1 ; pos_ind ++) {
+                        get(position._successors.get(pos_ind))._predecessors.add(pl(wid, hei));
                     }
                 }
             }
         }
-        for (int checker = 1; checker <= last; checker++) {
+
+        // make sure all solution pieces are in solution
+
+        for (int checker = 1; checker <= last ; checker ++) {
             if (solution[_solnNumToPlace[checker].x][_solnNumToPlace[checker].y] != checker) {
                 throw badArgs("The solution is missing a place number");
             }
         }
+
+        // DUMMY SETUP
+        // FIXME: Remove everything down "// END DUMMY SETUP".
+        // END DUMMY SETUP
+
+
+
+        // [][] pass in solution, initialize board
+        // allsquares contains list of all sq objects on the board
+        //board is a two d matrix, all squares is just a list
+    //sq.successor = allsuccessors
+
+
+        // FIXME: Initialize _board so that _board[x][y] contains the Sq object
+        //        representing the contents at cell (x, y), _allSquares
+        //        contains the list of all Sq objects on the board, and
+        //        _solnNumToPlace[k] contains the Place in _solution that
+        //        contains sequence number k.
+            //        Check that all numbers from
+        //        1 - last appear; else throw IllegalArgumentException (see
+        //        badArgs utility).
+
+        // FIXME: For each Sq object on the board, set its _successors and
+        //        _predecessor lists to the lists of locations of all cells
+        //        that it might connect to (i.e., all cells that are a queen
+        //        move away in the direction of its arrow, and of all cells
+        //        that might connect to it.
+
         _unconnected = last - 1;
     }
 
@@ -141,22 +181,47 @@ class Model implements Iterable<Model.Sq> {
         _allSuccessors = model._allSuccessors;
 
         _board = new Sq[_width][_height];
-        for (int col = 0; col < _width; col++) {
-            for (int row = _height - 1; row >= 0; row--) {
-                this._board[col][row] = new Sq(model._board[col][row]);
+
+        //makes a copy of model in a new instance of a _board
+
+        for (int col_num = 0; col_num < _width ; col_num ++) {
+            for (int row_num = _height - 1 ; row_num >= 0 ; row_num --) {
+                //not sure if below line is an abstraction barrier
+                this._board[col_num][row_num] = new Sq(model._board[col_num][row_num]);
+                //System.out.println(model._board[col_num][row_num].sequenceNum());
+                //System.out.println(model._board[col_num][row_num]._group);
+
+
+                //this._board[col_num][row_num]._head=model._board[col_num][row_num].head();
+            }
+
+        }
+
+        for (int i = 0; i < _width ; i ++) {
+            for (int j = _height - 1 ; j >= 0 ; j --) {
+                this._board[i][j]._head = model._board[i][j].head();
+                //System.out.println(this._board[i][j]._head.x);
+                this._board[i][j]._predecessor=model._board[i][j].predecessor();
+                this._board[i][j]._successor=model._board[i][j].successor();
+                this._board[i][j]._successors=model._board[i][j].successors();
+                this._board[i][j]._predecessors=model._board[i][j].predecessors();
+               if (model._board[i][j].group() != -1) {
+                   this._board[i][j]._group = model._board[i][j].group();
+                   //System.out.println(this._board[i][j]._group);
+               }
+                model._allSquares.add(this._board[i][j]);
+
             }
         }
 
-        for (int i = 0; i < _width; i++) {
-            for (int j = _height - 1; j >= 0; j--) {
-                if (_board[i][j] != null) {
-                    this._board[i][j]._head = this.get(_board[i][j]).head();
-                    this._board[i][j]._predecessor = this.get(_board[i][j]).predecessor();
-                    this._board[i][j]._successor = this.get(_board[i][j]).successor();
-                }
-                _allSquares.add(this._board[i][j]);
-            }
-        }
+        // FIXME: Initialize _board and _allSquares to contain copies of the
+        //        the Sq objects in MODEL other than their _successor,
+        //        _predecessor, and _head fields (which can't necessarily be
+        //        set until all the necessary Sq objects are first created.)
+
+        // FIXME: Fill in the _successor, _predecessor, and _head fields of the
+        //        copied Sq objects.
+
     }
 
     /** Returns the width (number of columns of cells) of the board. */
@@ -212,7 +277,18 @@ class Model implements Iterable<Model.Sq> {
 
         Sq[][] _board = new Sq[_width][_height];
         _allSquares.clear();
+
+        PlaceList _allSuccessorSq [][][] = Place.successorCells(_width, _height);
+        // FIXME: Initialize _board to contain nulls and clear all objects from
+        //        _allSquares.
+
+        // FIXME: Initialize _allSuccSquares so that _allSuccSquares[x][y][dir]
+        //        is a list of all the Places on the board that are a queen
+        //        move in direction DIR from (x, y) and _allSuccSquares[x][y][0]
+        //        is a list of all Places that are one queen move from in
+        //        direction from (x, y).
     }
+
     /** Remove all connections and non-fixed sequence numbers. */
     void restart() {
         for (Sq sq : this) {
@@ -263,31 +339,38 @@ class Model implements Iterable<Model.Sq> {
      *  unconnected and are separated by a queen move.  Returns true iff
      *  any changes were made. */
     boolean autoconnect() {
+
+        //all consecutive sequence numbers are connected if connectable
+        //find cleaner way to do this; inefficient to be checking every single one
+
         boolean changed = false;
-        int count = 0;
-        for (int wi = 0; wi < width(); wi++) {
-            for (int entry = height() - 1; entry >= 0; entry--) {
+        int count_changed = 0;
+        for (int wi = 0 ; wi < width() ; wi ++) {
+            for (int entry = height() - 1 ; entry >= 0 ; entry --) {
                 if (_board[wi][entry].sequenceNum() != 0) {
-                    for (int wid = 0; wid < width(); wid++) {
-                        for (int ind = height() - 1; ind >= 0; ind--) {
+                    for (int wid = 0 ; wid < width() ; wid ++) {
+                        for (int ind = height() - 1 ; ind >= 0 ; ind --) {
                             if (_board[wi][entry].sequenceNum() == _board[wid][ind].sequenceNum() - 1) {
                                 _board[wi][entry].connect(_board[wid][ind]);
                                 changed = true;
-                                count++;
+                                count_changed += 1;
                             }
                         }
                     }
                 }
             }
         }
-        _unconnected -= count;
+        _unconnected -= count_changed;
         return changed;
     }
+
     /** Sets the numbers in my squares to the solution from which I was
      *  last initialized by the constructor. */
+
+    //set sequence number to that of the solution's
     void solve() {
-        for (int w = 0; w < width(); w++) {
-            for (int r = height() - 1; r >= 0; r--) {
+        for (int w = 0 ; w < width() ; w ++) {
+            for (int r = height() - 1 ; r >= 0; r--) {
                 _board[w][r]._sequenceNum = this._solution[w][r];
             }
         }
@@ -585,45 +668,62 @@ class Model implements Iterable<Model.Sq> {
          * of the same connected sequence.
          */
         boolean connectable(Sq s1) {
-            if (Place.dirOf(this.x, this.y, s1.x, s1.y) == this._dir) {
-                if (s1.predecessor() == null && this.successor() == null) {
-                    if (s1.sequenceNum() != this.sequenceNum() + 1 && this.sequenceNum() > 0) {
-                        if (this.sequenceNum() == s1.sequenceNum() - 1) {
-                            return true;
-                        }
-                        if (s1.sequenceNum() == 0) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
 
-                    if (s1.sequenceNum() != 0 && this.sequenceNum() == 0) {
-                        this._sequenceNum = s1.sequenceNum() - 1;
-                        return true;
-                    }
-                    if (s1.sequenceNum() == 0 && this.sequenceNum() == 0) {
-                        if (s1.group() != this.group()) {
-                            return true;
-                        } else if (s1.group() == -1 && this.group() != -1) {
-                            return true;
-                        } else if (s1.group() != -1 && this.group() == -1) {
-                            return true;
-                        } else if (s1.group() == this.group()) {
-                            if (s1.group() == -1) {
-                                return true;
-                            } else {
-                                return false;
-                            }
-                        }
-                    }
+            //must be in the correct direction
+            // FIXME
+            if (Place.dirOf(this.x, this.y, s1.x, s1.y) != this._dir) {
+                return false;
+            }
 
+            if (s1.predecessor() != null || this.successor() != null) {
+                return false;
+            }
+
+            //Can't already have a successor
+            if (this.successors() == null) {
+                return false;
+            }
+
+            //check to see if both s1 and I have sequence numbers
+            //if they both have sequence numbers, check to make sure they aren't the same number
+            if (s1.sequenceNum() != 0 && this.sequenceNum() != 0) {
+                if (this.sequenceNum() != s1.sequenceNum() - 1) {
+                    return false;
                 }
             }
 
-        return false;
+            //if neither have sequence numbers
+            if (s1.sequenceNum() == 0 && this.sequenceNum() == 0) {
+                if (s1.group() == this.group()) {
+                    return false;
+                }
+            }
+
+            //if all this is true, check to see if they're in the same group.  If they are, it returns as connectable!
+
+            return this.group() != s1.group();
         }
+
+        /**
+         * Connect me to S1, if we are connectable; otherwise do nothing.
+         * Returns true iff we were connectable.  Assumes S1 is in the proper
+         * arrow direction from me.
+         */
         boolean connect(Sq s1) {
+            // FIXME: Connect me to my successor:
+            //        + Set my _successor field and S1's _predecessor field. *
+            //        + If I have a number, number all my successors
+            //          accordingly (if needed). *
+            //        + If S1 is numbered, number me and my predecessors
+            //          accordingly (if needed). *
+            //        + Set the _head fields of my successors to my _head. *
+            //        + If either of this or S1 used to be unnumbered and is
+            //          now numbered, release its group of whichever was
+            //          unnumbered, so that it can be reused. *
+            //        + If both this and S1 are unnumbered, set the group of
+            //          my head to the result of joining the two groups. *
+
+            //check to see if it's connectable
             if (!connectable(s1)) {
                 return false;
             }
@@ -631,60 +731,64 @@ class Model implements Iterable<Model.Sq> {
             s1._predecessor = this;
             this._successor = s1;
 
-            if (this.sequenceNum() == 0 && s1.sequenceNum() == 0) {
-                if (this.group() == -1 && s1.group() != -1) {
-                    this._group = s1.group();
-                    Sq track = this;
-                    while (track != null) {
-                        track._head = this;
-                        track._group = this.group();
-                        track = track.successor();
-                    }
-                    return true;
-                } else if (this.group() != -1 && s1.group() == -1) {
-                    s1._group = this.group();
-                    s1._head = this.head();
-                    return true;
-                } else if (this.group() == -1 && s1.group() == -1) {
-                    int groupassign = newGroup();
-                    this._group = groupassign;
-                    s1._group = groupassign;
-                    s1._head = this;
-                    return true;
-                } else if (this.group() != -1 && s1.group() != -1) {
-                    int newgroup = joinGroups(this.group(), s1.group());
-                    Sq backthis = this;
-                    while (backthis != null) {
-                        backthis._group = newgroup;
-                    }
-                    Sq s1forward = s1;
-                    while (s1forward != null) {
-                        s1forward._group = newgroup;
-                    }
+            if (s1.sequenceNum() == 0 && this.sequenceNum() == 0) {
+                Sq head_change = this.successor();
+                while (head_change != null) {
+                    head_change._head = this.head();
+                    head_change._head._group = this.group();
+                    head_change = get(head_change.successor());
                 }
-                return true;
-            } else if (this.sequenceNum() != 0 && s1.sequenceNum() == 0) {
-                Sq forwards = this.successor();
-                while (forwards != null) {
-                    forwards._sequenceNum = forwards.predecessor().sequenceNum() + 1;
-                    forwards._head = this;
-                    forwards._predecessor = forwards;
-                    forwards = forwards.successor();
-                }
-                return true;
-            } else if (this.sequenceNum() == 0 && s1.sequenceNum() != 0) {
-                Sq backwards = s1;
-                while (backwards != null) {
-                    backwards._sequenceNum = backwards.predecessor().sequenceNum() - 1;
-                    backwards._successor = backwards;
-                    backwards._head = this.head();
-                    backwards = backwards.predecessor();
-                }
-                return true;
             }
+
+
+            if (s1.sequenceNum() != 0) {
+                Sq s1_predecessor = s1.predecessor();
+                if (this.group() > 0) {
+                    releaseGroup(this.group());
+                }
+                while (s1_predecessor != null) {
+                    s1_predecessor._sequenceNum = s1_predecessor.successor().sequenceNum() + 1;
+                    s1_predecessor = s1_predecessor.predecessor();
+                }
+            }
+
+            if (this.sequenceNum() > 0) {
+                Sq my_successor = this.successor();
+
+                if (s1.sequenceNum() == 2 && this.sequenceNum() == 1) {
+                    this._successor = s1;
+                }
+                if (s1.group() != -1) {
+                    releaseGroup(s1.group());
+                }
+
+                while (my_successor != null) {
+                    my_successor._sequenceNum = my_successor.predecessor().sequenceNum() + 1;
+                    my_successor = my_successor.successor();
+                }
+
+            }
+
+
+
+
+            //System.out.println(_usedGroups);
+
             _unconnected -= 1;
             return true;
         }
+
+        /** Disconnect me from my current successor, if any. */
+
+        // FIXME: If both this and next are now one-element groups,
+        //        release their former group and set both group
+        //        numbers to -1.
+        //        Otherwise, if either is now a one-element group, set
+        //        its group number to -1 without releasing the group
+        //        number.
+        //        Otherwise, the group has been split into two multi-
+        //        element groups.  Create a new group for next.
+
         void disconnect() {
             Sq next = _successor;
             if (next == null) {
@@ -692,96 +796,136 @@ class Model implements Iterable<Model.Sq> {
             }
             _unconnected += 1;
             next._predecessor = _successor = null;
+
+            //if I am unnumbered
             if (this._sequenceNum == 0) {
-                int thisgroup = 1;
-                int nextgroup = 1;
 
-                Sq thispred = this.predecessor();
-                Sq nextsucc = next.successor();
+                int this_group = 1;
+                int next_group = 1;
 
-                while (nextsucc != null) {
-                    nextgroup += 1;
-                    nextsucc = nextsucc.successor();
+                Sq this_pred = this.predecessor();
+                Sq next_succ = next.successor();
+
+                while (next_succ != null) {
+                    next_group += 1;
+                    next_succ = next_succ.successor();
                 }
 
-                while (thispred != null) {
-                    thisgroup += 1;
-                    thispred = thispred.predecessor();
+                while (this_pred != null) {
+                    this_group += 1;
+                    this_pred = this_pred.predecessor();
                 }
 
-                if (nextgroup == 1 && thisgroup == 1) {
-                    releaseGroup(this.group());
-                    next._group = -1;
-                    this._group = -1;
-                } else if (nextgroup != 1 && thisgroup == 1) {
-                    releaseGroup(this.group());
-                    this._group = -1;
-                } else if (thisgroup > 1 && nextgroup > 1) {
-                    next._group = newGroup() + 1;
-                    _usedGroups.add(next._group + 1);
-                } else if (nextgroup > 1 && thisgroup > 1) {
-                    releaseGroup(next.group());
-                    next._group = -1;
-                } else {
-                    boolean thisfixed = this.hasFixedNum();
+            if (next_group == 1 && this_group == 1) {
+                releaseGroup(this.group());
+                next._group = -1;
+                this._group = -1;
+            }
+
+            else if (next_group != 1 && this_group == 1) {
+                releaseGroup(this.group());
+                this._group = -1;
+            }
+
+            else if (this_group > 1 && next_group > 1) {
+                next._group = newGroup() + 1;
+                _usedGroups.add(next._group + 1);
+            }
+
+            else if (next_group > 1 && this_group > 1) {
+                releaseGroup(next.group());
+                next._group = -1;
+            }
+
+
+
+
+
+            else {
+                boolean this_fixed = this.hasFixedNum();
+
+                if (this.predecessor() != null) {
+                    Sq pred_iter = this.predecessor();
+                    while (pred_iter != null) {
+                        if (pred_iter.hasFixedNum()) {
+                            this_fixed = true;
+                            break;
+                        }
+                        pred_iter = pred_iter.predecessor();
+                    }
+                }
+
+                if (!this_fixed) {
+                    this._sequenceNum = 0;
                     if (this.predecessor() != null) {
-                        Sq prediter = this.predecessor();
-                        while (prediter != null) {
-                            if (prediter.hasFixedNum()) {
-                                thisfixed = true;
-                                break;
-                            }
-                            prediter = prediter.predecessor();
-                        }
-                    }
-                    if (!thisfixed) {
-                        this._sequenceNum = 0;
-                        if (this.predecessor() != null) {
-                            int thisgrouped = newGroup();
-                            Sq predbackwards = this;
-                            while (predbackwards != null) {
-                                this._group = thisgroup;
-                                predbackwards._sequenceNum = 0;
-                                predbackwards = predbackwards.predecessor();
+                        int this_grouped = newGroup();
+                        Sq pred_backwards = this;
+                        while (pred_backwards != null) {
+                            this._group= this_group;
+                            pred_backwards._sequenceNum = 0;
+                            pred_backwards = pred_backwards.predecessor();
 
-                            }
-                        } else {
-                            this._group = -1;
                         }
                     }
-                    boolean nextfixedcheck = next.hasFixedNum();
-                    if (next.successor() != null) {
-                        Sq nextsuc = next.successor();
-                        while (nextsuc != null) {
-                            if (nextsuc.hasFixedNum()) {
-                                nextfixedcheck = true;
-                            }
-                            nextsuc = nextsuc.successor();
-                        }
-                    }
-                    if (!nextfixedcheck) {
-                        next._sequenceNum = 0;
-                        if (next.successor() != null) {
-                            int nxtg = newGroup();
-                            Sq nxtitr = next;
-                            _usedGroups.add(nextgroup);
-                            while (nxtitr != null) {
-                                nxtitr._group = nextgroup;
-                                nxtitr._sequenceNum = 0;
-                                nxtitr = nxtitr.successor();
-                            }
-                        } else {
-                            next._group = -1;
-                        }
+                    else {
+                        this._group = -1;
                     }
                 }
-                Sq headfind = next;
-                while (headfind != null) {
-                    headfind._head = next;
-                    headfind = headfind.successor();
+
+                boolean next_fixed_check = next.hasFixedNum();
+                if (next.successor() != null) {
+                    Sq next_suc = next.successor();
+                    while (next_suc != null) {
+                        if (next_suc.hasFixedNum()) {
+                            next_fixed_check = true;
+                        }
+                        next_suc = next_suc.successor();
+                    }
+                }
+
+                if (! next_fixed_check) {
+                    next._sequenceNum = 0;
+                    if (next.successor() != null) {
+                        int nxt_g = newGroup();
+                        Sq nxt_itr = next;
+                        _usedGroups.add(next_group);
+                        while (nxt_itr != null) {
+                            nxt_itr._group = next_group;
+                            nxt_itr._sequenceNum = 0;
+                            nxt_itr = nxt_itr.successor();
+                        }
+                    }
+                    else {
+                        next._group = -1;
+                    }
                 }
             }
+
+            Sq head_find = next;
+            while (head_find != null) {
+                head_find._head = next;
+                head_find = head_find.successor();
+            }
+
+
+
+
+
+                // FIXME: If neither this nor any square in its group that
+                //        precedes it has a fixed sequence number, set all
+                //        their sequence numbers to 0 and create a new group
+                //        for them if this has a current predecessor (other
+                //        set group to -1).
+                // FIXME: If neither next nor any square in its group that
+                //        follows it has a fixed sequence number, set all
+                //        their sequence numbers to 0 and create a new
+                //        group for them if next has a current successor
+                //        (otherwise set next's group to -1.)
+            }
+            // FIXME: Set the _head of next and all squares in its group to
+            //        next.
         }
+
         @Override
         public boolean equals(Object obj) {
             Sq sq = (Sq) obj;
