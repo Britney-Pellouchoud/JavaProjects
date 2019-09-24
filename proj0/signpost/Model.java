@@ -321,38 +321,32 @@ class Model implements Iterable<Model.Sq> {
      *  unconnected and are separated by a queen move.  Returns true iff
      *  any changes were made. */
     boolean autoconnect() {
-
-        //all consecutive sequence numbers are connected if connectable
-        //find cleaner way to do this; inefficient to be checking every single one
-
         boolean changed = false;
-        int count_changed = 0;
-        for (int wi = 0 ; wi < width() ; wi ++) {
-            for (int entry = height() - 1 ; entry >= 0 ; entry --) {
+        int count = 0;
+        for (int wi = 0; wi < width(); wi++) {
+            for (int entry = height() - 1; entry >= 0; entry--) {
                 if (_board[wi][entry].sequenceNum() != 0) {
-                    for (int wid = 0 ; wid < width() ; wid ++) {
-                        for (int ind = height() - 1 ; ind >= 0 ; ind --) {
+                    for (int wid = 0; wid < width(); wid++) {
+                        for (int ind = height() - 1; ind >= 0; ind--) {
                             if (_board[wi][entry].sequenceNum() == _board[wid][ind].sequenceNum() - 1) {
                                 _board[wi][entry].connect(_board[wid][ind]);
                                 changed = true;
-                                count_changed += 1;
+                                count += 1;
                             }
                         }
                     }
                 }
             }
         }
-        _unconnected -= count_changed;
+        _unconnected -= count;
         return changed;
     }
 
     /** Sets the numbers in my squares to the solution from which I was
      *  last initialized by the constructor. */
-
-    //set sequence number to that of the solution's
     void solve() {
-        for (int w = 0 ; w < width() ; w ++) {
-            for (int r = height() - 1 ; r >= 0; r--) {
+        for (int w = 0; w < width(); w++) {
+            for (int r = height() - 1; r >= 0; r--) {
                 _board[w][r]._sequenceNum = this._solution[w][r];
             }
         }
@@ -711,7 +705,7 @@ class Model implements Iterable<Model.Sq> {
             }
 
             if (this.sequenceNum() > 0) {
-                Sq my_successor = this.successor();
+                Sq mysuc = this.successor();
 
                 if (s1.sequenceNum() == 2 && this.sequenceNum() == 1) {
                     this._successor = s1;
@@ -720,18 +714,12 @@ class Model implements Iterable<Model.Sq> {
                     releaseGroup(s1.group());
                 }
 
-                while (my_successor != null) {
-                    my_successor._sequenceNum = my_successor.predecessor().sequenceNum() + 1;
-                    my_successor = my_successor.successor();
+                while (mysuc != null) {
+                    mysuc._sequenceNum = mysuc.predecessor().sequenceNum() + 1;
+                    mysuc = mysuc.successor();
                 }
 
             }
-
-
-
-
-            //System.out.println(_usedGroups);
-
             _unconnected -= 1;
             return true;
         }
@@ -744,72 +732,58 @@ class Model implements Iterable<Model.Sq> {
             }
             _unconnected += 1;
             next._predecessor = _successor = null;
-
-            //if I am unnumbered
             if (this._sequenceNum == 0) {
 
-                int this_group = 1;
-                int next_group = 1;
+                int thisgroup = 1;
+                int nextgroup = 1;
 
-                Sq this_pred = this.predecessor();
-                Sq next_succ = next.successor();
+                Sq thispred = this.predecessor();
+                Sq nextsucc = next.successor();
 
-                while (next_succ != null) {
-                    next_group += 1;
-                    next_succ = next_succ.successor();
+                while (nextsucc != null) {
+                    nextgroup += 1;
+                    nextsucc = nextsucc.successor();
                 }
 
-                while (this_pred != null) {
-                    this_group += 1;
-                    this_pred = this_pred.predecessor();
+                while (thispred != null) {
+                    thisgroup += 1;
+                    thispred = thispred.predecessor();
                 }
 
-            if (next_group == 1 && this_group == 1) {
-                releaseGroup(this.group());
-                next._group = -1;
-                this._group = -1;
-            }
+                if (nextgroup == 1 && thisgroup == 1) {
+                    releaseGroup(this.group());
+                    next._group = -1;
+                    this._group = -1;
+                } else if (nextgroup != 1 && thisgroup == 1) {
+                    releaseGroup(this.group());
+                    this._group = -1;
+                } else if (thisgroup > 1 && nextgroup > 1) {
+                    next._group = newGroup() + 1;
+                    _usedGroups.add(next._group + 1);
+                } else if (nextgroup > 1 && thisgroup > 1) {
+                    releaseGroup(next.group());
+                    next._group = -1;
+                } else {
+                    boolean thisfixed = this.hasFixedNum();
 
-            else if (next_group != 1 && this_group == 1) {
-                releaseGroup(this.group());
-                this._group = -1;
-            }
-
-            else if (this_group > 1 && next_group > 1) {
-                next._group = newGroup() + 1;
-                _usedGroups.add(next._group + 1);
-            }
-
-            else if (next_group > 1 && this_group > 1) {
-                releaseGroup(next.group());
-                next._group = -1;
-            }
-
-
-
-
-
-            else {
-                boolean this_fixed = this.hasFixedNum();
-
-                if (this.predecessor() != null) {
-                    Sq prediter = this.predecessor();
+                    if (this.predecessor() != null) {
+                        Sq prediter = this.predecessor();
                         while (prediter != null) {
                             if (prediter.hasFixedNum()) {
-                                this_fixed = true;
+                                thisfixed = true;
                                 break;
                             }
                             prediter = prediter.predecessor();
                         }
                     }
 
-                    if (!this_fixed) {
+                    if (!thisfixed) {
                         this._sequenceNum = 0;
                         if (this.predecessor() != null) {
                             int thisgrouped = newGroup();
                             Sq predbackwards = this;
                             while (predbackwards != null) {
-                                this._group = this_group;
+                                this._group = thisgroup;
                                 predbackwards._sequenceNum = 0;
                                 predbackwards = predbackwards.predecessor();
 
@@ -835,9 +809,9 @@ class Model implements Iterable<Model.Sq> {
                         if (next.successor() != null) {
                             int nxtg = newGroup();
                             Sq nxtitr = next;
-                            _usedGroups.add(next_group);
+                            _usedGroups.add(nextgroup);
                             while (nxtitr != null) {
-                                nxtitr._group = next_group;
+                                nxtitr._group = nextgroup;
                                 nxtitr._sequenceNum = 0;
                                 nxtitr = nxtitr.successor();
                             }
