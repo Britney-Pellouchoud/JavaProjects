@@ -94,14 +94,9 @@ class Place {
     static PlaceList[][][] successorCells(int width, int height) {
         PlaceList[][][] M = new PlaceList[width][height][9];
         int lim = Math.max(width, height);
-        //m will be a list of lists of lists (columns, entries in columns, directions of those entries)
-        //the first item of the first entry are all the places one queen move away from (x,y) in any direction
-        //Array[] m = new Array[];
-
-        //each Place(w, h) will have a Place List of successor cells (here we make sure for each direction there will be a Placelist)
-        for (int w = 0 ; w < width ; w ++ ) {
-            for (int h = height - 1 ; h >= 0 ; h --) {
-                for (int direct = 0; direct <= 8 ; direct ++) {
+        for (int w = 0; w < width; w++) {
+            for (int h = height - 1; h >= 0; h--) {
+                for (int direct = 0; direct <= 8; direct++) {
                     M[w][h][direct] = new PlaceList();
                 }
 
