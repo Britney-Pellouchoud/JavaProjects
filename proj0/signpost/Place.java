@@ -8,7 +8,7 @@ import static java.lang.Math.max;
 /** An (X, Y) position on a Signpost puzzle board.  We require that
  *  X, Y >= 0.  Each Place object is unique; no other has the same x and y
  *  values.  As a result, "==" may be used for comparisons.
- *  @author
+ *  @author Britney Pellouchoud
  */
 class Place {
 
@@ -43,12 +43,9 @@ class Place {
                                  _places.length);
             }
             _places = newPlaces;
-            // if your new entry is out of bounds for the current size, make a new place by copying
-            // all the old place values and adding the new entry
         }
         if (_places[x][y] == null) {
             _places[x][y] = new Place(x, y);
-            // if there's nothing in the place, put the new input in
         }
         return _places[x][y];
     }
@@ -83,7 +80,8 @@ class Place {
     }
 
     /** If (x1, y1) is the adjacent square in  direction DIR from me, returns
-     *  y1 - y. */
+     *  y1 - y.
+     *  @param dxir is for direction */
     static int dy(int dxir) {
         return DY[dxir];
     }
@@ -110,16 +108,13 @@ class Place {
             }
 
         }
-
-        //now we iterate through each place, find all other possible places and see if the first place points in the direction of the other place
-        //we add each place that could possibly succeed to M[x][y][0], and then to its direction log
-        for (int x = 0 ; x < width ; x ++) {
-            for (int y = height - 1 ; y >= 0 ; y --) {
-                for (int otherx = 0 ; otherx < width ; otherx ++) {
-                    for (int othery = height - 1; othery >= 0; othery --) {
-                        int pointer_direct = pl(x, y).dirOf(pl(otherx, othery));
-                        if (pointer_direct != 0) {
-                            M[x][y][pointer_direct].add(pl(otherx, othery));
+        for (int x = 0; x < width; x++) {
+            for (int y = height - 1; y >= 0; y--) {
+                for (int otherx = 0; otherx < width; otherx++) {
+                    for (int othery = height - 1; othery >= 0; othery--) {
+                        int pointerdirect = pl(x, y).dirOf(pl(otherx, othery));
+                        if (pointerdirect != 0) {
+                            M[x][y][pointerdirect].add(pl(otherx, othery));
                             M[x][y][0].add(pl(otherx, othery));
                         }
                     }

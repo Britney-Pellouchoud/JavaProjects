@@ -1,6 +1,5 @@
 package signpost;
 
-import java.sql.SQLOutput;
 import java.util.Collections;
 import java.util.Random;
 
@@ -9,7 +8,7 @@ import static signpost.Place.PlaceList;
 import static signpost.Utils.*;
 
 /** A creator of random Signpost puzzles.
- *  @author
+ *  @author Britney Pellouchoud
  */
 class PuzzleGenerator implements PuzzleSource {
 
@@ -23,19 +22,16 @@ class PuzzleGenerator implements PuzzleSource {
     public Model getPuzzle(int width, int height, boolean allowFreeEnds) {
         Model model =
             new Model(makePuzzleSolution(width, height, allowFreeEnds));
-        // FIXME: Remove the "//" on the following two lines.
-        // makeSolutionUnique(model);
-         //model.autoconnect();
         return model;
     }
 
-    /** Return an array representing a WIDTH x HEIGHT Signpost puzzle.
-     *  The first array index indicates x-coordinates (column numbers) on
-     *  the board, and the second index represents y-coordinates (row numbers).
-     *  Its values will be the sequence numbers (1 to WIDTH x HEIGHT)
-     *  appearing in a sequence queen moves on the resulting board.
-     *  Unless ALLOWFREEENDS, the first and last sequence numbers will
-     *  appear in the upper-left and lower-right corners, respectively. */
+    /**
+     *
+     * @param width is width
+     * @param height is height
+     * @param allowFreeEnds is freeends
+     * @return
+     */
     private int[][] makePuzzleSolution(int width, int height,
                                        boolean allowFreeEnds) {
         _vals = new int[width][height];
@@ -57,21 +53,9 @@ class PuzzleGenerator implements PuzzleSource {
         }
         _vals[x0][y0] = 1;
         _vals[x1][y1] = last;
-        // FIXME: Remove the following return statement and uncomment the
-        //        next three lines.
-
-
-        // boolean ok = findSolutionPathFrom(x0, y0);
-        // assert ok;
-        //return _vals;
-        return new int[][]{
-                {14, 9, 8, 1},
-                {15, 10, 7, 2},
-                {13, 11, 6, 3},
-                {16, 12, 5, 4}
-
-
-        };
+        boolean ok = findSolutionPathFrom(x0, y0);
+        assert ok;
+        return _vals;
     }
 
 
@@ -139,44 +123,26 @@ class PuzzleGenerator implements PuzzleSource {
         result = 1;
         for (Sq sq : model) {
             Sq found;
-            found = null; // will be set to a successive square
+            found = null;
             int nFound;
-            nFound = 0; // will be set to number of successive squares
+            nFound = 0;
             if (sq.successor() == null && sq.direction() != 0) {
-                //System.out.println(sq.sequenceNum());
-                //System.out.println(sq.successors());
-                /*
-                for (Place s_uccessor : sq.successors()) {
-                    //System.out.println(s_uccessor);
-
-                    if (model.get(s_uccessor).sequenceNum() != 0 && sq.connectable(model.get(s_uccessor))) {
+                for (Place succ : sq.successors()) {
+                    int num = model.get(succ).sequenceNum();
+                    if (num != 0 && sq.connectable(model.get(succ))) {
                         nFound = 1;
-                        found = model.get(s_uccessor);
-                        //System.out.println(found);
-                        //sq.connect(found);
+                        found = model.get(succ);
+                    } else if (sq.connectable(model.get(succ))) {
+                        nFound++;
+                        found = model.get(succ);
                     }
-                    else if (sq.connectable(model.get(s_uccessor))) {
-                        nFound ++;
-                        found = model.get(s_uccessor);
+                    if (nFound == 0 || found == null) {
+                        return 0;
+                    } else if (nFound == 1) {
+                        sq.connect(found);
+                        result = 2;
                     }
-                    //if I have a sequence number, and can be connected to my successor who does have a sequence number, connect us
-
-                if (nFound == 0 || found == null) {
-                    return 0;
-                } else if (nFound == 1) {
-                    sq.connect(found);
-                    result = 2;
                 }
-            }
-*/
-
-                // FIXME: Set nFound to the number of squares in the
-                //        direction sq.direction() from sq that can
-                //        be connected to it and set found to one of those
-                //        squares.
-                //        If sq is numbered and can be connected to
-                //        a numbered square, then set nFound to 1 and found
-                //        to that numbered square.
             }
         }
         return result;
@@ -200,16 +166,9 @@ class PuzzleGenerator implements PuzzleSource {
             found = null;
             nFound = 0;
             if (sq.predecessor() == null && sq.sequenceNum() != 1) {
-                // FIXME: Set nFound to the number of squares that are
-                //        possible predecessors of sq and connectable to it,
-                //        and set found to one of those squares.  If sq is
-                //        numbered and one of these connectable predecessors
-                //        is numbered, then set nFound to 1 and found
-                //        to that numbered predecessor.
-
-                /*
                 for (Place predec : sq.predecessors()) {
-                    if (model.get(predec).sequenceNum() != 0 && sq.connectable(model.get(predec))) {
+                    int number = model.get(predec).sequenceNum();
+                    if (number != 0 && sq.connectable(model.get(predec))) {
                         nFound = 1;
                         found = model.get(predec);
                     }
@@ -222,13 +181,12 @@ class PuzzleGenerator implements PuzzleSource {
                     result = 2;
                 }
             }
-            */
-
-            }
 
         }
         return result;
+
     }
+
 
     /** Remove all links in MODEL and unfix numbers (other than the first and
      *  last) that do not affect solvability.  Not all such numbers are
@@ -239,8 +197,8 @@ class PuzzleGenerator implements PuzzleSource {
         do {
             changed = false;
             for (Sq sq : model) {
-                if (sq.hasFixedNum() && sq.sequenceNum() != 1 && sq.direction() != 0)
-                {
+                int k = sq.sequenceNum();
+                if (sq.hasFixedNum() && k != 1 && sq.direction() != 0) {
                     model.restart();
                     int n = sq.sequenceNum();
                     sq.unfixNum();
