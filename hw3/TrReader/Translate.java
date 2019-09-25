@@ -17,6 +17,16 @@ public class Translate {
             return null;
         }
     }
+
+    static boolean tester(String S, String from, String to) {
+        char[] buffer = new char[S.length()];
+        try{
+            throw new IOException();
+        } catch (IOException e) {
+            return buffer == null;
+        }
+    }
+
     /*
        REMINDER: translate must
       a. Be non-recursive
