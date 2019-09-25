@@ -4,15 +4,18 @@
 public class WeirdList {
     /** The empty sequence of integers. */
     public static final WeirdList EMPTY =
-        null;  // TODO: REPLACE THIS LINE
+        String[] n = new String[Weirdlist.length()];  // TODO: REPLACE THIS LINE
 
     /** A new WeirdList whose head is HEAD and tail is TAIL. */
-  public WeirdList(int head, WeirdList tail) { /* TODO: FILL IN */ }
+  public WeirdList(int head, WeirdList tail) {
+      this.head = head;
+      this.tail = tail;
+  }
 
     /** Returns the number of elements in the sequence that
      *  starts with THIS. */
     public int length() {
-        return 0;  // TODO: REPLACE THIS LINE
+        return this.tail.length() + 1;
     }
 
     /** Return a string containing my contents as a sequence of numerals
@@ -20,7 +23,7 @@ public class WeirdList {
      *  5, 4, and 2, this returns " 5 4 2". */
     @Override
     public String toString() {
-        return ""; // TODO: REPLACE THIS LINE
+        return " " + this.head() + this.tail.toString(); // TODO: REPLACE THIS LINE
     }
 
     /** Part 3b: Apply FUNC.apply to every element of THIS WeirdList in
@@ -59,6 +62,26 @@ public class WeirdList {
      * }
      * You are NOT required to do this, just an extra thing you can
      * do if you want to avoid making a separate .java file. */
+
+        private static class Empty WeirdList extends WeirdList {
+            public EmptryWeirdList(int head, WeirdList, tail) {
+                super(head, tail);
+            }
+            @Override
+            public String toString() {
+                return " ";
+            }
+
+            @Override
+            public int length() {
+                return 0
+            }
+
+            @Override
+            public WeirdList map(IntUnaryFunction func) {
+                return this;
+            }
+        }
 
 }
 

@@ -3,14 +3,36 @@ class WeirdListClient {
 
     /** Return the result of adding N to each element of L. */
     static WeirdList add(WeirdList L, int n) {
-        return null; // TODO: REPLACE THIS LINE
+        L.head = L.head + n;
+        WeirdList x;
+        x = L;
+        if (x.tail != null) {
+            return helperadd
+        }
+        return L;
     }
 
     /** Return the sum of all the elements in L. */
-    static int sum(WeirdList L) {
-        return 0; // TODO: REPLACE THIS LINE
+    static int sum(WeirdList L, total) {
+        WeirdList x;
+        x = L;
+        int summer = x.head;
+        if (x.tail != null) {
+            return sumhelper(L, n);
+        }
+        return summer; // TODO: REPLACE THIS LINE
     }
 
+    private static helperadd (WeirdList L, int n) {
+        L.head = L.head + n;
+        WeirdList x = L.tail
+        return add(x, n);
+    }
+
+    private static sumhelper (WeirdList L, total) {
+        summer += L.head;
+        return sum(L.tail, summer)
+    }
     /* IMPORTANT: YOU ARE NOT ALLOWED TO USE RECURSION IN ADD AND SUM
      *
      * As with WeirdList, you'll need to add an additional class or
