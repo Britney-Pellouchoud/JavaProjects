@@ -12,15 +12,19 @@ class MonotonicFilter<Value extends Comparable<Value>> extends Filter<Value> {
     /** A filter of values from INPUT that delivers a monotonic
      *  subsequence.  */
     MonotonicFilter(Iterator<Value> input) {
-        super(input); //FIXME?
-        // FIXME: REPLACE THIS LINE WITH YOUR CODE
+        super(input);
     }
 
     @Override
     protected boolean keep() {
-        return false;  // FIXME: REPLACE THIS LINE WITH YOUR CODE
+        if (greaterthan == null || greaterthan.compareTo(_next) < 0) {
+            greaterthan = _next;
+            return true;
+        }
+        else {
+            return false;
+        }
+        }
+    private Value greaterthan;
     }
-    
-    // FIXME: ADD ANY ADDITIONAL FIELDS REQUIRED HERE
 
-}

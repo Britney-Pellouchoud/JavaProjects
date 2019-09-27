@@ -1,4 +1,7 @@
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
+
 import utils.Filter;
 
 /** A kind of Filter that lets through every other VALUE element of
@@ -11,13 +14,21 @@ class AlternatingFilter<Value> extends Filter<Value> {
      *  value. */
     AlternatingFilter(Iterator<Value> input) {
         super(input); //FIXME?
-        // FIXME: REPLACE THIS LINE WITH YOUR CODE
     }
 
     @Override
     protected boolean keep() {
-        return false;  // FIXME: REPLACE THIS LINE WITH YOUR CODE
+        return !(valid = !valid);  // FIXME: REPLACE THIS LINE WITH YOUR CODE
     }
+
+
+
+    private boolean valid = true;
+
+
+        // FIXME: REPLACE THIS LINE WITH YOUR CODE
+
+
 
     // FIXME: REPLACE THIS LINE WITH YOUR CODE
 
