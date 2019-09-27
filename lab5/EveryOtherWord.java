@@ -3,6 +3,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import static org.junit.Assert.*;
 
@@ -22,7 +23,17 @@ public class EveryOtherWord {
       */
 
     public static Iterable<String> everyOtherWord(List<String> L) {
-        return null; // FIXME: REPLACE THIS LINE WITH YOUR CODE
+        Set<String> answer = new HashSet<String>();
+        java.util.Iterator<String> l_iter = L.iterator();
+        while (l_iter.hasNext()){
+            answer.add(l_iter.next());
+            if (l_iter.hasNext()) {
+                l_iter.next();
+            }
+
+        }
+        ; // FIXME: REPLACE THIS LINE WITH YOUR CODE
+        return answer;
     }
 
     /** Tests whether or not your everyOtherWord method works correctly. */
@@ -38,6 +49,10 @@ public class EveryOtherWord {
         expected.add("are");
 
         try {
+            List<String> k = new ArrayList<String>();
+            k.add("Hello"); k.add("this"); k.add("world");
+            System.out.println(everyOtherWord(k));
+            System.out.println(everyOtherWord(L));
             assertTrue(haveSameItems(expected, s));
         } catch (AssertionError e) {
             System.out.println("expected: " + expected);
