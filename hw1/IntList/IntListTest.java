@@ -84,6 +84,13 @@ public class IntListTest {
         assert(a.head == 3);
     }
 
+    @Test
+    public void testreverseDestructive(){
+        IntList a = IntList.list(1,2,3,4,5);
+        IntList b = IntList.list(5,4,3,2,1);
+        assertEquals(a,b);
+    }
+
 
     /* Run the unit tests in this file. */
     public static void main(String... args) {

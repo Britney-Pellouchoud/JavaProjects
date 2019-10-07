@@ -8,7 +8,7 @@ import static org.junit.Assert.*;
 import static enigma.TestUtils.*;
 
 /** The suite of all JUnit tests for the Permutation class.
- *  @author
+ *  @ Britney Pellouchoud
  */
 public class PermutationTest {
 
@@ -25,6 +25,7 @@ public class PermutationTest {
      *  FROMALPHA and TOALPHA and that maps each character of
      *  FROMALPHA to the corresponding character of FROMALPHA, and
      *  vice-versa. TESTID is used in error messages. */
+
     private void checkPerm(String testId,
                            String fromAlpha, String toAlpha) {
         int N = fromAlpha.length();

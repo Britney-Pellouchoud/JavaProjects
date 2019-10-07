@@ -246,6 +246,20 @@ public class IntList {
         return dummy;
 
 }
+    public static IntList reverseDestructive(IntList L) {
+        if (L == null || L.tail == null) {
+            return L;
+        } else {
+            IntList reversed = reverseDestructive(L.tail);
+            L.tail.tail = L;
+            L.tail = null;
+            return reversed;
+        }
+    }
+
+
+
+
 }
 
 

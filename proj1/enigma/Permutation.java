@@ -4,7 +4,7 @@ import static enigma.EnigmaException.*;
 
 /** Represents a permutation of a range of integers starting at 0 corresponding
  *  to the characters of an alphabet.
- *  @author
+ *  @ Britney Pellouchoud
  */
 class Permutation {
 
@@ -15,6 +15,7 @@ class Permutation {
      *  Whitespace is ignored. */
     Permutation(String cycles, Alphabet alphabet) {
         _alphabet = alphabet;
+
         // FIXME
     }
 
@@ -35,7 +36,7 @@ class Permutation {
 
     /** Returns the size of the alphabet I permute. */
     int size() {
-        return 0; // FIXME
+        return _alphabet.size(); // FIXME
     }
 
     /** Return the result of applying this permutation to P modulo the
