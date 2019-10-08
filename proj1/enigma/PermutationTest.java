@@ -52,4 +52,53 @@ public class PermutationTest {
         checkPerm("identity", UPPER_STRING, UPPER_STRING);
     }
 
+    @Test
+    public void checkAlphabet() {
+        Alphabet alph = new Alphabet();
+        assertEquals(alph.size(), 26);
+        Character b = 'B';
+        assertEquals(true, alph.contains(b));
+        Character d = 'D';
+        assert(alph.toChar(3) == d);
+        assert(alph.toInt(d) == 3);
+    }
+
+    @Test
+    public void checksize() {
+        Alphabet alph = new Alphabet();
+        Permutation perm = new Permutation("(ABC)", alph);
+        assert(perm.size() == 26);
+    }
+
+    @Test
+    public void checkcharperm() {
+        Alphabet alph = new Alphabet();
+        Permutation perm = new Permutation("(BAC)", alph);
+        assert(perm.permute('A') == 'C');
+        assert(perm.permute('D') == 'D');
+        assert(perm.permute('C') == 'B');
+        Permutation perm2 = new Permutation("(BAC)(DEF)", alph);
+        assert(perm2.permute('D') == 'E');
+    }
+
+    @Test
+    public void checkcharinvert() {
+        Alphabet alph = new Alphabet();
+        Permutation perm = new Permutation("(BAC)", alph);
+        assert(perm.invert('A') == 'B');
+        assert(perm.invert('D') == 'D');
+        assert(perm.invert('B') == 'C');
+        Permutation perm2 = new Permutation("(BAC)(DEF)", alph);
+        assert(perm2.invert('D') == 'F');
+    }
+
+    @Test
+    public void checkderangement() {
+        Alphabet alph = new Alphabet();
+        Permutation perm = new Permutation("(BAC)", alph);
+        assert(perm.derangement() == false);
+        Permutation perm2 = new Permutation("(ABCDEFGHIJKLMNOPQRSTUVWXYZ)", alph);
+        assert(perm2.derangement() == true);
+    }
+
 }
