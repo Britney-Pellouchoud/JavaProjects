@@ -7,10 +7,12 @@ import static enigma.EnigmaException.*;
  */
 class Rotor {
 
+    int _setting;
     /** A rotor named NAME whose permutation is given by PERM. */
     Rotor(String name, Permutation perm) {
         _name = name;
         _permutation = perm;
+        _setting = -1;
         // FIXME
     }
 
@@ -46,29 +48,29 @@ class Rotor {
 
     /** Return my current setting. */
     int setting() {
-        return 0; // FIXME
+        return _setting; // FIXME
     }
 
     /** Set setting() to POSN.  */
     void set(int posn) {
-        // FIXME
+        _setting = posn;
     }
 
     /** Set setting() to character CPOSN. */
     void set(char cposn) {
-        // FIXME
+        _setting = _permutation.alphabet().toInt(cposn);
     }
 
     /** Return the conversion of P (an integer in the range 0..size()-1)
      *  according to my permutation. */
     int convertForward(int p) {
-        return 0;  // FIXME
+        return _permutation.permute(p);  // FIXME
     }
 
     /** Return the conversion of E (an integer in the range 0..size()-1)
      *  according to the inverse of my permutation. */
     int convertBackward(int e) {
-        return 0;  // FIXME
+        return _permutation.invert(e);  // FIXME
     }
 
     /** Returns true iff I am positioned to allow the rotor to my left
@@ -79,6 +81,9 @@ class Rotor {
 
     /** Advance me one position, if possible. By default, does nothing. */
     void advance() {
+        if (rotates()) {
+            _setting += 1;
+        }
     }
 
     @Override

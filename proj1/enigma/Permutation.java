@@ -48,13 +48,39 @@ class Permutation {
     /** Return the result of applying this permutation to P modulo the
      *  alphabet size. */
     int permute(int p) {
-        return p % _alphabet.size();  // FIXME
+        char character = _alphabet.toChar(p);
+        int index = _cycles.indexOf(character);
+        if(index != -1 && _cycles.charAt(index + 1) != ')') {
+            char next = _cycles.charAt(index + 1);
+            return _alphabet.toInt(next);
+        }
+        if (index != -1 && _cycles.charAt(index + 1) == ')') {
+            char perm = _cycles.charAt(index);
+            for (int i = index; _cycles.charAt(i) != '('; i--) {
+                perm = _cycles.charAt(i);
+            }
+            return _alphabet.toInt(perm);
+        }
+        return p;
     }
 
     /** Return the result of applying the inverse of this permutation
      *  to  C modulo the alphabet size. */
     int invert(int c) {
-        return permute(c);  // FIXME
+        char character = _alphabet.toChar(c);
+        int index = _cycles.indexOf(character);
+        if(index != -1 && _cycles.charAt(index - 1) != '(') {
+            char prev = _cycles.charAt(index - 1);
+            return _alphabet.toInt(prev);
+        }
+        if (index != -1 &&_cycles.charAt(index - 1) == '(') {
+            char perm = _cycles.charAt(index);
+            for (int i = index; _cycles.charAt(i) != ')'; i++) {
+                perm = _cycles.charAt(i);
+            }
+            return _alphabet.toInt(perm);
+        }
+        return c;
     }
 
     /** Return the result of applying this permutation to the index of P

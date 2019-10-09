@@ -13,5 +13,20 @@ class FixedRotor extends Rotor {
         super(name, perm);
     }
 
+    @Override
+    void set(int posn) {
+        super.set(posn);
+    }
+
+    @Override
+    Permutation permutation() {
+        return super.permutation();
+    }
+
+    @Override
+    int size() {
+        return super.size();
+    }
+
     // FIXME ?
 }

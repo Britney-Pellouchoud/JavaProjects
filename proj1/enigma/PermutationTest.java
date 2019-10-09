@@ -101,4 +101,22 @@ public class PermutationTest {
         assert(perm2.derangement() == true);
     }
 
+    @Test
+    public void checkintperm() {
+        Alphabet alph = new Alphabet();
+        Permutation perm = new Permutation("(BAC)", alph);
+        assert(perm.permute(0) == 2);
+        assert(perm.permute(2) == 1);
+        assert(perm.permute(5) == 5);
+    }
+
+    @Test
+    public void checkintinvert() {
+        Alphabet alph = new Alphabet();
+        Permutation perm = new Permutation("(BAC)", alph);
+        assert(perm.invert(0) == 1);
+        assert(perm.invert(1) == 2);
+        assert(perm.invert(12) == 12);
+    }
+
 }
