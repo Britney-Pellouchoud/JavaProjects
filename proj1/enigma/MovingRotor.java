@@ -16,8 +16,6 @@ class MovingRotor extends Rotor {
     MovingRotor(String name, Permutation perm, String notches) {
         super(name, perm);
 
-        int size;
-        int c = 2;
         name();
         // FIXME
     }
@@ -26,8 +24,9 @@ class MovingRotor extends Rotor {
 
     @Override
     void advance() {
-        Alphabet alph = new Alphabet();
-        Permutation perm = new Permutation("(abcdef)", alph);
+        if (permutation().size() > 0) {
+            _setting += 1;
+        }
 
         // FIXME
     }

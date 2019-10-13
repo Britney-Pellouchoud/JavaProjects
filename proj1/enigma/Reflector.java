@@ -6,15 +6,13 @@ import static enigma.EnigmaException.*;
  *  @ Britney Pellouchoud
  */
 class Reflector extends FixedRotor {
+    private Permutation _setting;
 
     /** A non-moving rotor named NAME whose permutation at the 0 setting
      * is PERM. */
     Reflector(String name, Permutation perm) {
         super(name, perm);
-        int x;
-        x = 12;
-        boolean y;
-        y = true;
+        _setting = perm;
         // FIXME
     }
 
