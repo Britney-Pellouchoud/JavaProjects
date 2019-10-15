@@ -1,12 +1,7 @@
 package enigma;
-
-import java.util.ArrayList;
-
-import static enigma.EnigmaException.*;
-
 /** Represents a permutation of a range of integers starting at 0 corresponding
  *  to the characters of an alphabet.
- *  @ Britney Pellouchoud
+ *  @author BritneyPellouchoud
  */
 class Permutation {
 
@@ -21,14 +16,12 @@ class Permutation {
     Permutation(String cycles, Alphabet alphabet) {
         _alphabet = alphabet;
         _cycles = cycles;
-        // FIXME
     }
 
     /** Add the cycle c0->c1->...->cm->c0 to the permutation, where CYCLE is
      *  c0c1...cm. */
     private void addCycle(String cycle) {
         this._cycles = this._cycles.concat(cycle);
-        // FIXME
     }
 
     /** Return the value of P modulo the size of this permutation. */
@@ -42,7 +35,7 @@ class Permutation {
 
     /** Returns the size of the alphabet I permute. */
     int size() {
-        return _alphabet.size(); // FIXME
+        return _alphabet.size();
     }
 
     /** Return the result of applying this permutation to P modulo the
@@ -50,7 +43,7 @@ class Permutation {
     int permute(int p) {
         char character = _alphabet.toChar(p % _alphabet.size());
         int index = _cycles.indexOf(character);
-        if(index != -1 && _cycles.charAt(index + 1) != ')') {
+        if (index != -1 && _cycles.charAt(index + 1) != ')') {
             char next = _cycles.charAt(index + 1);
             return _alphabet.toInt(next);
         }
@@ -61,7 +54,6 @@ class Permutation {
             }
             return _alphabet.toInt(perm);
         }
-        //System.out.println(p % _alphabet.size());
         return (p % _alphabet.size());
     }
 
@@ -69,15 +61,12 @@ class Permutation {
      *  to  C modulo the alphabet size. */
     int invert(int c) {
         char character = _alphabet.toChar(c % _alphabet.size());
-        //System.out.println(character);
         int index = _cycles.indexOf(character);
-        //System.out.println(index);
-        if(index != -1 && _cycles.charAt(index - 1) != '(') {
+        if (index != -1 && _cycles.charAt(index - 1) != '(') {
             char prev = _cycles.charAt(index - 1);
-            //System.out.println(prev);
             return _alphabet.toInt(prev);
         }
-        if (index != -1 &&_cycles.charAt(index - 1) == '(') {
+        if (index != -1 && _cycles.charAt(index - 1) == '(') {
             char perm = _cycles.charAt(index);
             for (int i = index; _cycles.charAt(i) != ')'; i++) {
                 perm = _cycles.charAt(i);
@@ -90,20 +79,21 @@ class Permutation {
     /** Return the result of applying this permutation to the index of P
      *  in ALPHABET, and converting the result to a character of ALPHABET. */
     char permute(char p) {
-        int index = _cycles.indexOf(p);
-        if (_cycles.length() != 0 && _cycles.charAt(index + 1) != ')' && index != -1) {
-            return _cycles.charAt(index + 1);
-        } else if (_cycles.length() != 0  && _cycles.charAt(index + 1) == ')' && index != -1){
-            char perm = _cycles.charAt(index);
-            for (int i = index; _cycles.charAt(i) != '('; i--) {
-                perm = _cycles.charAt(i);
+        int i = _cycles.indexOf(p);
+        if (i != -1) {
+            if (_cycles.length() != 0 && _cycles.charAt(i + 1) != ')') {
+                return _cycles.charAt(i + 1);
+            } else if (_cycles.length() != 0  && _cycles.charAt(i + 1) == ')') {
+                char perm = _cycles.charAt(i);
+                for (int j = i; _cycles.charAt(j) != '('; j--) {
+                    perm = _cycles.charAt(j);
+                }
+                return perm;
             }
-            return perm;
         } else if (_cycles.length() == 0) {
             return p;
         }
         return p;
-        // FIXME
     }
 
     /** Return the result of applying the inverse of this permutation to C. */
@@ -139,6 +129,4 @@ class Permutation {
 
     /** Alphabet of this permutation. */
     private Alphabet _alphabet;
-
-    // FIXME: ADDITIONAL FIELDS HERE, AS NEEDED
 }

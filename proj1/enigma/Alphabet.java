@@ -3,20 +3,22 @@ import java.util.*;
 
 /** An alphabet of encodable characters.  Provides a mapping from characters
  *  to and from indices into the alphabet.
- *  @ Britney Pellouchoud
+ *  @author Britney Pellouchoud
  */
 class Alphabet {
-    ArrayList chars;
     /** A new alphabet containing CHARS.  Character number #k has index
      *  K (numbering from 0). No character may be duplicated. */
+    private ArrayList chars;
+    /* Alphabet takes in a string of characters
+     * checks for duplicates */
     Alphabet(String chars) {
-        ArrayList <Character> no_duplicates = new ArrayList<>();
+        ArrayList<Character> noduplicates = new ArrayList<>();
         for (int i = 0; i < chars.length(); i++) {
-            if (!no_duplicates.contains(chars.charAt(i))){
-                no_duplicates.add(chars.charAt(i));
+            if (!noduplicates.contains(chars.charAt(i))) {
+                noduplicates.add(chars.charAt(i));
             }
         }
-        this.chars = no_duplicates;
+        this.chars = noduplicates;
     }
 
     /** A default alphabet of all upper-case characters. */
@@ -26,7 +28,7 @@ class Alphabet {
 
     /** Returns the size of the alphabet. */
     int size() {
-        return chars.size(); // FIXME
+        return chars.size();
     }
 
     /** Returns true if preprocess(CH) is in this alphabet. */
@@ -43,9 +45,7 @@ class Alphabet {
     /** Returns character number INDEX in the alphabet, where
      *  0 <= INDEX < size(). */
     char toChar(int index) {
-        //assert(index >= 0 && index < chars.size());
         return (char) chars.get(index % 26);
-        //return (char) ('A' + index); // FIXME
     }
 
     /** Returns the index of character preprocess(CH), which must be in
@@ -54,11 +54,10 @@ class Alphabet {
         int index = 0;
         for (int i = 0; i < chars.size(); i++) {
             if ((char) chars.get(i) == ch) {
-               index = i;
+                index = i;
             }
         }
         return index;
-        //return ch - 'A'; // FIXME
     }
 
 }

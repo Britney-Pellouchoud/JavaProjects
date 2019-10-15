@@ -3,6 +3,9 @@ package enigma;
 import org.junit.Test;
 import org.junit.Rule;
 import org.junit.rules.Timeout;
+
+import java.sql.SQLOutput;
+
 import static org.junit.Assert.*;
 
 import static enigma.TestUtils.*;
@@ -142,6 +145,12 @@ public class PermutationTest {
         A.advance();
         //should not advance a setting because rotate is set to false
         assert(A.setting() == 0);
+    }
+
+    @Test
+    public void alphlength() {
+        Alphabet alph = new Alphabet("ABC");
+        System.out.println(alph.size());
     }
 
     @Test

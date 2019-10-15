@@ -1,10 +1,9 @@
 package enigma;
 
-import org.junit.Test;
 
 
 /** Superclass that represents a rotor in the enigma machine.
- *  @ Britney Pellouchoud
+ *  @author Britney Pellouchoud
  */
 class Rotor {
 
@@ -14,7 +13,6 @@ class Rotor {
         _name = name;
         _permutation = perm;
         _setting = 0;
-        // FIXME
     }
 
     /** Return my name. */
@@ -38,15 +36,15 @@ class Rotor {
     }
 
     /** Return true iff I have a ratchet and can move. */
-    //moving rotors always have a ratchet
     boolean rotates() {
-        if (!reflecting() && !fixed()){
+        if (!reflecting() && !fixed()) {
             return true;
         }
         return false;
     }
 
-    boolean fixed() {return false;}
+    boolean fixed() {
+        return false; }
     /** Return true iff I reflect. */
     boolean reflecting() {
         return false;
@@ -54,7 +52,7 @@ class Rotor {
 
     /** Return my current setting. */
     int setting() {
-        return _setting; // FIXME
+        return _setting;
     }
 
     /** Set setting() to POSN.  */
@@ -70,17 +68,23 @@ class Rotor {
     /** Return the conversion of P (an integer in the range 0..size()-1)
      *  according to my permutation. */
     int convertForward(int p) {
-       // System.out.println(alphabet().size());
-        System.out.println("*" + (p - setting()));
-        System.out.println((p - setting()) % alphabet().size());
-        return _permutation.permute((p - setting()) % alphabet().size());  // FIXME
+        int input = (p + setting()) % alphabet().size();
+        int answer = (_permutation.permute(input) - setting());
+        if (answer < 0) {
+            return alphabet().size() + answer;
+        }
+        return answer % alphabet().size();
     }
 
     /** Return the conversion of E (an integer in the range 0..size()-1)
      *  according to the inverse of my permutation. */
     int convertBackward(int e) {
-        //  System.out.println(setting());
-        return _permutation.invert((e + setting()) % alphabet().size());  // FIXME
+        int input = (e + setting()) % alphabet().size();
+        int answer = (_permutation.invert(input) - setting());
+        if (answer < 0) {
+            return alphabet().size() + answer;
+        }
+        return answer % alphabet().size();
     }
 
     /** Returns true iff I am positioned to allow the rotor to my left
@@ -106,8 +110,6 @@ class Rotor {
 
     /** The permutation implemented by this rotor in its 0 position. */
     private Permutation _permutation;
-
-    // FIXME: ADDITIONAL FIELDS HERE, AS NEEDED
 
 
 }

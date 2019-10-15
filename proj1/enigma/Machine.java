@@ -13,20 +13,25 @@ class Machine {
     /** A new Enigma machine with alphabet ALPHA, 1 < NUMROTORS rotor slots,
      *  and 0 <= PAWLS < NUMROTORS pawls.  ALLROTORS contains all the
      *  available rotors. */
+
+    private int rotornum;
+    private int numpawl;
     Machine(Alphabet alpha, int numRotors, int pawls,
             Collection<Rotor> allRotors) {
         _alphabet = alpha;
+        int rotornum = numRotors;
+        int numpawl = pawls;
         // FIXME
     }
 
     /** Return the number of rotor slots I have. */
     int numRotors() {
-        return 0; // FIXME
+        return rotornum;
     }
 
     /** Return the number pawls (and thus rotating rotors) I have. */
     int numPawls() {
-        return 0; // FIXME
+        return numpawl;
     }
 
     /** Set my rotor slots to the rotors named ROTORS from my set of
