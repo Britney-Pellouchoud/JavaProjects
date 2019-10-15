@@ -8,11 +8,14 @@ import static enigma.EnigmaException.*;
 class FixedRotor extends Rotor {
 
     private Permutation _set;
+    private int _setting;
     /** A non-moving rotor named NAME whose permutation at the 0 setting
      * is given by PERM. */
     FixedRotor(String name, Permutation perm) {
         super(name, perm);
         _set = perm;
+        _setting = 0;
+
     }
 
     @Override
@@ -30,5 +33,12 @@ class FixedRotor extends Rotor {
         return super.size();
     }
 
+    @Override
+    boolean fixed() {return true;}
+
+    @Override
+    boolean rotates() {
+        return false;
+    }
     // FIXME ?
 }

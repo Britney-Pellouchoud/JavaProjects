@@ -61,6 +61,9 @@ public class MovingRotorTest {
     public void checkRotorAdvance() {
         setRotor("I", NAVALA, "");
         rotor.advance();
+        //System.out.println(roto);
+        System.out.println(UPPER_STRING);
+        System.out.println(NAVALB_MAP.get("I"));
         checkRotor("Rotor I advanced", UPPER_STRING, NAVALB_MAP.get("I"));
     }
 
@@ -69,6 +72,7 @@ public class MovingRotorTest {
         setRotor("I", NAVALA, "");
         rotor.set(25);
         checkRotor("Rotor I set", UPPER_STRING, NAVALZ_MAP.get("I"));
+
     }
 
 }

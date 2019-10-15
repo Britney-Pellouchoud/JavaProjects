@@ -1,6 +1,7 @@
 package enigma;
 
-import static enigma.EnigmaException.*;
+import org.junit.Test;
+
 
 /** Superclass that represents a rotor in the enigma machine.
  *  @ Britney Pellouchoud
@@ -12,7 +13,7 @@ class Rotor {
     Rotor(String name, Permutation perm) {
         _name = name;
         _permutation = perm;
-        _setting = -1;
+        _setting = 0;
         // FIXME
     }
 
@@ -37,10 +38,15 @@ class Rotor {
     }
 
     /** Return true iff I have a ratchet and can move. */
+    //moving rotors always have a ratchet
     boolean rotates() {
+        if (!reflecting() && !fixed()){
+            return true;
+        }
         return false;
     }
 
+    boolean fixed() {return false;}
     /** Return true iff I reflect. */
     boolean reflecting() {
         return false;
@@ -64,13 +70,17 @@ class Rotor {
     /** Return the conversion of P (an integer in the range 0..size()-1)
      *  according to my permutation. */
     int convertForward(int p) {
-        return _permutation.permute(p);  // FIXME
+       // System.out.println(alphabet().size());
+        System.out.println("*" + (p - setting()));
+        System.out.println((p - setting()) % alphabet().size());
+        return _permutation.permute((p - setting()) % alphabet().size());  // FIXME
     }
 
     /** Return the conversion of E (an integer in the range 0..size()-1)
      *  according to the inverse of my permutation. */
     int convertBackward(int e) {
-        return _permutation.invert(e);  // FIXME
+        //  System.out.println(setting());
+        return _permutation.invert((e + setting()) % alphabet().size());  // FIXME
     }
 
     /** Returns true iff I am positioned to allow the rotor to my left
@@ -81,7 +91,7 @@ class Rotor {
 
     /** Advance me one position, if possible. By default, does nothing. */
     void advance() {
-        if (rotates()) {
+        if (this.rotates()) {
             _setting += 1;
         }
     }
@@ -98,5 +108,6 @@ class Rotor {
     private Permutation _permutation;
 
     // FIXME: ADDITIONAL FIELDS HERE, AS NEEDED
+
 
 }

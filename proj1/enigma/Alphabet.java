@@ -43,8 +43,8 @@ class Alphabet {
     /** Returns character number INDEX in the alphabet, where
      *  0 <= INDEX < size(). */
     char toChar(int index) {
-        assert(index >= 0 && index < chars.size());
-        return (char) chars.get(index);
+        //assert(index >= 0 && index < chars.size());
+        return (char) chars.get(index % 26);
         //return (char) ('A' + index); // FIXME
     }
 

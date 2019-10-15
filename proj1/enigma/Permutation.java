@@ -27,7 +27,7 @@ class Permutation {
     /** Add the cycle c0->c1->...->cm->c0 to the permutation, where CYCLE is
      *  c0c1...cm. */
     private void addCycle(String cycle) {
-        this._cycles = this._cycles + cycle;
+        this._cycles = this._cycles.concat(cycle);
         // FIXME
     }
 
@@ -48,7 +48,7 @@ class Permutation {
     /** Return the result of applying this permutation to P modulo the
      *  alphabet size. */
     int permute(int p) {
-        char character = _alphabet.toChar(p);
+        char character = _alphabet.toChar(p % _alphabet.size());
         int index = _cycles.indexOf(character);
         if(index != -1 && _cycles.charAt(index + 1) != ')') {
             char next = _cycles.charAt(index + 1);
@@ -61,16 +61,20 @@ class Permutation {
             }
             return _alphabet.toInt(perm);
         }
-        return p;
+        //System.out.println(p % _alphabet.size());
+        return (p % _alphabet.size());
     }
 
     /** Return the result of applying the inverse of this permutation
      *  to  C modulo the alphabet size. */
     int invert(int c) {
-        char character = _alphabet.toChar(c);
+        char character = _alphabet.toChar(c % _alphabet.size());
+        //System.out.println(character);
         int index = _cycles.indexOf(character);
+        //System.out.println(index);
         if(index != -1 && _cycles.charAt(index - 1) != '(') {
             char prev = _cycles.charAt(index - 1);
+            //System.out.println(prev);
             return _alphabet.toInt(prev);
         }
         if (index != -1 &&_cycles.charAt(index - 1) == '(') {
@@ -87,14 +91,16 @@ class Permutation {
      *  in ALPHABET, and converting the result to a character of ALPHABET. */
     char permute(char p) {
         int index = _cycles.indexOf(p);
-        if (_cycles.charAt(index + 1) != ')' && index != -1) {
+        if (_cycles.length() != 0 && _cycles.charAt(index + 1) != ')' && index != -1) {
             return _cycles.charAt(index + 1);
-        } else if (_cycles.charAt(index + 1) == ')' && index != -1){
+        } else if (_cycles.length() != 0  && _cycles.charAt(index + 1) == ')' && index != -1){
             char perm = _cycles.charAt(index);
             for (int i = index; _cycles.charAt(i) != '('; i--) {
                 perm = _cycles.charAt(i);
             }
             return perm;
+        } else if (_cycles.length() == 0) {
+            return p;
         }
         return p;
         // FIXME

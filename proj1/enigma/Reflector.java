@@ -16,6 +16,11 @@ class Reflector extends FixedRotor {
         // FIXME
     }
 
+    @Override
+    boolean rotates() {
+        return false;
+    }
+
     // FIXME?
 
     @Override
@@ -23,6 +28,11 @@ class Reflector extends FixedRotor {
         if (posn != 0) {
             throw error("reflector has only one position");
         }
+    }
+
+    @Override
+    boolean reflecting() {
+        return true;
     }
 
 }
