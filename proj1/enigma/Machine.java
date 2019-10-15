@@ -1,12 +1,16 @@
 package enigma;
 
+import com.sun.xml.internal.xsom.impl.scd.Iterators;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Collection;
+import java.util.List;
 
 import static enigma.EnigmaException.*;
 
 /** Class that represents a complete enigma machine.
- *  @author
+ *  @author Britney Pellouchoud
  */
 class Machine {
 
@@ -16,11 +20,14 @@ class Machine {
 
     private int rotornum;
     private int numpawl;
+    Collection<Rotor> rotorlist;
+    private List<Rotor> rotors;
     Machine(Alphabet alpha, int numRotors, int pawls,
             Collection<Rotor> allRotors) {
         _alphabet = alpha;
         int rotornum = numRotors;
         int numpawl = pawls;
+        rotorlist = allRotors;
         // FIXME
     }
 
@@ -38,6 +45,9 @@ class Machine {
      *  available rotors (ROTORS[0] names the reflector).
      *  Initially, all rotors are set at their 0 setting. */
     void insertRotors(String[] rotors) {
+        for (int i = 0; i < rotors.length; i ++) {
+
+        }
         // FIXME
     }
 
