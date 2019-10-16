@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 
 import static enigma.TestUtils.*;
 
-
+/*
 public class MachineTest {
     @Test
     public void checkMachine() {
@@ -23,3 +23,4 @@ public class MachineTest {
         Machine X = new Machine(alph, 3, 2, Rotors);
     }
 }
+*/

@@ -147,6 +147,7 @@ public class PermutationTest {
         assert(A.setting() == 0);
     }
 
+
     @Test
     public void alphlength() {
         Alphabet alph = new Alphabet("ABC");

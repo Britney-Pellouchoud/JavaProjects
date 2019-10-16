@@ -7,13 +7,25 @@ package enigma;
  */
 class Rotor {
 
-    int _setting;
+    protected String _notches;
+    protected int _setting;
+    protected boolean moving;
+    protected boolean rotated;
     /** A rotor named NAME whose permutation is given by PERM. */
     Rotor(String name, Permutation perm) {
         _name = name;
         _permutation = perm;
         _setting = 0;
+        String _notches = "";
+        rotated = false;
+
     }
+
+    boolean hasRotated() {
+        return rotated;
+    }
+
+    String getNotches() { return _notches;}
 
     /** Return my name. */
     String name() {
@@ -95,9 +107,6 @@ class Rotor {
 
     /** Advance me one position, if possible. By default, does nothing. */
     void advance() {
-        if (this.rotates()) {
-            _setting += 1;
-        }
     }
 
     @Override
@@ -110,6 +119,5 @@ class Rotor {
 
     /** The permutation implemented by this rotor in its 0 position. */
     private Permutation _permutation;
-
 
 }

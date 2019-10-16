@@ -11,18 +11,20 @@ class MovingRotor extends Rotor {
      *  alphabet).
      */
 
-    private String notchstr;
+    protected String notchstr;
+    protected boolean rotated;
     MovingRotor(String name, Permutation perm, String notches) {
         super(name, perm);
-        String notchstr = notches;
+        notchstr = notches;
+        rotated = false;
+        moving = true;
     }
+
 
 
     @Override
     void advance() {
-        if (rotates()) {
-            this._setting += 1;
-        }
+        this._setting += 1;
     }
 
     @Override
@@ -32,15 +34,12 @@ class MovingRotor extends Rotor {
 
     @Override
     boolean rotates() {
-        if (atNotch()) {
-            return true;
-        }
-        return false;
+        return true;
     }
 
     @Override
     boolean atNotch() {
-        if (notchstr == null) {
+        if (notchstr == "") {
             return true;
         }
         for (int i = 0; i < notchstr.length(); i++) {
@@ -50,4 +49,6 @@ class MovingRotor extends Rotor {
         }
         return false;
     }
+
+
 }
