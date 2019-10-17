@@ -21,18 +21,18 @@ class Machine {
     protected int rotornum;
     protected int numpawl;
     Collection<Rotor> rotorlist;
-    protected List<Rotor> usedrotors;
+    protected ArrayList<Rotor> usedrotors;
     protected Permutation plugbrd;
     Machine(Alphabet alpha, int numRotors, int pawls,
             Collection<Rotor> allRotors) {
         _alphabet = alpha;
-        int rotornum = numRotors;
-        int numpawl = pawls;
+        rotornum = numRotors;
+        numpawl = pawls;
         rotorlist = allRotors;
-        List<Rotor> usedrotors;
+        usedrotors = new ArrayList<Rotor>();
         Permutation plugbrd = new Permutation("", alpha);
         assert(numRotors > 1);
-        assert(numpawl < numRotors && numpawl <= 0);
+        assert(numpawl < numRotors && numpawl >= 0);
 
         // FIXME
     }
@@ -59,7 +59,7 @@ class Machine {
         for (int i = 0; i < rotors.length; i ++) {
             for (Rotor r : rotorlist) {
                 if (r.name().equals(rotors[i])) {
-                    if (usedrotors.contains(r)) {
+                    if(usedrotors != null && usedrotors.contains(r)) {
                         throw EnigmaException.error("Cannot input two of the same rotor");
                     } else {
                         usedrotors.add(r);
@@ -85,29 +85,37 @@ class Machine {
         plugbrd = plugboard;
     }
 
+    void doublestep() {
+        ArrayList<Rotor> moving = new ArrayList<Rotor>();
+
+        for (int j = usedrotors.size() - 1; j >= usedrotors.size() - numpawl; j--) {
+            if (j == usedrotors.size() - 1) {
+                moving.add(usedrotors.get(j));
+            } else if (usedrotors.get(j + 1).atNotch() || usedrotors.get(j).atNotch()) {
+                moving.add(usedrotors.get(j));
+            }
+        }
+
+        for (Rotor r : moving) {
+            r.advance();
+        }
+    }
+
     /** Returns the result of converting the input character C (as an
      *  index in the range 0..alphabet size - 1), after first advancing
 
      *  the machine. */
+
+
     int convert(int c) {
         int x = plugbrd.permute(c);
-        Rotor fast = usedrotors.get(usedrotors.size() - 1);
-        fast.advance();
-        for (int i = 1; i < numpawl; i++) {
-            Rotor before = usedrotors.get(usedrotors.size() - i);
-            Rotor after = usedrotors.get(usedrotors.size() - 1 - i);
-            if (before.atNotch()) {
-                if (!before.hasRotated()){
-                    after.advance();
-                    before.advance();
-                    after.rotated = true;
-                    before.rotated = true;
-                }
-            }
-        }
+        doublestep();
         for (int i = usedrotors.size() - 1; i > 0; i--) {
-            x = usedrotors.get(i).convertForward(x);
+            int setfast = usedrotors.get(i).setting();
+            Rotor r = usedrotors.get(i);
+            x = r.convertForward(x);
         }
+
         for (int i = 0; i < usedrotors.size(); i++) {
             x = usedrotors.get(i).convertBackward(x);
         }
@@ -119,6 +127,9 @@ class Machine {
     String convert(String msg) {
         String message = new String();
         for (int i = 0; i < msg.length(); i++) {
+            if (msg.charAt(i) == ' ') {
+                continue;
+            }
             int j = convert(_alphabet.toInt(msg.charAt(i)));
             char k = _alphabet.toChar(j);
             message += k;

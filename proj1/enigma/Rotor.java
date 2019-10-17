@@ -79,11 +79,21 @@ class Rotor {
 
     /** Return the conversion of P (an integer in the range 0..size()-1)
      *  according to my permutation. */
+
+    final int wrap(int p) {
+        int r = p % size();
+        if (r < 0) {
+            r += size();
+            return wrap(r);
+        }
+        return r;
+    }
+
     int convertForward(int p) {
         int input = (p + setting()) % alphabet().size();
         int answer = (_permutation.permute(input) - setting());
         if (answer < 0) {
-            return alphabet().size() + answer;
+            return wrap(answer);
         }
         return answer % alphabet().size();
     }
@@ -119,5 +129,6 @@ class Rotor {
 
     /** The permutation implemented by this rotor in its 0 position. */
     private Permutation _permutation;
+
 
 }

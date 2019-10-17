@@ -34,7 +34,10 @@ class MovingRotor extends Rotor {
 
     @Override
     boolean rotates() {
-        return true;
+        if (this.atNotch()) {
+            return true;
+        }
+        return false;
     }
 
     @Override

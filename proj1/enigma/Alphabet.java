@@ -42,10 +42,22 @@ class Alphabet {
 
     }
 
+    final int wrap(int p) {
+        int r = p % size();
+        if (r < 0) {
+            r += size();
+            return wrap(r);
+        }
+        return r;
+    }
+
     /** Returns character number INDEX in the alphabet, where
      *  0 <= INDEX < size(). */
     char toChar(int index) {
-        return (char) chars.get(index % 26);
+        if (index < 0) {
+            return (char) chars.get(wrap(index));
+        }
+        return (char) chars.get(index % this.size());
     }
 
     /** Returns the index of character preprocess(CH), which must be in

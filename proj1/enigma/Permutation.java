@@ -29,6 +29,7 @@ class Permutation {
         int r = p % size();
         if (r < 0) {
             r += size();
+            return wrap(r);
         }
         return r;
     }
@@ -54,7 +55,8 @@ class Permutation {
             }
             return _alphabet.toInt(perm);
         }
-        return (p % _alphabet.size());
+        return p;
+        //return (p % _alphabet.size());
     }
 
     /** Return the result of applying the inverse of this permutation
