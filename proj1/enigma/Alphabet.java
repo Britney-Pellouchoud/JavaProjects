@@ -1,5 +1,5 @@
 package enigma;
-import java.util.*;
+import java.util.ArrayList;
 
 /** An alphabet of encodable characters.  Provides a mapping from characters
  *  to and from indices into the alphabet.
@@ -8,14 +8,15 @@ import java.util.*;
 class Alphabet {
     /** A new alphabet containing CHARS.  Character number #k has index
      *  K (numbering from 0). No character may be duplicated. */
-    private ArrayList chars;
-    /* Alphabet takes in a string of characters
+    protected ArrayList chars;
+    /** Alphabet takes in a string of characters.
+     * @param characters **string of characters**
      * checks for duplicates */
-    Alphabet(String chars) {
+    Alphabet(String characters) {
         ArrayList<Character> noduplicates = new ArrayList<>();
-        for (int i = 0; i < chars.length(); i++) {
-            if (!noduplicates.contains(chars.charAt(i))) {
-                noduplicates.add(chars.charAt(i));
+        for (int i = 0; i < characters.length(); i++) {
+            if (!noduplicates.contains(characters.charAt(i))) {
+                noduplicates.add(characters.charAt(i));
             }
         }
         this.chars = noduplicates;
@@ -42,6 +43,9 @@ class Alphabet {
 
     }
 
+    /** Wrap takes in an integer and modulos it to return the usable integer.
+     * @param p **integer p**
+     */
     final int wrap(int p) {
         int r = p % size();
         if (r < 0) {

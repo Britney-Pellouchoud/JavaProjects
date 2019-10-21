@@ -1,5 +1,8 @@
 package enigma;
 
+import com.sun.xml.internal.xsom.impl.scd.Iterators;
+import org.junit.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -11,7 +14,7 @@ import java.util.Scanner;
 import static enigma.EnigmaException.*;
 
 /** Enigma simulator.
- *  @author
+ *  @author Britney Pellouchoud
  */
 public final class Main {
 
@@ -24,6 +27,7 @@ public final class Main {
      *  file for processed messages.  Otherwise, output goes to the
      *  standard output. Exits normally if there are no errors in the input;
      *  otherwise with code 1. */
+
     public static void main(String... args) {
         try {
             new Main(args).process();
@@ -77,25 +81,87 @@ public final class Main {
      *  file _config and apply it to the messages in _input, sending the
      *  results to _output. */
     private void process() {
-        // FIXME
+        Machine M = readConfig();
+        String[] used = new String[M.numRotors()];
+        int counter = 0;
+        while (counter < M.numRotors()){
+            String nurm = _input.next();
+            if (nurm.contains("*")) {
+                continue;
+            }
+            used[counter] = nurm;
+            counter += 1;
+        }
+        M.insertRotors(used);
+        setUp(M, _input.next());
+        String cycles = "";
+        String a = _input.next();
+        while (a.contains("(")) {
+            cycles += a;
+            a = _input.next();
+        }
+        Permutation forplug = new Permutation(cycles, _alphabet);
+        M.setPlugboard(forplug);
+        while (_input.hasNextLine()) {
+            String x = M.convert(_input.nextLine());
+            _output.print(x);
+        }
+
     }
 
     /** Return an Enigma machine configured from the contents of configuration
      *  file _config. */
     private Machine readConfig() {
         try {
+            _alphabet = new Alphabet(_config.next());
+            int numrot = _config.nextInt();
+            int numpaw = _config.nextInt();
+            ArrayList<Rotor> allrots = new ArrayList<>();
+            while (_config.hasNextLine()) {
+                allrots.add(readRotor());
+            }
+            return new Machine(_alphabet, numrot, numpaw, allrots);
             // FIXME
-            _alphabet = new Alphabet();
-            return new Machine(_alphabet, 2, 1, null);
+            //_alphabet = new Alphabet();
+            //return new Machine(_alphabet, 2, 1, null);
         } catch (NoSuchElementException excp) {
             throw error("configuration file truncated");
         }
     }
 
     /** Return a rotor, reading its description from _config. */
-    private Rotor readRotor() {
+    //private
+    Rotor readRotor() {
         try {
-            return null; // FIXME
+            if (!_config.nextLine().contains("(")) {
+                _config.nextLine();
+            }
+            String name = _config.next();
+            String orientation = _config.next();
+            String typer = "";
+            String notches = "";
+            if (orientation.charAt(0) == 'R') {
+                typer = "Reflector";
+            } else if (orientation.charAt(0) == 'M') {
+                typer = "Moving";
+                for (int i = 1; i < orientation.length(); i++) {
+                    notches += orientation.charAt(i);
+                }
+            } else if (orientation.charAt(0) == 'N') {
+                typer = "Nonmoving";
+            }
+
+            String permutation = "";
+            while (_config.next().contains(")")) {
+                permutation += _config.next();
+            }
+            Permutation perm = new Permutation(permutation, _alphabet);
+            if (typer.equals("Reflector")) {
+                return new Reflector(name, perm);
+            } else if (typer.equals("Moving")) {
+                return new MovingRotor(name, perm, notches);
+            }
+            return new FixedRotor(name, perm);
         } catch (NoSuchElementException excp) {
             throw error("bad rotor description");
         }
@@ -104,14 +170,20 @@ public final class Main {
     /** Set M according to the specification given on SETTINGS,
      *  which must have the format specified in the assignment. */
     private void setUp(Machine M, String settings) {
-        // FIXME
+       M.setRotors(settings);
+        //FIXME
     }
 
     /** Print MSG in groups of five (except that the last group may
      *  have fewer letters). */
-    private void printMessageLine(String msg) {
-        // FIXME
+
+    void printMessageLine(String msg) {
+        for (int i = 0; i < msg.length(); i += 5) {
+            message += msg.substring(i, i + 5) + " ";
+        }
     }
+
+    private String message = "";
 
     /** Alphabet used in this machine. */
     private Alphabet _alphabet;

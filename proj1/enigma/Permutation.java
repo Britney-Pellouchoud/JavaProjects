@@ -6,6 +6,9 @@ package enigma;
 class Permutation {
 
 
+    /**Initializes private cycle for permutations.
+     *
+     */
     private String _cycles;
 
     /** Set this Permutation to that specified by CYCLES, a string in the
@@ -56,7 +59,6 @@ class Permutation {
             return _alphabet.toInt(perm);
         }
         return p;
-        //return (p % _alphabet.size());
     }
 
     /** Return the result of applying the inverse of this permutation

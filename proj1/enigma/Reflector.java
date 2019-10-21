@@ -6,6 +6,10 @@ import static enigma.EnigmaException.*;
  *  @author Britney Pellouchoud
  */
 class Reflector extends FixedRotor {
+
+    /**Permutation _setting.
+     *
+     */
     private Permutation _setting;
 
     /** A non-moving rotor named NAME whose permutation at the 0 setting

@@ -1,9 +1,6 @@
 package enigma;
 
-import com.sun.xml.internal.xsom.impl.scd.Iterators;
-import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Collection;
 import java.util.List;
 
@@ -20,9 +17,17 @@ class Machine {
 
     protected int rotornum;
     protected int numpawl;
-    Collection<Rotor> rotorlist;
+    protected Collection<Rotor> rotorlist;
     protected ArrayList<Rotor> usedrotors;
     protected Permutation plugbrd;
+
+    /**.
+     * Machine constructor
+     * @param alpha **alphabet**
+     * @param numRotors **number of rotors**
+     * @param pawls **number of pawls**
+     * @param allRotors **allpossiblerotors**
+     */
     Machine(Alphabet alpha, int numRotors, int pawls,
             Collection<Rotor> allRotors) {
         _alphabet = alpha;
@@ -31,10 +36,8 @@ class Machine {
         rotorlist = allRotors;
         usedrotors = new ArrayList<Rotor>();
         Permutation plugbrd = new Permutation("", alpha);
-        assert(numRotors > 1);
-        assert(numpawl < numRotors && numpawl >= 0);
-
-        // FIXME
+        assert (numRotors > 1);
+        assert (numpawl < numRotors && numpawl >= 0);
     }
 
     /** Return the number of rotor slots I have. */
@@ -47,6 +50,10 @@ class Machine {
         return numpawl;
     }
 
+    /** Now we know what rotors are used.
+     *
+     * @return **num of used rotors**
+     */
     List<Rotor> usedrotors() {
         return usedrotors;
     }
@@ -56,11 +63,11 @@ class Machine {
      *  available rotors (ROTORS[0] names the reflector).
      *  Initially, all rotors are set at their 0 setting. */
     void insertRotors(String[] rotors) {
-        for (int i = 0; i < rotors.length; i ++) {
+        for (int i = 0; i < rotors.length; i++) {
             for (Rotor r : rotorlist) {
                 if (r.name().equals(rotors[i])) {
-                    if(usedrotors != null && usedrotors.contains(r)) {
-                        throw EnigmaException.error("Cannot input two of the same rotor");
+                    if (usedrotors != null && usedrotors.contains(r)) {
+                        throw EnigmaException.error("Can't input same rotor.");
                     } else {
                         usedrotors.add(r);
                     }
@@ -73,7 +80,7 @@ class Machine {
      *  numRotors()-1 characters in my alphabet. The first letter refers
      *  to the leftmost rotor setting (not counting the reflector).  */
     void setRotors(String setting) {
-        assert(setting.length() == numRotors() - 1);
+        assert (setting.length() == numRotors() - 1);
         for (int i = 0; i < setting.length(); i++) {
             int c = _alphabet.toInt(setting.charAt(i));
             usedrotors.get(i + 1).set(c);
@@ -85,13 +92,17 @@ class Machine {
         plugbrd = plugboard;
     }
 
+    /**Doublestep makes sure all the rotors turn correctly.
+     * Returns nothing.
+     */
     void doublestep() {
         ArrayList<Rotor> moving = new ArrayList<Rotor>();
-
-        for (int j = usedrotors.size() - 1; j >= usedrotors.size() - numpawl; j--) {
+        int num = usedrotors.size();
+        for (int j = num - 1; j >= num - numpawl; j--) {
+            Rotor X = usedrotors.get(j);
             if (j == usedrotors.size() - 1) {
-                moving.add(usedrotors.get(j));
-            } else if (usedrotors.get(j + 1).atNotch() || usedrotors.get(j).atNotch()) {
+                moving.add(X);
+            } else if (usedrotors.get(j + 1).atNotch() || X.atNotch()) {
                 moving.add(usedrotors.get(j));
             }
         }
@@ -110,6 +121,7 @@ class Machine {
     int convert(int c) {
         int x = plugbrd.permute(c);
         doublestep();
+
         for (int i = usedrotors.size() - 1; i > 0; i--) {
             int setfast = usedrotors.get(i).setting();
             Rotor r = usedrotors.get(i);
@@ -119,6 +131,8 @@ class Machine {
         for (int i = 0; i < usedrotors.size(); i++) {
             x = usedrotors.get(i).convertBackward(x);
         }
+
+
         return plugbrd.invert(x);
     }
 
@@ -134,11 +148,10 @@ class Machine {
             char k = _alphabet.toChar(j);
             message += k;
         }
-        return message; // FIXME
+        return message;
     }
 
     /** Common alphabet of my rotors. */
     private final Alphabet _alphabet;
 
-    // FIXME: ADDITIONAL FIELDS HERE, IF NEEDED.
 }

@@ -7,9 +7,21 @@ package enigma;
  */
 class Rotor {
 
+    /**Notches.
+     *
+     */
     protected String _notches;
+    /**Integer _setting.
+     *
+     */
     protected int _setting;
+    /**Boolean moving.
+     *
+     */
     protected boolean moving;
+    /**Boolean rotated.
+     *
+     */
     protected boolean rotated;
     /** A rotor named NAME whose permutation is given by PERM. */
     Rotor(String name, Permutation perm) {
@@ -21,11 +33,21 @@ class Rotor {
 
     }
 
+    /**If it has rotated.
+     *
+     * @return **boolean**
+     */
     boolean hasRotated() {
+
         return rotated;
     }
 
-    String getNotches() { return _notches;}
+    /**Where the notches are.
+     *
+     * @return **string**
+     */
+    String getNotches() {
+        return _notches; }
 
     /** Return my name. */
     String name() {
@@ -55,8 +77,13 @@ class Rotor {
         return false;
     }
 
+    /**Returns whether or not the rotor can move.
+     *
+     * @return **boolean**
+     */
     boolean fixed() {
         return false; }
+
     /** Return true iff I reflect. */
     boolean reflecting() {
         return false;
@@ -89,6 +116,11 @@ class Rotor {
         return r;
     }
 
+    /**Converts letters taking setting into account.
+     *
+     * @param p **integer**
+     * @return **integer**
+     */
     int convertForward(int p) {
         int input = (p + setting()) % alphabet().size();
         int answer = (_permutation.permute(input) - setting());

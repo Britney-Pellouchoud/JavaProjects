@@ -5,6 +5,7 @@ import org.junit.Rule;
 import org.junit.rules.Timeout;
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.util.HashMap;
 
 import static enigma.TestUtils.*;
@@ -61,9 +62,6 @@ public class MovingRotorTest {
     public void checkRotorAdvance() {
         setRotor("I", NAVALA, "");
         rotor.advance();
-        //System.out.println(roto);
-        //System.out.println(UPPER_STRING);
-        //System.out.println(NAVALB_MAP.get("I"));
         checkRotor("Rotor I advanced", UPPER_STRING, NAVALB_MAP.get("I"));
     }
 
@@ -73,6 +71,10 @@ public class MovingRotorTest {
         rotor.set(25);
         checkRotor("Rotor I set", UPPER_STRING, NAVALZ_MAP.get("I"));
 
+    }
+
+    @Test
+    public void checkparser() {
     }
 
 }

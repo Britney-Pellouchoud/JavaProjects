@@ -11,8 +11,22 @@ class MovingRotor extends Rotor {
      *  alphabet).
      */
 
+    /** String to hold all notches
+     * Initialized in Moving rotor.
+     */
     protected String notchstr;
+
+    /**Boolean to know whether or not the rotor has rotated.
+     *
+     */
     protected boolean rotated;
+
+    /**Constructor for moving rotors, overrides Rotor.
+     *
+     * @param name **String**
+     * @param perm **Permutation**
+     * @param notches **String**
+     */
     MovingRotor(String name, Permutation perm, String notches) {
         super(name, perm);
         notchstr = notches;
@@ -42,7 +56,7 @@ class MovingRotor extends Rotor {
 
     @Override
     boolean atNotch() {
-        if (notchstr == "") {
+        if (notchstr.equals("")) {
             return true;
         }
         for (int i = 0; i < notchstr.length(); i++) {

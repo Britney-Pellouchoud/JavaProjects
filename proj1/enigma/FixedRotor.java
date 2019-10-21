@@ -7,7 +7,13 @@ import static enigma.EnigmaException.*;
  */
 class FixedRotor extends Rotor {
 
+    /** Every permutation needs a setting.
+     * @param _set **Permutation**
+     */
     private Permutation _set;
+    /** Every permutation needs a setting.
+     * @param setting **Integer**
+     */
     private int _setting;
     /** A non-moving rotor named NAME whose permutation at the 0 setting
      * is given by PERM. */
