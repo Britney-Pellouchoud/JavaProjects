@@ -4,8 +4,6 @@ import org.junit.Test;
 import org.junit.Rule;
 import org.junit.rules.Timeout;
 import static org.junit.Assert.*;
-
-import java.io.File;
 import java.util.HashMap;
 
 import static enigma.TestUtils.*;

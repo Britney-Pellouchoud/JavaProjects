@@ -10,7 +10,7 @@ class Rotor {
     /**Notches.
      *
      */
-    protected String _notches;
+    protected String notches;
     /**Integer _setting.
      *
      */
@@ -28,7 +28,6 @@ class Rotor {
         _name = name;
         _permutation = perm;
         _setting = 0;
-        String _notches = "";
         rotated = false;
 
     }
@@ -47,7 +46,7 @@ class Rotor {
      * @return **string**
      */
     String getNotches() {
-        return _notches; }
+        return notches; }
 
     /** Return my name. */
     String name() {

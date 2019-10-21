@@ -15,10 +15,23 @@ class Machine {
      *  and 0 <= PAWLS < NUMROTORS pawls.  ALLROTORS contains all the
      *  available rotors. */
 
+    /**Rotornum.
+     */
     protected int rotornum;
+
+    /**Numpawl.
+     */
     protected int numpawl;
+
+    /**Rotorlist.
+     */
     protected Collection<Rotor> rotorlist;
+
+    /**Userotors.
+     */
     protected ArrayList<Rotor> usedrotors;
+    /**Plugboard.
+     */
     protected Permutation plugbrd;
 
     /**.
@@ -35,7 +48,7 @@ class Machine {
         numpawl = pawls;
         rotorlist = allRotors;
         usedrotors = new ArrayList<Rotor>();
-        Permutation plugbrd = new Permutation("", alpha);
+        plugbrd = new Permutation("", alpha);
         assert (numRotors > 1);
         assert (numpawl < numRotors && numpawl >= 0);
     }

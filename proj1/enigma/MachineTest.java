@@ -80,13 +80,11 @@ public class MachineTest {
         Permutation plugboard = new Permutation("(HQ) (EX) (IP) "
                 + "(TR) (BY)", UPPER);
         String setting = "AXLE";
-
         Reflector aB = new Reflector("B", cBPerm);
         FixedRotor aBeta = new FixedRotor("Beta", cBetaPerm);
         MovingRotor aIII = new MovingRotor("III", cIIIPerm, "V");
         MovingRotor aIV = new MovingRotor("IV", cIVPerm, "J");
         MovingRotor aI = new MovingRotor("I", cIPerm, "Q");
-
         Collection<Rotor> kRotors = new ArrayList<Rotor>();
         kRotors.add(aB);
         kRotors.add(aBeta);
@@ -107,7 +105,9 @@ public class MachineTest {
                 + "TLOOKEDALLSQUARESANDOBLONGSLIKEACOMPLICATEDFIGURE"
                 + "INTHESECONDBOOKOFEUCLID";
 
-
+        for (Rotor r : K.usedrotors) {
+            System.out.println("SET " + r.setting());
+        }
         System.out.println("B setting: " + aB.setting());
         System.out.println("Beta setting: " + aBeta.setting());
         System.out.println("III setting: " + aIII.setting());
@@ -123,8 +123,6 @@ public class MachineTest {
                 + "VJVHOUFANTQACKKTOZZRDABQNNVPOIEFQAFSVVICVUDUEREYNPFFMNBJVGQ";
 
         assertEquals(K.convert(msg), reality);
-
-
     }
 
 

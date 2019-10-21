@@ -1,8 +1,4 @@
 package enigma;
-
-import com.sun.xml.internal.xsom.impl.scd.Iterators;
-import org.junit.Test;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -84,7 +80,7 @@ public final class Main {
         Machine M = readConfig();
         String[] used = new String[M.numRotors()];
         int counter = 0;
-        while (counter < M.numRotors()){
+        while (counter < M.numRotors()) {
             String nurm = _input.next();
             if (nurm.contains("*")) {
                 continue;
@@ -92,6 +88,7 @@ public final class Main {
             used[counter] = nurm;
             counter += 1;
         }
+
         M.insertRotors(used);
         setUp(M, _input.next());
         String cycles = "";
@@ -102,10 +99,24 @@ public final class Main {
         }
         Permutation forplug = new Permutation(cycles, _alphabet);
         M.setPlugboard(forplug);
+
+        String l = a;
+        String msge = l;
+        l = _input.nextLine();
+        msge += l;
+        String converted = M.convert(msge);
+        printMessageLine(converted);
+
+
         while (_input.hasNextLine()) {
-            String x = M.convert(_input.nextLine());
-            _output.print(x);
+            String x = _input.nextLine();
+            String converted2 = M.convert(x);
+            printMessageLine(converted2);
+
         }
+
+
+
 
     }
 
@@ -121,22 +132,21 @@ public final class Main {
                 allrots.add(readRotor());
             }
             return new Machine(_alphabet, numrot, numpaw, allrots);
-            // FIXME
-            //_alphabet = new Alphabet();
-            //return new Machine(_alphabet, 2, 1, null);
+
         } catch (NoSuchElementException excp) {
             throw error("configuration file truncated");
         }
     }
 
     /** Return a rotor, reading its description from _config. */
-    //private
-    Rotor readRotor() {
+    private Rotor readRotor() {
         try {
-            if (!_config.nextLine().contains("(")) {
-                _config.nextLine();
+            String name;
+            if (starter.isEmpty()) {
+                name = _config.next();
+            } else {
+                name = starter;
             }
-            String name = _config.next();
             String orientation = _config.next();
             String typer = "";
             String notches = "";
@@ -151,11 +161,19 @@ public final class Main {
                 typer = "Nonmoving";
             }
 
-            String permutation = "";
-            while (_config.next().contains(")")) {
-                permutation += _config.next();
+            StringBuilder permutation = new StringBuilder(new String());
+            String permer = _config.next();
+            while (permer.contains("(") && permer.contains(")")) {
+                permutation.append(permer);
+                if (_config.hasNext()) {
+                    permer = _config.next();
+                } else {
+                    break;
+                }
             }
-            Permutation perm = new Permutation(permutation, _alphabet);
+            starter = permer;
+            Alphabet alph = _alphabet;
+            Permutation perm = new Permutation(permutation.toString(), alph);
             if (typer.equals("Reflector")) {
                 return new Reflector(name, perm);
             } else if (typer.equals("Moving")) {
@@ -167,23 +185,37 @@ public final class Main {
         }
     }
 
+    /**Starter.
+     */
+    private String starter = "";
+
     /** Set M according to the specification given on SETTINGS,
      *  which must have the format specified in the assignment. */
-    private void setUp(Machine M, String settings) {
-       M.setRotors(settings);
-        //FIXME
+    private static void setUp(Machine M, String settings) {
+        M.setRotors(settings);
     }
 
     /** Print MSG in groups of five (except that the last group may
      *  have fewer letters). */
 
-    void printMessageLine(String msg) {
+
+    static void printMessageLine(String msg) {
         for (int i = 0; i < msg.length(); i += 5) {
-            message += msg.substring(i, i + 5) + " ";
+            if (i + 5 < msg.length()) {
+                message += msg.substring(i, i + 5) + " ";
+                continue;
+            }
+            message += msg.substring(i, msg.length());
         }
+        _output.println();
+        _output.append(message);
+        message = "";
     }
 
-    private String message = "";
+
+    /** Message.
+     */
+    private static String message = "";
 
     /** Alphabet used in this machine. */
     private Alphabet _alphabet;
@@ -195,5 +227,5 @@ public final class Main {
     private Scanner _config;
 
     /** File for encoded/decoded messages. */
-    private PrintStream _output;
+    private static PrintStream _output;
 }
