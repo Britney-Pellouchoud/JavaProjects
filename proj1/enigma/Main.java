@@ -107,16 +107,11 @@ public final class Main {
         String converted = M.convert(msge);
         printMessageLine(converted);
 
-
         while (_input.hasNextLine()) {
             String x = _input.nextLine();
             String converted2 = M.convert(x);
             printMessageLine(converted2);
-
         }
-
-
-
 
     }
 
