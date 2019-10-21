@@ -53,6 +53,7 @@ class Machine {
         assert (numpawl < numRotors && numpawl >= 0);
     }
 
+
     /** Return the number of rotor slots I have. */
     int numRotors() {
         return rotornum;

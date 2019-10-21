@@ -76,19 +76,25 @@ public final class Main {
     /** Configure an Enigma machine from the contents of configuration
      *  file _config and apply it to the messages in _input, sending the
      *  results to _output. */
-    private void process() {
-        Machine M = readConfig();
+
+    private String setup2(Machine M){
+        M.usedrotors = new ArrayList<Rotor>();
         String[] used = new String[M.numRotors()];
         int counter = 0;
         while (counter < M.numRotors()) {
-            String nurm = _input.next();
+            String nurm;
+            if (settline.isEmpty()) {
+                nurm = settline;
+            }else {
+                nurm = _input.next();
+            }
+            //System.out.println("NURM " + nurm);
             if (nurm.contains("*")) {
                 continue;
             }
             used[counter] = nurm;
             counter += 1;
         }
-
         M.insertRotors(used);
         setUp(M, _input.next());
         String cycles = "";
@@ -99,19 +105,32 @@ public final class Main {
         }
         Permutation forplug = new Permutation(cycles, _alphabet);
         M.setPlugboard(forplug);
+        return a;
 
-        String l = a;
+    }
+
+    private String settline = "";
+
+    private void process() {
+        Machine M = readConfig();
+        String l = setup2(M);
         String msge = l;
         l = _input.nextLine();
         msge += l;
         String converted = M.convert(msge);
         printMessageLine(converted);
-
         while (_input.hasNextLine()) {
             String x = _input.nextLine();
-            String converted2 = M.convert(x);
-            printMessageLine(converted2);
+            if (!x.contains("*")) {
+                String converted2 = M.convert(x);
+                printMessageLine(converted2);
+            } else {
+                settline = x;
+                setup2(M);
+            }
+
         }
+
 
     }
 
@@ -142,9 +161,7 @@ public final class Main {
             } else {
                 name = starter;
             }
-            System.out.println("Name " + name);
             String orientation = _config.next();
-            System.out.println("Orientation " + orientation);
             String typer = "";
             String notches = "";
             if (orientation.charAt(0) == 'R') {
@@ -169,7 +186,6 @@ public final class Main {
                     break;
                 }
             }
-            System.out.println("Permutation " + permutation);
             starter = permer;
             Alphabet alph = _alphabet;
             Permutation perm = new Permutation(permutation.toString(), alph);
@@ -206,8 +222,8 @@ public final class Main {
             }
             message += msg.substring(i, msg.length());
         }
-        _output.println();
         _output.append(message);
+        _output.println();
         message = "";
     }
 
