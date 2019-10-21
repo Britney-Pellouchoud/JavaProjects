@@ -123,7 +123,7 @@ public final class Main {
             int numrot = _config.nextInt();
             int numpaw = _config.nextInt();
             ArrayList<Rotor> allrots = new ArrayList<>();
-            while (_config.hasNextLine()) {
+            while (_config.hasNextLine() && !starter.contains("(")) {
                 allrots.add(readRotor());
             }
             return new Machine(_alphabet, numrot, numpaw, allrots);
@@ -142,7 +142,9 @@ public final class Main {
             } else {
                 name = starter;
             }
+            System.out.println("Name " + name);
             String orientation = _config.next();
+            System.out.println("Orientation " + orientation);
             String typer = "";
             String notches = "";
             if (orientation.charAt(0) == 'R') {
@@ -157,6 +159,7 @@ public final class Main {
             }
 
             StringBuilder permutation = new StringBuilder(new String());
+
             String permer = _config.next();
             while (permer.contains("(") && permer.contains(")")) {
                 permutation.append(permer);
@@ -166,6 +169,7 @@ public final class Main {
                     break;
                 }
             }
+            System.out.println("Permutation " + permutation);
             starter = permer;
             Alphabet alph = _alphabet;
             Permutation perm = new Permutation(permutation.toString(), alph);
