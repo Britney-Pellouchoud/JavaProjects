@@ -3,6 +3,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -81,27 +82,50 @@ public final class Main {
         M.usedrotors = new ArrayList<Rotor>();
         String[] used = new String[M.numRotors()];
         int counter = 0;
+        String nurm;
+        Scanner sett = new Scanner(settline);
         while (counter < M.numRotors()) {
-            String nurm;
-            if (settline.isEmpty()) {
-                nurm = settline;
-            }else {
+            if (!settline.isEmpty()) {
+                nurm = sett.next();
+            } else {
                 nurm = _input.next();
             }
-            //System.out.println("NURM " + nurm);
             if (nurm.contains("*")) {
                 continue;
             }
             used[counter] = nurm;
             counter += 1;
         }
+
         M.insertRotors(used);
-        setUp(M, _input.next());
+        if (!settline.isEmpty()) {
+            setUp(M, sett.next());
+        } else {
+            setUp(M, _input.next());
+        }
+
+
         String cycles = "";
-        String a = _input.next();
-        while (a.contains("(")) {
-            cycles += a;
+        String a;
+        if (!settline.isEmpty()) {
+            //System.out.println("SETTLINE " + settline);
+            a = sett.next();
+            System.out.println("A " + a);
+            while (a.contains("(")) {
+                cycles += a;
+                if (sett.hasNext()) {
+                    a = sett.next();
+                } else {
+                    a = _input.next();
+                }
+
+            }
+        } else {
             a = _input.next();
+            while (a.contains("(")) {
+                cycles += a;
+                a = _input.next();
+            }
         }
         Permutation forplug = new Permutation(cycles, _alphabet);
         M.setPlugboard(forplug);
@@ -126,7 +150,15 @@ public final class Main {
                 printMessageLine(converted2);
             } else {
                 settline = x;
-                setup2(M);
+                String n = setup2(M);
+                if (x == settline) {
+                    x = n + _input.nextLine();
+                    String converted3 = M.convert(x);
+                    printMessageLine(converted3);
+                    continue;
+                }
+                String converted3 = M.convert(x);
+                printMessageLine(converted3);
             }
 
         }

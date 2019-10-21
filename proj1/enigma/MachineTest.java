@@ -98,7 +98,7 @@ public class MachineTest {
         K.setRotors(setting);
         K.setPlugboard(plugboard);
         String msg = "FROMHISSHOULDERHIAWATHATOOKTHECAMERAOFROSEWOOD"
-                + "MADEOFSLIDINGFOLDINGROSEWOOD "
+                + "MADEOFSLIDINGFOLDINGROSEWOOD"
                 + "NEATLYPUTITALLTOGETHERINITSCASEITLAYCOMP"
                 + "ACTLYFOLDEDINTONEARLYNOTHINGBUTHEOPENEDOUTTHEHINGES"
                 + "PUSHEDANDPULLEDTHEJOINTSANDHINGESTILLI"
@@ -122,7 +122,8 @@ public class MachineTest {
                 + "WXUEBZQJOYMHIPGRREGOHETUXDTWLCMMWAVN"
                 + "VJVHOUFANTQACKKTOZZRDABQNNVPOIEFQAFSVVICVUDUEREYNPFFMNBJVGQ";
 
-        assertEquals(K.convert(msg), reality);
+        assertEquals(K.convert(reality), msg);
+        //assertEquals(K.convert(msg), reality);
     }
 
 

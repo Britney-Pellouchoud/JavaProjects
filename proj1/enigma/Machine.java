@@ -79,8 +79,11 @@ class Machine {
     void insertRotors(String[] rotors) {
         for (int i = 0; i < rotors.length; i++) {
             for (Rotor r : rotorlist) {
-                if (r.name().equals(rotors[i])) {
-                    if (usedrotors != null && usedrotors.contains(r)) {
+                String lower = r.name().toLowerCase();
+                String lower2 = rotors[i].toLowerCase();
+                if (lower.equals(lower2)) {
+                    //System.out.println("USEDROTORS LIST "  + usedrotors);
+                    if (usedrotors.contains(r)) {
                         throw EnigmaException.error("Can't input same rotor.");
                     } else {
                         usedrotors.add(r);
@@ -88,7 +91,13 @@ class Machine {
                 }
             }
         }
+
     }
+
+
+
+
+
 
     /** Set my rotors according to SETTING, which must be a string of
      *  numRotors()-1 characters in my alphabet. The first letter refers
