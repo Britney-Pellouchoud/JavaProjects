@@ -123,7 +123,6 @@ public class MachineTest {
                 + "VJVHOUFANTQACKKTOZZRDABQNNVPOIEFQAFSVVICVUDUEREYNPFFMNBJVGQ";
 
         assertEquals(K.convert(reality), msg);
-        //assertEquals(K.convert(msg), reality);
     }
 
 

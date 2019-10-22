@@ -82,7 +82,6 @@ class Machine {
                 String lower = r.name().toLowerCase();
                 String lower2 = rotors[i].toLowerCase();
                 if (lower.equals(lower2)) {
-                    //System.out.println("USEDROTORS LIST "  + usedrotors);
                     if (usedrotors.contains(r)) {
                         throw EnigmaException.error("Can't input same rotor.");
                     } else {
@@ -125,8 +124,15 @@ class Machine {
             Rotor X = usedrotors.get(j);
             if (j == usedrotors.size() - 1) {
                 moving.add(X);
-            } else if (usedrotors.get(j + 1).atNotch() || X.atNotch()) {
-                moving.add(usedrotors.get(j));
+            } else if (!usedrotors.get(j - 1).rotates()) {
+                if (usedrotors.get(j + 1).atNotch()) {
+                    moving.add(X);
+                } else {
+                    continue;
+                }
+            }
+            else if (usedrotors.get(j + 1).atNotch() || X.atNotch()) {
+                moving.add(X);
             }
         }
 
@@ -154,8 +160,6 @@ class Machine {
         for (int i = 0; i < usedrotors.size(); i++) {
             x = usedrotors.get(i).convertBackward(x);
         }
-
-
         return plugbrd.invert(x);
     }
 

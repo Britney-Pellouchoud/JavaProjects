@@ -24,6 +24,7 @@ class FixedRotor extends Rotor {
 
     }
 
+
     @Override
     void set(int posn) {
         super.set(posn);

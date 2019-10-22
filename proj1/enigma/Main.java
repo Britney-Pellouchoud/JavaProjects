@@ -3,7 +3,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -76,9 +75,11 @@ public final class Main {
 
     /** Configure an Enigma machine from the contents of configuration
      *  file _config and apply it to the messages in _input, sending the
-     *  results to _output. */
+     *  results to _output.
+     *  @return String
+     *  @param M*/
 
-    private String setup2(Machine M){
+    private String setup2(Machine M) {
         M.usedrotors = new ArrayList<Rotor>();
         String[] used = new String[M.numRotors()];
         int counter = 0;
@@ -108,9 +109,11 @@ public final class Main {
         String cycles = "";
         String a;
         if (!settline.isEmpty()) {
-            //System.out.println("SETTLINE " + settline);
-            a = sett.next();
-            System.out.println("A " + a);
+            if (!sett.hasNext()) {
+                a = _input.next();
+            } else {
+                a = sett.next();
+            }
             while (a.contains("(")) {
                 cycles += a;
                 if (sett.hasNext()) {
@@ -133,14 +136,23 @@ public final class Main {
 
     }
 
+    /**
+     * String settline to know if I need to reset.
+     */
     private String settline = "";
 
+    /**
+     * The entire process of going through the document.
+     */
     private void process() {
         Machine M = readConfig();
         String l = setup2(M);
         String msge = l;
-        l = _input.nextLine();
-        msge += l;
+        if (_input.hasNextLine()) {
+            l = _input.nextLine();
+            msge += l;
+        }
+
         String converted = M.convert(msge);
         printMessageLine(converted);
         while (_input.hasNextLine()) {
@@ -152,10 +164,18 @@ public final class Main {
                 settline = x;
                 String n = setup2(M);
                 if (x == settline) {
-                    x = n + _input.nextLine();
-                    String converted3 = M.convert(x);
-                    printMessageLine(converted3);
-                    continue;
+                    if (_input.hasNextLine()) {
+                        x = n + _input.nextLine();
+                        String converted3 = M.convert(x);
+                        printMessageLine(converted3);
+                        continue;
+                    } else {
+                        x = n;
+                        String converted3 = M.convert(x);
+                        printMessageLine(converted3);
+                        continue;
+                    }
+
                 }
                 String converted3 = M.convert(x);
                 printMessageLine(converted3);

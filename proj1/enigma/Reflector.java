@@ -25,6 +25,7 @@ class Reflector extends FixedRotor {
     }
 
 
+
     @Override
     void set(int posn) {
         if (posn != 0) {
