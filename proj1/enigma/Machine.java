@@ -90,7 +90,9 @@ class Machine {
                 }
             }
         }
-
+        if (usedrotors.size() != rotors.length) {
+            throw new EnigmaException("Bad rotor description");
+        }
     }
 
 
