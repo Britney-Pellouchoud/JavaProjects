@@ -102,7 +102,14 @@ class Machine {
      *  numRotors()-1 characters in my alphabet. The first letter refers
      *  to the leftmost rotor setting (not counting the reflector).  */
     void setRotors(String setting) {
-        assert (setting.length() == numRotors() - 1);
+        if (setting.length() != numRotors() - 1) {
+            throw new EnigmaException("Wrong setting length");
+        }
+        for (int i = 0; i < setting.length(); i++) {
+            if (!_alphabet.contains(setting.charAt(i))) {
+                throw new EnigmaException("Character does not exist in alphabet");
+            }
+        }
         for (int i = 0; i < setting.length(); i++) {
             int c = _alphabet.toInt(setting.charAt(i));
             usedrotors.get(i + 1).set(c);
