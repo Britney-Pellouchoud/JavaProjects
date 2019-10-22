@@ -89,14 +89,13 @@ public final class Main {
             if (!settline.isEmpty()) {
                 try {
                     nurm = sett.next();
-                } catch (NoSuchElementException excp){
+                } catch (NoSuchElementException excp) {
                     throw new EnigmaException("Bad configuration");
                 }
-
             } else {
                 try {
                     nurm = _input.next();
-                } catch (NoSuchElementException excp){
+                } catch (NoSuchElementException excp) {
                     throw new EnigmaException("Bad configuration");
                 }
             }
@@ -113,8 +112,6 @@ public final class Main {
         } else {
             setUp(M, _input.next());
         }
-
-
         String cycles = "";
         String a;
         if (!settline.isEmpty()) {
@@ -130,7 +127,6 @@ public final class Main {
                 } else {
                     a = _input.next();
                 }
-
             }
         } else {
             a = _input.next();
@@ -142,7 +138,6 @@ public final class Main {
         Permutation forplug = new Permutation(cycles, _alphabet);
         M.setPlugboard(forplug);
         return a;
-
     }
 
     /**
