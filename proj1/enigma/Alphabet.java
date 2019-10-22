@@ -17,6 +17,8 @@ class Alphabet {
         for (int i = 0; i < characters.length(); i++) {
             if (!noduplicates.contains(characters.charAt(i))) {
                 noduplicates.add(characters.charAt(i));
+            } else {
+                throw new EnigmaException("Cannot have duplicates");
             }
         }
         this.chars = noduplicates;

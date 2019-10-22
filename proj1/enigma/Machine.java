@@ -124,15 +124,17 @@ class Machine {
             Rotor X = usedrotors.get(j);
             if (j == usedrotors.size() - 1) {
                 moving.add(X);
+                continue;
             } else if (!usedrotors.get(j - 1).rotates()) {
                 if (usedrotors.get(j + 1).atNotch()) {
                     moving.add(X);
+                    continue;
                 } else {
                     continue;
                 }
-            }
-            else if (usedrotors.get(j + 1).atNotch() || X.atNotch()) {
+            } else if (usedrotors.get(j + 1).atNotch() || X.atNotch()) {
                 moving.add(X);
+                continue;
             }
         }
 
