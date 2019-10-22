@@ -93,6 +93,11 @@ class Machine {
         if (usedrotors.size() != rotors.length) {
             throw new EnigmaException("Bad rotor description");
         }
+        for (int i = 0; i < usedrotors.size(); i++) {
+            if (usedrotors.get(i).reflecting() && i != 0) {
+                throw new EnigmaException("Reflector in wrong position");
+            }
+        }
     }
 
 
