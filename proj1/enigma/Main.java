@@ -87,9 +87,18 @@ public final class Main {
         Scanner sett = new Scanner(settline);
         while (counter < M.numRotors()) {
             if (!settline.isEmpty()) {
-                nurm = sett.next();
+                try {
+                    nurm = sett.next();
+                } catch (NoSuchElementException excp){
+                    throw new EnigmaException("Bad configuration");
+                }
+
             } else {
-                nurm = _input.next();
+                try {
+                    nurm = _input.next();
+                } catch (NoSuchElementException excp){
+                    throw new EnigmaException("Bad configuration");
+                }
             }
             if (nurm.contains("*")) {
                 continue;
