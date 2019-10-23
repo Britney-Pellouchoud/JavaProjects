@@ -113,7 +113,7 @@ public final class Main {
             setUp(M, _input.next());
         }
         String cycles = "";
-        String a;
+        String a = "";
         if (!settline.isEmpty()) {
             if (!sett.hasNext()) {
                 a = _input.next();
@@ -129,10 +129,15 @@ public final class Main {
                 }
             }
         } else {
-            a = _input.next();
-            while (a.contains("(")) {
-                cycles += a;
+            if (_input.hasNext()) {
                 a = _input.next();
+                if (a.contains("*")) {
+                    return a;
+                }
+                while (a.contains("(")) {
+                    cycles += a;
+                    a = _input.next();
+                }
             }
         }
         Permutation forplug = new Permutation(cycles, _alphabet);
@@ -151,9 +156,16 @@ public final class Main {
     private void process() {
         Machine M = readConfig();
         String l = setup2(M);
+        if (l.contains("*")) {
+            printMessageLine("");
+            return;
+        }
         String msge = l;
         if (_input.hasNextLine()) {
             l = _input.nextLine();
+            if (l.isEmpty()) {
+                printMessageLine("");
+            }
             msge += l;
         }
 
