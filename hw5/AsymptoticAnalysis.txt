@@ -1,0 +1,18 @@
+1. Simple: Quadratic (since that will grow faster than the others.
+   Tight: still quadratic, since regardless of input size runtime should be quadratic
+
+2. Simple: 48logx, since the property of logs
+   Tight: constant, since log of 0 is 1
+
+3. Simple: J, since it would be 2 * sum j
+   Tight: N, since it depends on N.
+
+4. Worst case: N + j; j will never reloop, since it was set outside of the loop
+
+5. Worst case: 2 * logarithmic since each time it gets cut in half (n/2)
+
+6. As logarithmic functions of x, as x approaches infinity, also approach infinity, regardless of the base.
+
+7. As x approaches infinity, so does the polynomial function (since all coefficients are positive).
+
+8. F(n) will always be bound by its function, and will be tightly bound by that function.

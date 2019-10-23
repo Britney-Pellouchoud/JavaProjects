@@ -70,7 +70,15 @@ public class CompactLinkedList<T> extends AbstractSequentialList<T> {
 
         @Override
         public T next() {
-            return null; // REPLACE WITH SOLUTION
+            if (_next < 0) {
+                throw new IllegalArgumentException("Wrong index");
+            }
+            T a = _data[_next];
+            int prevNext = _next;
+            _next = _link[_next]^_prev;
+            _prev = prevNext;
+            return a;
+            // REPLACE WITH SOLUTION
         }
 
         @Override
@@ -85,7 +93,15 @@ public class CompactLinkedList<T> extends AbstractSequentialList<T> {
 
         @Override
         public T previous() {
-            return null; // REPLACE WITH SOLUTION
+            if (_prev < 0) {
+                throw new IllegalArgumentException("Wrong index");
+            }
+            T a = _data[_prev];
+            int prevPrev = _prev;
+            _prev = _link[_prev]^_next;
+            _next = prevPrev;
+            return a;
+            // REPLACE WITH SOLUTION
         }
 
         @Override
@@ -107,6 +123,31 @@ public class CompactLinkedList<T> extends AbstractSequentialList<T> {
              * no longer in use (for example, that were being used, but were
              * then removed).  For this exercise, you needn't bother. */
             // FILL IN
+            if (_size >= _data.length) {
+                throw new IllegalArgumentException("Incorrect sizing.");
+            }
+            _link[_size] = _next ^ _prev;
+            _data[_size] = obj;
+
+
+
+            //modify previous, otherwise indexing is thrown off
+            if (_prev == -1) {
+                _first = size();
+            } else if (_prev > -1) {
+                _link[_prev] ^= _next ^ _size;
+            }
+
+            //modify next
+            if (_next < 0) {
+                _last = _size;
+            } else if (_next >= 0) {
+                _link[_next] ^= _prev^_size;
+            }
+
+            _prev = _size;
+            _size += 1;
+
         }
 
 
