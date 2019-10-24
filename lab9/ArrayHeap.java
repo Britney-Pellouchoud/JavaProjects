@@ -4,6 +4,7 @@ import java.util.ArrayList;
   * store Comparable objects. Instead, it can store any type of object
   * (represented by type T) and an associated priority value.
   * @author CS 61BL Staff*/
+
 public class ArrayHeap<T> {
 
     /* DO NOT CHANGE THESE METHODS. */
@@ -119,54 +120,74 @@ public class ArrayHeap<T> {
 
     /* Returns the index of the left child of the node at i. */
     private int getLeftOf(int i) {
-        //TODO
-        return 0;
+        int j = i * 2;
+        return j;
     }
 
     /* Returns the index of the right child of the node at i. */
     private int getRightOf(int i) {
-        //TODO
-        return 0;
+        int j = i * 2 + 1;
+        return j;
     }
 
     /* Returns the index of the node that is the parent of the node at i. */
     private int getParentOf(int i) {
-        //TODO
-        return 0;
+        int j = i/2;
+        return j;
     }
 
     /* Adds the given node as a left child of the node at the given index. */
     private void setLeft(int index, Node n) {
-        //TODO
+        int lefthelper = getLeftOf(index);
+        setNode(lefthelper, n);
     }
 
     /* Adds the given node as the right child of the node at the given index. */
     private void setRight(int index, Node n) {
-        //TODO
+        int righthelper = getRightOf(index);
+        setNode(righthelper, n);
     }
 
     /** Returns the index of the node with smaller priority. Precondition: not
       * both nodes are null. */
     private int min(int index1, int index2) {
-        //TODO
-        return 0;
+        Node a = getNode(index1);
+        assert(a != null);
+        double aprior = a.priority;
+        Node b = getNode(index2);
+        assert(b != null);
+        double bprior = b.priority;
+        if (aprior < bprior) {
+            return (int) aprior;
+        }
+        return (int) bprior;
+
     }
 
     /* Returns the Node with the smallest priority value, but does not remove it
      * from the heap. */
     public Node peek() {
-        //TODO
-        return null;
+        int min = Integer.MAX_VALUE;
+        Node lowest_prior = null;
+        for (Node n : contents) {
+            if (n.priority < min) {
+                min = (int) n.priority;
+                lowest_prior = n;
+            }
+        }
+        return lowest_prior;
     }
 
     /* Bubbles up the node currently at the given index. */
     private void bubbleUp(int index) {
-        //TODO
+        while (min(index, getParentOf(index)) == index && index > 1) {
+            swap(index, getParentOf(index));
+            index = getParentOf(index);
+        }
     }
 
     /* Bubbles down the node currently at the given index. */
     private void bubbleDown(int index) {
-        //TODO
     }
 
     /* Inserts an item with the given priority value. Same as enqueue, or offer. */
