@@ -127,9 +127,42 @@ public class BSTStringSet implements StringSet, Iterable<String> {
     }
 
     // FIXME: UNCOMMENT THE NEXT LINE FOR PART B
-    // @Override
+    //@Override
     public Iterator<String> iterator(String low, String high) {
-        return null;  // FIXME: PART B
+        return new LimitedIterator(low, high);
+    }
+
+    private class LimitedIterator implements Iterator<String> {
+        private Node current;
+        private Stack<Node> position;
+        private String lowerstring;
+        private String higherstring;
+
+        public LimitedIterator(String lower, String higher) {
+            this.position = new Stack<Node>();
+            this.lowerstring = lower;
+            this.higherstring = higher;
+            current = _root;
+        }
+
+        public boolean hasNext() {
+            if (position.isEmpty()) {
+                return false;
+            } else if (current.s.compareTo(higherstring) > 0 && current == null) {
+                return false;
+            }
+            return true;
+        }
+
+        public String next() {
+            while (current.s.compareTo(lowerstring) > -1 && current != null) {
+                position.push(current);
+                current = current.left;
+            }
+            Node x = position.pop();
+            current = x.right;
+            return current.s;
+        }
     }
 
 
