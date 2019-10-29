@@ -7,10 +7,8 @@ import java.util.List;
  * @ Britney Pellouchoud
  */
 public class BSTStringSetTest  {
-    // FIXME: Add your own tests for your BST StringSet
-
     @Test
-    public void testNothing() {
-        // FIXME: Delete this function and add your own tests
+    public static void dolater(){
+
     }
 }
