@@ -4,7 +4,7 @@ import java.util.List;
 
 /**
  * Test of a BST-based String Set.
- * @author
+ * @ Britney Pellouchoud
  */
 public class BSTStringSetTest  {
     // FIXME: Add your own tests for your BST StringSet

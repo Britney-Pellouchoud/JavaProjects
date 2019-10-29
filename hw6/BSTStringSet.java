@@ -16,17 +16,48 @@ public class BSTStringSet implements StringSet, Iterable<String> {
 
     @Override
     public void put(String s) {
-        // FIXME: PART A
+        _root = puthelp(s, _root);
+    }
+
+    private Node puthelp(String s, Node r) {
+        if (r == null) {
+            Node newnode = new Node(s);
+            return newnode;
+        }
+
+        boolean sameval = s.equals(r.s);
+
+        if (sameval) {
+            r.right = puthelp(s, r.right);
+        } else {
+            r.left = puthelp(s, r.left);
+        }
+        return r;
     }
 
     @Override
     public boolean contains(String s) {
-        return false; // FIXME: PART A
+        return doesitcontain(s, _root); // FIXME: PART A
+    }
+
+    private boolean doesitcontain(String s, Node r) {
+        if (r == null) {
+            return false;
+        } if (r.s.equals(s)) {
+            return true;
+        } int comparison = s.compareTo(r.s);
+        if (comparison > 0) {
+            return doesitcontain(s, r.left);
+        } else {
+            return doesitcontain(s, r.right);
+        }
+
     }
 
     @Override
     public List<String> asList() {
-        return null; // FIXME: PART A
+        return new ArrayList<String>();
+         // FIXME: PART A
     }
 
 
