@@ -73,17 +73,33 @@ public final class Main {
         }
     }
 
+    /**
+     * To track the location.
+     */
+    private String nurm;
+
+    /**
+     * For inside the while loop.
+     */
+    private int counter = 0;
+
+    /**
+     * To keep track of input.
+     */
+    private String a = "";
+
+
+
     /** Configure an Enigma machine from the contents of configuration
      *  file _config and apply it to the messages in _input, sending the
      *  results to _output.
      *  @return String
      *  @param M*/
 
+
     private String setup2(Machine M) {
         M.usedrotors = new ArrayList<Rotor>();
         String[] used = new String[M.numRotors()];
-        int counter = 0;
-        String nurm;
         Scanner sett = new Scanner(settline);
         while (counter < M.numRotors()) {
             if (!settline.isEmpty()) {
@@ -105,7 +121,6 @@ public final class Main {
             used[counter] = nurm;
             counter += 1;
         }
-
         M.insertRotors(used);
         if (!settline.isEmpty()) {
             setUp(M, sett.next());
@@ -113,7 +128,6 @@ public final class Main {
             setUp(M, _input.next());
         }
         String cycles = "";
-        String a = "";
         if (!settline.isEmpty()) {
             if (!sett.hasNext()) {
                 a = _input.next();
@@ -140,9 +154,18 @@ public final class Main {
                 }
             }
         }
+        setplugboard(M, cycles);
+        return a;
+    }
+
+    /**
+     * To help set the plugboard.
+     * @param M is a machine
+     * @param cycles is a String
+     */
+    private void setplugboard(Machine M, String cycles) {
         Permutation forplug = new Permutation(cycles, _alphabet);
         M.setPlugboard(forplug);
-        return a;
     }
 
     /**
@@ -275,6 +298,9 @@ public final class Main {
     /** Set M according to the specification given on SETTINGS,
      *  which must have the format specified in the assignment. */
     private static void setUp(Machine M, String settings) {
+        if (settings.length() != M.numPawls()) {
+            throw new EnigmaException("Wrong number of arguments");
+        }
         M.setRotors(settings);
     }
 

@@ -114,7 +114,7 @@ class Machine {
         }
         for (int i = 0; i < setting.length(); i++) {
             if (!_alphabet.contains(setting.charAt(i))) {
-                throw new EnigmaException("Character does not exist in alphabet");
+                throw new EnigmaException("Char doesn't exist in alphabet");
             }
         }
         for (int i = 0; i < setting.length(); i++) {
