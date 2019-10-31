@@ -9,6 +9,20 @@ import java.util.Stack;
  * @author
  */
 public class BSTStringSet implements StringSet, Iterable<String> {
+    /** Represents a single Node of the tree. */
+    private static class Node {
+        /** String stored in this Node. */
+        private String s;
+        /** Left child of this Node. */
+        private Node left;
+        /** Right child of this Node. */
+        private Node right;
+
+        /** Creates a Node containing SP. */
+        public Node(String sp) {
+            s = sp;
+        }
+    }
     /** Creates a new empty set. */
     public BSTStringSet() {
         _root = null;
@@ -25,9 +39,9 @@ public class BSTStringSet implements StringSet, Iterable<String> {
             return newnode;
         }
 
-        boolean sameval = s.equals(r.s);
+        int sameval = s.compareTo(r.s);
 
-        if (sameval) {
+        if (sameval > 0) {
             r.right = puthelp(s, r.right);
         } else {
             r.left = puthelp(s, r.left);
@@ -47,35 +61,23 @@ public class BSTStringSet implements StringSet, Iterable<String> {
             return true;
         } int comparison = s.compareTo(r.s);
         if (comparison > 0) {
-            return doesitcontain(s, r.left);
-        } else {
             return doesitcontain(s, r.right);
+        } else if (comparison < 0) {
+            return doesitcontain(s, r.left);
         }
+        return true;
+
 
     }
 
     @Override
     public List<String> asList() {
-        System.out.println("This returns the array list as a string.");
         return new ArrayList<String>();
          // FIXME: PART A
     }
 
 
-    /** Represents a single Node of the tree. */
-    private static class Node {
-        /** String stored in this Node. */
-        private String s;
-        /** Left child of this Node. */
-        private Node left;
-        /** Right child of this Node. */
-        private Node right;
 
-        /** Creates a Node containing SP. */
-        Node(String sp) {
-            s = sp;
-        }
-    }
 
     /** An iterator over BSTs. */
     private static class BSTIterator implements Iterator<String> {
