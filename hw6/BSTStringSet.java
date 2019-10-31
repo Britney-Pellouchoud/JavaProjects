@@ -56,6 +56,7 @@ public class BSTStringSet implements StringSet, Iterable<String> {
 
     @Override
     public List<String> asList() {
+        System.out.println("This returns the array list as a string.");
         return new ArrayList<String>();
          // FIXME: PART A
     }
