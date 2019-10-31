@@ -23,6 +23,7 @@ public class BSTStringSet implements StringSet, Iterable<String> {
             s = sp;
         }
     }
+
     /** Creates a new empty set. */
     public BSTStringSet() {
         _root = null;
@@ -72,8 +73,11 @@ public class BSTStringSet implements StringSet, Iterable<String> {
 
     @Override
     public List<String> asList() {
-        return new ArrayList<String>();
-         // FIXME: PART A
+        ArrayList<String> answer = new ArrayList<>();
+        for (String key : this) {
+            answer.add(key);
+        }
+        return answer;
     }
 
 
@@ -132,16 +136,16 @@ public class BSTStringSet implements StringSet, Iterable<String> {
     // FIXME: UNCOMMENT THE NEXT LINE FOR PART B
     //@Override
     public Iterator<String> iterator(String low, String high) {
-        return new LimitedIterator(low, high);
+        return new BoundedIterator(low, high);
     }
 
-    private class LimitedIterator implements Iterator<String> {
+    private class BoundedIterator implements Iterator<String> {
         private Node current;
         private Stack<Node> position;
         private String lowerstring;
         private String higherstring;
 
-        public LimitedIterator(String lower, String higher) {
+        public BoundedIterator(String lower, String higher) {
             this.position = new Stack<Node>();
             this.lowerstring = lower;
             this.higherstring = higher;
