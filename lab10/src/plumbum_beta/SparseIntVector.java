@@ -13,7 +13,7 @@ import java.util.ArrayList;
  */
 
 public class SparseIntVector {
-	private List<Entry> entries;
+	private List<Entry> entries = new ArrayList<Entry>();
 	private int size;
 
 	public SparseIntVector(int... values) {
@@ -55,9 +55,13 @@ public class SparseIntVector {
 		int value = 0;
 		int indexA = 0;
 		int indexB = 0;
-		while (indexA <= a.size() && indexB <= b.size()) {
+
+		while (indexA < a.entries.size() && indexB < b.entries.size()) {
+
 			Entry entryA = a.entries.get(indexA);
+			System.out.println("ENTRY A " + entryA.value);
 			Entry entryB = b.entries.get(indexB);
+			System.out.println("ENTRY B " + entryB.value);
 
 			if (entryA.index == entryB.index) {
 				value += entryA.value * entryB.value;

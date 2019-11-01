@@ -15,16 +15,21 @@ public class SortedListHelper {
     /**
      * Inserts `item` into the sorted list `list`, maintaining its sorted...ness.
      */
+
+
+
     public static <T extends Comparable<T>> void insertIntoSortedList(List<T> list, T item) {
         boolean inserted = false;
-
+        //if (list.size() > 0) {
+        //    System.out.println("COMPARE " + item + " With " + list.get(0) + "is " +item.compareTo(list.get(0)));
+        //}
         for (int i = 0; i < list.size(); i++) {
             if (item.compareTo(list.get(i)) < 0) {
                 list.add(i, item);
                 inserted = true;
+                break;
             }
         }
-
         if (!inserted) {
             list.add(item);
         }

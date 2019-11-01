@@ -5,6 +5,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.SortedMap;
 
 import static org.junit.Assert.*;
 
@@ -16,7 +17,7 @@ import static org.junit.Assert.*;
  */
 public class SortedListTester {
 
-	@Test
+	@Test(timeout = 1000)
 	public void testIsListSorted() {
 		List<Integer> sortedList = Arrays.asList(-40, 1, 5, 7, 50, 494, 481293);
 		List<Integer> unsortedList = Arrays.asList(48, 29, 491, 5, 2, -239);
@@ -25,7 +26,7 @@ public class SortedListTester {
 		assertFalse(SortedListHelper.isListSorted(unsortedList));
 	}
 
-	@Test
+	@Test (timeout = 1000)
 	public void testInsertIntoSortedList() {
 		// TODO Allan please add more tests
 
@@ -41,6 +42,10 @@ public class SortedListTester {
 
 		SortedListHelper.insertIntoSortedList(list, 60);
 		assertEquals(3, list.size());
+		assertTrue(SortedListHelper.isListSorted(list));
+
+		SortedListHelper.insertIntoSortedList(list, -2);
+		assertEquals(4, list.size());
 		assertTrue(SortedListHelper.isListSorted(list));
 	}
 }
