@@ -1,8 +1,6 @@
 package tablut;
 
-import java.util.Formatter;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 import static tablut.Piece.*;
 import static tablut.Square.*;
@@ -10,7 +8,7 @@ import static tablut.Move.mv;
 
 
 /** The state of a Tablut Game.
- *  @author
+ *  @BritneyPellouchoud
  */
 class Board {
 
@@ -38,6 +36,10 @@ class Board {
         sq(4, 6), sq(4, 2), sq(2, 4), sq(6, 4)
     };
 
+    static final HashMap<Integer, Piece> allPieces = new HashMap<>();
+
+
+
     /** Initializes a game board with SIZE squares on a side in the
      *  initial position. */
     Board() {
@@ -55,16 +57,34 @@ class Board {
             return;
         }
         init();
+        Iterator it = model.allPieces.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) (it.next());
+            this.allPieces.put((int) pair.getKey(), (Piece) pair.getValue());
+        }
+
         // FIXME
     }
 
     /** Clears the board to the initial position. */
     void init() {
+        allPieces.clear();
+        for (Square s : INITIAL_ATTACKERS) {
+            Piece black = BLACK;
+            allPieces.put(s.index(), black);
+        }
+        for (Square s :INITIAL_DEFENDERS) {
+            Piece white = WHITE;
+            allPieces.put(s.index(), white);
+        }
+        allPieces.put(THRONE.index(), KING);
         // FIXME
     }
 
     /** Set the move limit to LIM.  It is an error if 2*LIM <= moveCount(). */
     void setMoveLimit(int n) {
+        assert 2 * n <= moveCount() : "CANNOT HAVE SET THIS MOVE LIMIT.";
+        _moveLimit = n;
         // FIXME
     }
 
@@ -87,6 +107,7 @@ class Board {
     /** Record current position and set winner() next mover if the current
      *  position is a repeat. */
     private void checkRepeated() {
+
         // FIXME
     }
 
@@ -98,7 +119,16 @@ class Board {
 
     /** Return location of the king. */
     Square kingPosition() {
-        return null; // FIXME
+        int ind = -1;
+        Iterator it = allPieces.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            if (pair.getValue().toString() == "K") {
+                ind = (int) pair.getKey();
+            }
+        }
+        assert ind != -1 : "KING NOT FOUND";
+        return Square.sq(ind); // FIXME
     }
 
     /** Return the contents the square at S. */
@@ -109,7 +139,11 @@ class Board {
     /** Return the contents of the square at (COL, ROW), where
      *  0 <= COL, ROW <= 9. */
     final Piece get(int col, int row) {
-        return null; // FIXME
+        assert col >=0 && row < 9 : "OUT OF BOUNDS FOR THIS BOARD";
+        Square s = sq(col, row);
+        int ind = s.index();
+        return this.allPieces.get(ind);
+        // FIXME
     }
 
     /** Return the contents of the square at COL ROW. */
@@ -119,11 +153,15 @@ class Board {
 
     /** Set square S to P. */
     final void put(Piece p, Square s) {
+        int i = s.index();
+        this.allPieces.put(i, p);
         // FIXME
     }
 
     /** Set square S to P and record for undoing. */
     final void revPut(Piece p, Square s) {
+        int i = s.index();
+        this.allPieces.put(i, p);
         // FIXME
     }
 
@@ -136,6 +174,9 @@ class Board {
      *  board.  For this to be true, FROM-TO must be a rook move and the
      *  squares along it, other than FROM, must be empty. */
     boolean isUnblockedMove(Square from, Square to) {
+        assert from.isRookMove(to) : "CANNOT MAKE THIS MOVE, NOT A ROOK MOVE";
+
+
         return false; // FIXME
     }
 
@@ -235,10 +276,24 @@ class Board {
         return out.toString();
     }
 
+    //reset to private after done testing
     /** Return the locations of all pieces on SIDE. */
-    private HashSet<Square> pieceLocations(Piece side) {
+    public HashSet<Square> pieceLocations(Piece side) {
         assert side != EMPTY;
-        return null; // FIXME
+        assert side == BLACK || side == WHITE || side == KING: "There is no side with this color";
+        HashSet<Square> locs = new HashSet<Square>();
+        Iterator it = allPieces.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry Pair = (Map.Entry) it.next();
+            if (Pair.getValue() == side) {
+                Square s = Square.sq((int) Pair.getKey());
+                locs.add(s);
+            }
+        }
+        if (side == WHITE) {
+            locs.add(this.kingPosition());
+        }
+        return locs; // FIXME
     }
 
     /** Return the contents of _board in the order of SQUARE_LIST as a sequence
@@ -254,13 +309,22 @@ class Board {
 
     /** Piece whose turn it is (WHITE or BLACK). */
     private Piece _turn;
+
     /** Cached value of winner on this board, or EMPTY if it has not been
      *  computed. */
     private Piece _winner;
+
     /** Number of (still undone) moves since initial position. */
     private int _moveCount;
+
     /** True when current board is a repeated position (ending the game). */
     private boolean _repeated;
+
+    private int _moveLimit;
+
+    int movelimit() {
+        return _moveLimit;
+    }
 
     // FIXME: Other state?
 
