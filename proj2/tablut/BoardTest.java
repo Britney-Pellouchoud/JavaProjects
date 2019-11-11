@@ -15,52 +15,66 @@ public class BoardTest {
     @Test
     public void inittest() {
         Board testboard = new Board();
-        assert testboard.allPieces.get(03).toString() == "B";
+        assert testboard.getallPieces().get(03).toString() == "B";
     }
 
     @Test
     public void copytest() {
         Board testboard = new Board();
         Board modelboard = new Board();
-        Piece help = WHITE;
+        Piece k = KING;
+        modelboard.setMoveLimit(5);
+        modelboard.makeMove(Square.sq(3,0), Square.sq(2,0));
+        modelboard.makeMove(modelboard.NTHRONE, Square.sq(5,5));
+        modelboard.makeMove(Square.sq(5, 0), Square.sq(6,0));
+        modelboard.makeMove(modelboard.THRONE, modelboard.NTHRONE);
+        assert modelboard.get(modelboard.NTHRONE) == KING;
+        assert modelboard.get(modelboard.THRONE) == EMPTY;
         testboard.copy(modelboard);
-
-        System.out.println(modelboard.allPieces.get(03));
-        System.out.println(testboard.allPieces.get(80));
-
-        Iterator it = testboard.allPieces.entrySet().iterator();
-        Iterator it2 = modelboard.allPieces.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry) (it.next());
-            Map.Entry pair2 = (Map.Entry) (it2.next());
-            assert pair.getKey() == pair2.getKey();
-            assert pair.getValue() == pair2.getValue();
-        }
+        assert testboard.get(testboard.NTHRONE) == KING;
+        assert testboard.get(testboard.THRONE) == EMPTY;
     }
 
 
     @Test
     public void kingpositiontest() {
         Board testboard = new Board();
-        assert Board.THRONE == testboard.kingPosition();
+        assert testboard.THRONE == testboard.kingPosition();
     }
 
     @Test
-    public void setMoveLimittest() {
-        Board testboard = new Board();
-        testboard.setMoveLimit(10);
-        assert testboard.movelimit() == 10;
+    public void legalMovestest() {
+        Board test = new Board();
+        System.out.println(test.legalMoves(WHITE));
     }
 
     @Test
-    public void pieceLocationstest() {
+    public void gettest() {
         Board testboard = new Board();
-        Piece testblack = BLACK;
-        HashSet a = testboard.pieceLocations(testblack);
-        assert(a.size() == 16);
-        Piece testwhite = WHITE;
-        HashSet b = testboard.pieceLocations(testwhite);
-        assert(b.size() == 9);
+        Piece k = KING;
+        assert testboard.get(4,4).equals(k);
+        assert testboard.get('e', '5').equals(k);
     }
+
+    @Test
+    public void puttest() {
+        Board testboard = new Board();
+        Piece k = KING;
+        testboard.put(k, testboard.NTHRONE);
+        System.out.println(testboard.get(testboard.NTHRONE));
+    }
+
+    @Test
+    public void unblockedtest() {
+        Board testboard = new Board();
+        Square s1 = Square.sq(0, 3);
+        Square s2 = Square.sq(2, 3);
+        assert testboard.isUnblockedMove(s1, s2) == true;
+        Square a1 = Square.sq(0,4);
+        Square a2 = Square.sq(2, 4);
+        assert testboard.isUnblockedMove(a1, a2) == false;
+    }
+
+
 
 }

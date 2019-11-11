@@ -2,6 +2,7 @@ package tablut;
 
 import java.util.*;
 
+import static tablut.Move.ROOK_MOVES;
 import static tablut.Piece.*;
 import static tablut.Square.*;
 import static tablut.Move.mv;
@@ -36,8 +37,7 @@ class Board {
         sq(4, 6), sq(4, 2), sq(2, 4), sq(6, 4)
     };
 
-    static final HashMap<Integer, Piece> allPieces = new HashMap<>();
-
+    private HashMap<Integer, Piece> allPieces = new HashMap<>();
 
 
     /** Initializes a game board with SIZE squares on a side in the
@@ -51,16 +51,26 @@ class Board {
         copy(model);
     }
 
+
+    HashMap<Integer, Piece> getallPieces() {
+        return this.allPieces;
+    }
+
     /** Copies MODEL into me. */
+
     void copy(Board model) {
         if (model == this) {
             return;
         }
-        init();
-        Iterator it = model.allPieces.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry) (it.next());
-            this.allPieces.put((int) pair.getKey(), (Piece) pair.getValue());
+        //Something is wrong with this.
+        HashMap<Piece, Integer> reverse = new HashMap<>();
+        for (int index : model.allPieces.keySet()) {
+            Piece p = model.allPieces.get(index);
+            if (reverse.get(p) != null) {
+                this.allPieces.remove(index);
+            }
+            this.allPieces.put(index, p);
+            reverse.put(p, index);
         }
 
         // FIXME
@@ -68,22 +78,29 @@ class Board {
 
     /** Clears the board to the initial position. */
     void init() {
+        _turn = BLACK;
+        final HashMap<Integer, Piece> allPieces = new HashMap<>();
         allPieces.clear();
         for (Square s : INITIAL_ATTACKERS) {
             Piece black = BLACK;
-            allPieces.put(s.index(), black);
+            this.allPieces.put(s.index(), black);
         }
         for (Square s :INITIAL_DEFENDERS) {
             Piece white = WHITE;
-            allPieces.put(s.index(), white);
+            this.allPieces.put(s.index(), white);
         }
-        allPieces.put(THRONE.index(), KING);
+        this.allPieces.put(THRONE.index(), KING);
+        for (int i = 0; i <= 80; i++) {
+            if (this.allPieces.get(i) == null) {
+                this.allPieces.put(i, EMPTY);
+            }
+        }
         // FIXME
     }
 
     /** Set the move limit to LIM.  It is an error if 2*LIM <= moveCount(). */
     void setMoveLimit(int n) {
-        assert 2 * n <= moveCount() : "CANNOT HAVE SET THIS MOVE LIMIT.";
+        //assert 2 * n <= moveCount() : "CANNOT HAVE SET THIS MOVE LIMIT.";
         _moveLimit = n;
         // FIXME
     }
@@ -107,14 +124,20 @@ class Board {
     /** Record current position and set winner() next mover if the current
      *  position is a repeat. */
     private void checkRepeated() {
-
+        if (positions.contains(allPieces)) {
+            if (_turn == WHITE) {
+                _winner = BLACK;
+            } else {
+                _winner = WHITE;
+            }
+        }
         // FIXME
     }
 
     /** Return the number of moves since the initial position that have not been
      *  undone. */
     int moveCount() {
-        return _moveCount;
+        return moves.size();
     }
 
     /** Return location of the king. */
@@ -123,7 +146,7 @@ class Board {
         Iterator it = allPieces.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
-            if (pair.getValue().toString() == "K") {
+            if (pair.getValue().toString().equals("K")) {
                 ind = (int) pair.getKey();
             }
         }
@@ -139,10 +162,10 @@ class Board {
     /** Return the contents of the square at (COL, ROW), where
      *  0 <= COL, ROW <= 9. */
     final Piece get(int col, int row) {
-        assert col >=0 && row < 9 : "OUT OF BOUNDS FOR THIS BOARD";
+        assert col >= 0 && col < 9 && row >= 0 && row < 9 : "OUT OF BOUNDS FOR THIS BOARD";
         Square s = sq(col, row);
         int ind = s.index();
-        return this.allPieces.get(ind);
+        return allPieces.get(ind);
         // FIXME
     }
 
@@ -175,9 +198,23 @@ class Board {
      *  squares along it, other than FROM, must be empty. */
     boolean isUnblockedMove(Square from, Square to) {
         assert from.isRookMove(to) : "CANNOT MAKE THIS MOVE, NOT A ROOK MOVE";
+        int i = from.index();
+        int dir = from.direction(to);
+        for (Square s : ROOK_SQUARES[i][dir]) {
+            int ind = s.index();
+            Piece p = this.get(s.col(), s.row());
+            if (s.equals(to)) {
+                if (allPieces.get(ind) != EMPTY) {
+                    return false;
+                }
+                break;
+            }
+            if (!p.equals(EMPTY)) {
+                return false;
+            }
+        }
 
-
-        return false; // FIXME
+        return true; // FIXME
     }
 
     /** Return true iff FROM is a valid starting square for a move. */
@@ -187,7 +224,18 @@ class Board {
 
     /** Return true iff FROM-TO is a valid move. */
     boolean isLegal(Square from, Square to) {
-        return false; // FIXME
+        if (!isUnblockedMove(from, to)) {
+            return false;
+        } if (!isLegal(from)) {
+            return false;
+        } if (!from.isRookMove(to)) {
+            return false;
+        } if (this.allPieces.get(from.index()) != KING && to.equals(THRONE)) {
+            return false;
+        } if (moves.size() >= movelimit()) {
+            return false;
+        }
+        return true; // FIXME
     }
 
     /** Return true iff MOVE is a legal move in the current
@@ -199,6 +247,16 @@ class Board {
     /** Move FROM-TO, assuming this is a legal move. */
     void makeMove(Square from, Square to) {
         assert isLegal(from, to);
+        Piece p = allPieces.get(from.index());
+        allPieces.put(from.index(), EMPTY);
+        allPieces.put(to.index(), p);
+        if (_turn == WHITE) {
+            _turn = BLACK;
+        } else {
+            _turn = WHITE;
+        }
+        moves.add(Move.mv(from, to));
+        recordpositions();
         // FIXME
     }
 
@@ -210,8 +268,34 @@ class Board {
     /** Capture the piece between SQ0 and SQ2, assuming a piece just moved to
      *  SQ0 and the necessary conditions are satisfied. */
     private void capture(Square sq0, Square sq2) {
+        if (iscapturable(sq0, sq2)) {
+
+        }
         // FIXME
     }
+
+    /*
+    Hostile when
+    - contains an enemy piece
+    - if it is the throne square and empty
+    - Hostile to white when 3/4 squares surrounding is black
+    - King is captured when like other pieces except when on throne(s)
+        - must be surrounded all four places by black pieces
+     */
+    boolean iscapturable(Square sq0, Square sq1) {
+        int sq0_index = sq0.index();
+        int sq1_index = sq1.index();
+        Piece p0 = allPieces.get(sq0_index);
+        Piece p1 = allPieces.get(sq1_index);
+        if (p0.equals(p1)) {
+            return true;
+        } if (sq1.equals(THRONE) && p1.equals(EMPTY)){
+            return true;
+        }
+        return false;
+    }
+
+
 
     /** Undo one move.  Has no effect on the initial board. */
     void undo() {
@@ -225,23 +309,54 @@ class Board {
      *  unless it is a repeated position or we are at the first move. */
     private void undoPosition() {
         // FIXME
+        int lastmove = moves.size();
+        if (lastmove == 0) {
+            return;
+        }
+        Move m = moves.get(lastmove - 1);
+        moves.remove(lastmove - 1);
+        if (positions.contains(allPieces)) {
+            _repeated = true;
+            moves.add(m);
+        }
         _repeated = false;
     }
 
     /** Clear the undo stack and board-position counts. Does not modify the
      *  current position or win status. */
+    //starting a new game from the current position
     void clearUndo() {
+        moves.clear();
         // FIXME
     }
 
     /** Return a new mutable list of all legal moves on the current board for
      *  SIDE (ignoring whose turn it is at the moment). */
     List<Move> legalMoves(Piece side) {
-        return null;  // FIXME
+        HashSet s = pieceLocations(side);
+        List<Move> _legalmoves = new ArrayList<>();
+        for (Object sq : s) {
+            Square a = (Square) sq;
+            int i = a.index();
+            for (int dir = 0; dir <=3; dir++) {
+                for (Square b : ((Square) sq).ROOK_SQUARES[i][dir]) {
+                    Move m = new Move(a, b);
+                    if (isUnblockedMove(a,b)) {
+                        _legalmoves.add(m);
+                    }
+                }
+            }
+
+        }
+        return _legalmoves;  // FIXME
     }
 
     /** Return true iff SIDE has a legal move. */
     boolean hasMove(Piece side) {
+        List legal = legalMoves(side);
+        if (legal.size() > 0) {
+            return true;
+        }
         return false; // FIXME
     }
 
@@ -278,10 +393,10 @@ class Board {
 
     //reset to private after done testing
     /** Return the locations of all pieces on SIDE. */
-    public HashSet<Square> pieceLocations(Piece side) {
+    private HashSet<Square> pieceLocations(Piece side) {
         assert side != EMPTY;
         assert side == BLACK || side == WHITE || side == KING: "There is no side with this color";
-        HashSet<Square> locs = new HashSet<Square>();
+        HashSet<Square> locs = new HashSet<>();
         Iterator it = allPieces.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry Pair = (Map.Entry) it.next();
@@ -294,6 +409,14 @@ class Board {
             locs.add(this.kingPosition());
         }
         return locs; // FIXME
+    }
+
+    private void recordpositions() {
+        if (positions.contains(allPieces)){
+            _repeated = false;
+            return;
+        }
+        positions.add(allPieces);
     }
 
     /** Return the contents of _board in the order of SQUARE_LIST as a sequence
@@ -312,19 +435,28 @@ class Board {
 
     /** Cached value of winner on this board, or EMPTY if it has not been
      *  computed. */
-    private Piece _winner;
+    private Piece _winner = null;
 
     /** Number of (still undone) moves since initial position. */
-    private int _moveCount;
 
     /** True when current board is a repeated position (ending the game). */
     private boolean _repeated;
+
+    List<HashMap> positions = new ArrayList<>();
 
     private int _moveLimit;
 
     int movelimit() {
         return _moveLimit;
     }
+
+
+
+    List<Move> moves = new ArrayList<>();
+    private int _moveCount = moves.size();
+
+
+
 
     // FIXME: Other state?
 

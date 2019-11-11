@@ -90,7 +90,8 @@ final class Move {
     }
 
     /** Construct the Move FROM-TO. */
-    private Move(Square from, Square to) {
+    //private; I changed it, maybe fix later.
+    public Move(Square from, Square to) {
         _from = from; _to = to;
         if (_from.col() == _to.col()) {
             _str = String.format("%s-%c", from, (char) to.row() + '1');
