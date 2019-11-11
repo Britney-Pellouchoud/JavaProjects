@@ -33,6 +33,7 @@ public class BoardTest {
         testboard.copy(modelboard);
         assert testboard.get(testboard.NTHRONE) == KING;
         assert testboard.get(testboard.THRONE) == EMPTY;
+        System.out.println(testboard);
     }
 
 
@@ -76,5 +77,38 @@ public class BoardTest {
     }
 
 
+    @Test
+    public void kingmovestest() {
+        Board testboard = new Board();
+        Square h5 = Square.sq(7,4);
+        Square h6 = Square.sq(7,5);
+        testboard.makeMove(h5, h6);
+        Square e4 = Square.sq(4, 3);
+        Square b4 = Square.sq(1, 3);
+        testboard.makeMove(e4, b4);
+        Square h7 = Square.sq(7,6);
+        testboard.makeMove(h6, h7);
+        System.out.println(testboard);
+        Square e5 = Square.sq(4, 4);
+        testboard.makeMove(e5, e4);
+        System.out.println(testboard);
+        Square h8 = Square.sq(7,7);
+        testboard.makeMove(h7, h8);
+        Square h4 = Square.sq(7, 3);
+        testboard.makeMove(e4, h4);
+        System.out.println(testboard);
+    }
+
+    @Test
+    public void initialclear() {
+        Board testboard = new Board();
+        Square h5 = Square.sq(7,4);
+        Square h6 = Square.sq(7,5);
+        testboard.makeMove(h5, h6);
+        System.out.println(testboard);
+        testboard.init();
+        System.out.println(testboard);
+
+    }
 
 }

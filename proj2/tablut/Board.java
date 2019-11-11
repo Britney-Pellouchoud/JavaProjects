@@ -79,8 +79,7 @@ class Board {
     /** Clears the board to the initial position. */
     void init() {
         _turn = BLACK;
-        final HashMap<Integer, Piece> allPieces = new HashMap<>();
-        allPieces.clear();
+        this.allPieces = new HashMap<>();
         for (Square s : INITIAL_ATTACKERS) {
             Piece black = BLACK;
             this.allPieces.put(s.index(), black);
@@ -116,6 +115,8 @@ class Board {
         return _winner;
     }
 
+
+
     /** Returns true iff this is a win due to a repeated position. */
     boolean repeatedPosition() {
         return _repeated;
@@ -124,7 +125,7 @@ class Board {
     /** Record current position and set winner() next mover if the current
      *  position is a repeat. */
     private void checkRepeated() {
-        if (positions.contains(allPieces)) {
+        if (positions.contains(this.allPieces)) {
             if (_turn == WHITE) {
                 _winner = BLACK;
             } else {
@@ -143,7 +144,7 @@ class Board {
     /** Return location of the king. */
     Square kingPosition() {
         int ind = -1;
-        Iterator it = allPieces.entrySet().iterator();
+        Iterator it = this.allPieces.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
             if (pair.getValue().toString().equals("K")) {
@@ -165,7 +166,7 @@ class Board {
         assert col >= 0 && col < 9 && row >= 0 && row < 9 : "OUT OF BOUNDS FOR THIS BOARD";
         Square s = sq(col, row);
         int ind = s.index();
-        return allPieces.get(ind);
+        return this.allPieces.get(ind);
         // FIXME
     }
 
@@ -204,7 +205,7 @@ class Board {
             int ind = s.index();
             Piece p = this.get(s.col(), s.row());
             if (s.equals(to)) {
-                if (allPieces.get(ind) != EMPTY) {
+                if (this.allPieces.get(ind) != EMPTY) {
                     return false;
                 }
                 break;
@@ -232,9 +233,10 @@ class Board {
             return false;
         } if (this.allPieces.get(from.index()) != KING && to.equals(THRONE)) {
             return false;
-        } if (moves.size() >= movelimit()) {
-            return false;
         }
+        /* if (moves.size() >= movelimit()) {
+            return false;
+        }*/
         return true; // FIXME
     }
 
@@ -247,9 +249,9 @@ class Board {
     /** Move FROM-TO, assuming this is a legal move. */
     void makeMove(Square from, Square to) {
         assert isLegal(from, to);
-        Piece p = allPieces.get(from.index());
-        allPieces.put(from.index(), EMPTY);
-        allPieces.put(to.index(), p);
+        Piece p = this.allPieces.get(from.index());
+        this.allPieces.put(from.index(), EMPTY);
+        this.allPieces.put(to.index(), p);
         if (_turn == WHITE) {
             _turn = BLACK;
         } else {
@@ -285,8 +287,8 @@ class Board {
     boolean iscapturable(Square sq0, Square sq1) {
         int sq0_index = sq0.index();
         int sq1_index = sq1.index();
-        Piece p0 = allPieces.get(sq0_index);
-        Piece p1 = allPieces.get(sq1_index);
+        Piece p0 = this.allPieces.get(sq0_index);
+        Piece p1 = this.allPieces.get(sq1_index);
         if (p0.equals(p1)) {
             return true;
         } if (sq1.equals(THRONE) && p1.equals(EMPTY)){
@@ -315,7 +317,7 @@ class Board {
         }
         Move m = moves.get(lastmove - 1);
         moves.remove(lastmove - 1);
-        if (positions.contains(allPieces)) {
+        if (positions.contains(this.allPieces)) {
             _repeated = true;
             moves.add(m);
         }
@@ -397,7 +399,7 @@ class Board {
         assert side != EMPTY;
         assert side == BLACK || side == WHITE || side == KING: "There is no side with this color";
         HashSet<Square> locs = new HashSet<>();
-        Iterator it = allPieces.entrySet().iterator();
+        Iterator it = this.allPieces.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry Pair = (Map.Entry) it.next();
             if (Pair.getValue() == side) {
@@ -412,11 +414,11 @@ class Board {
     }
 
     private void recordpositions() {
-        if (positions.contains(allPieces)){
+        if (positions.contains(this.allPieces)){
             _repeated = false;
             return;
         }
-        positions.add(allPieces);
+        positions.add(this.allPieces);
     }
 
     /** Return the contents of _board in the order of SQUARE_LIST as a sequence
@@ -431,7 +433,8 @@ class Board {
     }
 
     /** Piece whose turn it is (WHITE or BLACK). */
-    private Piece _turn;
+    //private
+    public Piece _turn;
 
     /** Cached value of winner on this board, or EMPTY if it has not been
      *  computed. */
