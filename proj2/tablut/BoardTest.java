@@ -12,10 +12,31 @@ import static tablut.Piece.*;
 
 public class BoardTest {
 
+
+
+    @Test
+    public void capturetest() {
+        Board testboard = new Board();
+        Square s1 = Square.sq(8, 5);
+        Square s01 = Square.sq(6, 5);
+        testboard.makeMove(s1, s01);
+        Square d1 = Square.sq(3, 4);
+        Square d2 = Square.sq(3, 6);
+        testboard.makeMove(d1, d2);
+        Square e1 = Square.sq(8, 3);
+        Square e2 = Square.sq(6, 3);
+        testboard.makeMove(e1, e2);
+        System.out.println(testboard);
+        Square fix =  Square.sq(6, 4);
+        System.out.println(testboard);
+        assert testboard.getallPieces().get(fix.index()) == EMPTY;
+
+    }
+
     @Test
     public void inittest() {
         Board testboard = new Board();
-        assert testboard.getallPieces().get(03).toString() == "B";
+        assert testboard.getallPieces().get(03).toString().equals("B");
     }
 
     @Test
@@ -34,6 +55,25 @@ public class BoardTest {
         assert testboard.get(testboard.NTHRONE) == KING;
         assert testboard.get(testboard.THRONE) == EMPTY;
         System.out.println(testboard);
+    }
+
+    @Test
+    public void undotest() {
+        Board testboard = new Board();
+        testboard.makeMove((Square.sq(7,4)), Square.sq(7,5));
+        System.out.println(testboard);
+        testboard.undo();
+        System.out.println(testboard);
+    }
+
+    @Test
+    public void testremove() {
+        java.util.List<Integer> k = new java.util.ArrayList<Integer>();
+        k.add(1);
+        k.add(2);
+        k.remove(k.size() - 1);
+        System.out.println(k);
+
     }
 
 
