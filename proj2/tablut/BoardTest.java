@@ -13,6 +13,23 @@ import static tablut.Piece.*;
 public class BoardTest {
 
     @Test
+    public void undoer() {
+        Square s = Square.sq(7, 4);
+        Square s1 = Square.sq(7, 5);
+        Board testboard = new Board();
+        testboard.makeMove(s, s1);
+        testboard.makeMove(Square.sq(6, 4), Square.sq(6, 5));
+        testboard.undo();
+        testboard.undo();
+        testboard.makeMove(s, s1);
+        assert testboard.getallPieces().get(s1.index()) != EMPTY;
+        System.out.println(testboard);
+
+
+
+    }
+
+    @Test
     public void squareindex() {
         Square s = Square.sq(0,1);
         System.out.println(s.index());

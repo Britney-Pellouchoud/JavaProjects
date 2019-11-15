@@ -161,7 +161,9 @@ class Board {
                 ind = (int) pair.getKey();
             }
         }
-        assert ind != -1 : "KING NOT FOUND";
+        if (ind == -1) {
+            _winner = BLACK;
+        }
         return Square.sq(ind);
     }
 
@@ -275,7 +277,7 @@ class Board {
         String section = whichsection(to);
         int capt = 0;
 
-        ArrayList<Integer> sides = new ArrayList();
+        ArrayList<Integer> sides = new ArrayList<Integer>();
         sides.add(0);
         sides.add(8);
         if ((sides.contains(to.row()) || sides.contains(to.col())) && p.equals(KING)) {
@@ -321,6 +323,8 @@ class Board {
         } else {
             _turn = WHITE;
         }
+
+        positions.add(this.encodedBoard());
 
     }
 
@@ -387,6 +391,9 @@ class Board {
         } else {
             this.allPieces.put(sq1.index(), EMPTY);
             capturedpieces.add(between);
+            if (between.equals(KING)) {
+                _winner = BLACK;
+            }
             return true;
         }
     }
@@ -444,9 +451,10 @@ class Board {
         int col = between.col();
         if (ishostile(sq0, hostile) && ishostile(sq2, hostile)) {
             return true;
+        } else {
+            return false;
         }
 
-        return false;
     }
 
 
@@ -457,6 +465,12 @@ class Board {
         thronelist.add(WTHRONE);
         thronelist.add(ETHRONE);
         thronelist.add(STHRONE);
+
+        if (hostile == WHITE) {
+            if (this.allPieces.get(s.index()) == KING || this.allPieces.get(s.index()) == WHITE) {
+                return true;
+            }
+        }
         if (this.allPieces.get(s.index()) == hostile) {
             return true;
         } else if (s.equals(THRONE)) {
@@ -484,7 +498,6 @@ class Board {
 
 
     /** Undo one move.  Has no effect on the initial board. */
-    //if you win you can undo and keep playing
     void undo() {
         this.undoPosition();
     }
@@ -496,19 +509,23 @@ class Board {
      *  unless it is a repeated position or we are at the first move. */
 
     private void undoPosition() {
+        if (prevmoves.size() <= 2) {
+            return;
+        }
+        _winner = null;
+        positions.remove(positions.size() - 1);
         ArrayList k = prevmoves.pop();
         Square s1 = (Square) k.get(0);
         Piece p1 = (Piece) k.get(1);
         ArrayList l = prevmoves.pop();
         Square s2 = (Square) l.get(0);
-        Piece moved = this.allPieces.get(s2.index());
         Piece opp = null;
-        if (moved == KING || moved == WHITE) {
-            opp = BLACK;
-        } if (moved == BLACK) {
+        if (p1 == KING || p1 == WHITE) {
             opp = WHITE;
+        } if (p1 == BLACK) {
+            opp = BLACK;
         }
-        _turn = opp;
+        this._turn = opp;
         Piece p2 = (Piece) l.get(1);
         this.allPieces.put(s2.index(), p1);
         this.allPieces.put(s1.index(), p2);
@@ -519,7 +536,6 @@ class Board {
             put(replace, putter);
             numreplace -= 1;
         }
-
 
         _repeated = false;
     }

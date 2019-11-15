@@ -35,7 +35,6 @@ public class UnitTest {
         Board testboard = new Board();
         Board modelboard = new Board();
         Piece k = KING;
-        modelboard.setMoveLimit(5);
         modelboard.makeMove(Square.sq(3,0), Square.sq(2,0));
         modelboard.makeMove(modelboard.NTHRONE, Square.sq(5,5));
         modelboard.makeMove(Square.sq(5, 0), Square.sq(6,0));

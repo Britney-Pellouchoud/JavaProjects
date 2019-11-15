@@ -40,8 +40,7 @@ class AI extends Player {
 
     @Override
     String myMove() {
-        findMove();
-        return "* " + _lastFoundMove.toString(); // FIXME
+        return findMove().toString(); // FIXME
     }
 
     @Override
@@ -59,7 +58,7 @@ class AI extends Player {
         } else {
             side = 1;
         }
-        int x = findMove(b, maxDepth(b), true, side, -INFTY, INFTY);
+        findMove(b, maxDepth(b), true, side, INFTY, -INFTY);
         return _lastFoundMove;
     }
 
@@ -73,122 +72,61 @@ class AI extends Player {
      *  and minimal value or value < ALPHA if SENSE==-1. Searches up to
      *  DEPTH levels.  Searching at level 0 simply returns a static estimate
      *  of the board value and does not set _lastMoveFound. */
+
     private int findMove(Board board, int depth, boolean saveMove,
                          int sense, int alpha, int beta) {
-        assert sense == 1 || sense == -1;
-        if (sense == -1) {
-            Move min = findmin(board, depth, alpha, beta);
-            board.makeMove(min);
-            if (saveMove) {
-                _lastFoundMove = min;
-            }
+        assert sense == -1 || sense == 1;
+        if (depth == 0) {
             return staticScore(board);
+        } if (sense == -1) {
+            int bestval = INFTY;
+            Move bestsofar = null;
+            for (Move m : board.legalMoves(myPiece())) {
+                Board test = new Board();
+                board.makeMove(m);
+                test.copy(board);
+                board.undo();
+                int value = findMove(test, depth - 1, false, 1, alpha, beta);
+                bestval = min(bestval, value);
+                beta = min(bestval, value);
+                if (beta >= alpha) {
+                    break;
+                }
+                if (value == bestval) {
+                    bestsofar = m;
+                }
+            }
+            if (saveMove) {
+                _lastFoundMove = bestsofar;
+            }
+            return bestval;
         } else {
-            Move max = findmax(board, depth, alpha, beta);
-            board.makeMove(max);
+            int bestval = -INFTY;
+            Move bestsofar = null;
+            for (Move m : board.legalMoves(myPiece())) {
+                Board test = new Board();
+                board.makeMove(m);
+                test.copy(board);
+                board.undo();
+                bestsofar = m;
+                int value = findMove(test, depth - 1, false, -1, alpha, beta);
+                bestval = max(bestval, value);
+                alpha = max(bestval, value);
+                if (beta >= alpha) {
+                    break;
+                }
+                if (value == bestval) {
+                    bestsofar = m;
+                }
+            }
             if (saveMove) {
-                _lastFoundMove = max;
+                _lastFoundMove = bestsofar;
             }
-            return staticScore(board);
+            return bestval;
         }
+
+
     }
-
-    private Move simplefindmax(Board board, int alpha, int beta) {
-        Move bestsofar = null;
-        int best = -INFTY;
-        for (Move m : board.legalMoves(myPiece())) {
-            Board next = new Board();
-            board.makeMove(m);
-            next.copy(board);
-            board.undo();
-            if (staticScore(next) >= best) {
-                bestsofar = m;
-                best = staticScore(next);
-                alpha = max(alpha, best);
-                if (beta <= alpha) {
-                    break;
-                }
-            }
-        }
-        return bestsofar;
-    }
-
-
-    private Move findmax(Board board, int depth, int alpha, int beta) {
-        if (depth == 0 || staticScore(board) == WINNING_VALUE) {
-            return simplefindmax(board, alpha, beta);
-        }
-        Move bestsofar = null;
-        int bestsofarval = -INFTY;
-        for (Move m : board.legalMoves(WHITE)) {
-             board.makeMove(m);
-             Board next = new Board();
-             next.copy(board);
-             board.undo();
-             Move response = findmin(next, depth - 1, alpha, beta);
-             next.makeMove(response);
-             if (staticScore(next) >= bestsofarval) {
-                 bestsofar = m;
-                 alpha = max(alpha, staticScore(next));
-                 if (beta <= alpha) {
-                     break;
-                 }
-             }
-        }
-        return bestsofar;
-   }
-
-
-   private Move simplefindmin(Board board, int alpha, int beta) {
-        if (board.winner() != null) {
-            return null;
-        }
-        Move bestsofar = null;
-        int best = INFTY;
-        for (Move m : board.legalMoves(myPiece())) {
-            Board next = new Board();
-            board.makeMove(m);
-            next.copy(board);
-            board.undo();
-            if (staticScore(next) <= best) {
-                bestsofar = m;
-                best = staticScore(next);
-                beta = min(beta, best);
-                if (beta <= alpha) {
-                    break;
-                }
-            }
-        }
-        return bestsofar;
-   }
-
-    private Move findmin(Board board, int depth, int alpha, int beta) {
-        if (depth == 0 || staticScore(board) == -WINNING_VALUE) {
-            return simplefindmin(board, alpha, beta);
-        }
-        Move bestsofar = null;
-        int best = INFTY;
-        for (Move m : board.legalMoves(BLACK)) {
-            Board next = new Board();
-            board.makeMove(m);
-            next.copy(board);
-            Board respboard = new Board();
-            Move response = findmax(next, depth - 1, alpha, beta);
-            respboard.copy(board);
-            if (staticScore(respboard) <= best) {
-                bestsofar = m;
-                best = staticScore(respboard);
-                beta = min(beta, staticScore(respboard));
-                if (beta <= alpha) {
-                    break;
-                }
-            }
-
-        }
-        return bestsofar;
-    }
-
-
 
 
 
