@@ -40,7 +40,10 @@ class AI extends Player {
 
     @Override
     String myMove() {
-        return findMove().toString(); // FIXME
+        Move found = findMove();
+        _controller.reportMove(found);
+        return found.toString();
+        // FIXME
     }
 
     @Override
@@ -58,7 +61,7 @@ class AI extends Player {
         } else {
             side = 1;
         }
-        findMove(b, maxDepth(b), true, side, INFTY, -INFTY);
+        findMove(b, maxDepth(b), true, side, -INFTY, INFTY);
         return _lastFoundMove;
     }
 
@@ -81,7 +84,7 @@ class AI extends Player {
         } if (sense == -1) {
             int bestval = INFTY;
             Move bestsofar = null;
-            for (Move m : board.legalMoves(myPiece())) {
+            for (Move m : board.legalMoves(BLACK)) {
                 Board test = new Board();
                 board.makeMove(m);
                 test.copy(board);
@@ -89,21 +92,22 @@ class AI extends Player {
                 int value = findMove(test, depth - 1, false, 1, alpha, beta);
                 bestval = min(bestval, value);
                 beta = min(bestval, value);
-                if (beta >= alpha) {
+                if (beta <= alpha) {
                     break;
                 }
                 if (value == bestval) {
                     bestsofar = m;
                 }
+                if (saveMove) {
+                    _lastFoundMove = bestsofar;
+                }
             }
-            if (saveMove) {
-                _lastFoundMove = bestsofar;
-            }
+
             return bestval;
         } else {
             int bestval = -INFTY;
             Move bestsofar = null;
-            for (Move m : board.legalMoves(myPiece())) {
+            for (Move m : board.legalMoves(WHITE)) {
                 Board test = new Board();
                 board.makeMove(m);
                 test.copy(board);
@@ -112,16 +116,17 @@ class AI extends Player {
                 int value = findMove(test, depth - 1, false, -1, alpha, beta);
                 bestval = max(bestval, value);
                 alpha = max(bestval, value);
-                if (beta >= alpha) {
+                if (beta <= alpha) {
                     break;
                 }
                 if (value == bestval) {
                     bestsofar = m;
                 }
+                if (saveMove) {
+                    _lastFoundMove = bestsofar;
+                }
             }
-            if (saveMove) {
-                _lastFoundMove = bestsofar;
-            }
+
             return bestval;
         }
 
@@ -155,6 +160,11 @@ class AI extends Player {
             }
         }
         int clearpathforking = clearpathwhitewin(k, board);
+        if (board.winner() == BLACK) {
+            return -INFTY;
+        } if (board.winner() == WHITE) {
+            return INFTY;
+        }
 
         return blwh + (int) distfromcenter + captureking + clearpathforking;
     }

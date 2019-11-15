@@ -1,6 +1,13 @@
 package tablut;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Formatter;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 
 import static tablut.Piece.*;
 import static tablut.Square.*;
@@ -88,8 +95,7 @@ class Board {
             this.allPieces.put(s.index(), white);
         }
         this.allPieces.put(THRONE.index(), KING);
-        int magic = 80;
-        for (int i = 0; i <= magic; i++) {
+        for (int i = 0; i <= 80; i++) {
             if (this.allPieces.get(i) == null) {
                 this.allPieces.put(i, EMPTY);
             }
@@ -97,6 +103,12 @@ class Board {
         positions.add(this.encodedBoard());
     }
 
+
+    /**
+     * Deepcopy.
+     * @param k HashMap.
+     * @return Hashmap.
+     */
     HashMap<Integer, Piece> deepcopy(HashMap<Integer, Piece> k) {
         HashMap<Integer, Piece> copy = new HashMap<>();
         for (Integer a : k.keySet()) {
@@ -109,7 +121,6 @@ class Board {
     /** @param n is an integer
      *Set the move limit to LIM.  It is an error if 2*LIM <= moveCount(). */
     void setMoveLimit(int n) {
-        assert 2 * n <= moveCount();
         _moveLimit = n;
     }
 
@@ -137,10 +148,14 @@ class Board {
         if (positions.contains(this.encodedBoard())) {
             _repeated = true;
             if (_turn == WHITE) {
+
                 _winner = BLACK;
             } else {
+                assert 0 == 1 : "MOTHERFUCKER6";
+
                 _winner = WHITE;
             }
+            return;
         }
         positions.add(this.encodedBoard());
     }
@@ -162,6 +177,7 @@ class Board {
             }
         }
         if (ind == -1) {
+            assert 0 == 1 : "MOTHERFUCKER";
             _winner = BLACK;
         }
         return Square.sq(ind);
@@ -260,9 +276,18 @@ class Board {
         return isLegal(move.from(), move.to());
     }
 
-    Stack<Piece> capturedpieces = new Stack<Piece>();
-    List<Integer> numcaptured = new ArrayList<Integer>();
-    List<Square> placecaptured = new ArrayList<Square>();
+    /**
+     * Captured piece.
+     */
+    private Stack<Piece> capturedpieces = new Stack<Piece>();
+    /**
+     * Numcaptured.
+     */
+    private List<Integer> numcaptured = new ArrayList<Integer>();
+    /**
+     * Placecaptured.
+     */
+    private List<Square> placecaptured = new ArrayList<Square>();
 
     /** Move FROM-TO, assuming this is a legal move. */
     void makeMove(Square from, Square to) {
@@ -270,42 +295,43 @@ class Board {
             return;
         }
         Piece p = this.allPieces.get(from.index());
-        revPut(EMPTY, from); // piece to square
+        revPut(EMPTY, from);
         revPut(p, to);
         int row = to.row();
         int col = to.col();
         String section = whichsection(to);
         int capt = 0;
-
         ArrayList<Integer> sides = new ArrayList<Integer>();
         sides.add(0);
         sides.add(8);
-        if ((sides.contains(to.row()) || sides.contains(to.col())) && p.equals(KING)) {
+        boolean help = (sides.contains(to.row()) || sides.contains(to.col()));
+        if (help && p.equals(KING)) {
             _winner = WHITE;
         }
-
-
         if (section.contains("L")) {
             Square left = Square.sq(col - 2, row);
             if (capture(to, left)) {
                 capt += 1;
                 placecaptured.add(to.between(left));
             }
-        } if (section.contains("R")) {
+        }
+        if (section.contains("R")) {
             Square right = Square.sq(col + 2, row);
 
             if (capture(to, right)) {
                 capt += 1;
                 placecaptured.add(to.between(right));
             }
-        } if (section.contains("U")) {
+        }
+        if (section.contains("U")) {
             Square up = Square.sq(col,  row + 2);
 
             if (capture(to, up)) {
                 capt += 1;
                 placecaptured.add(to.between(up));
             }
-        } if (section.contains("D")) {
+        }
+        if (section.contains("D")) {
             Square down = Square.sq(col, row - 2);
 
             if (capture(to, down)) {
@@ -313,46 +339,55 @@ class Board {
                 placecaptured.add(to.between(down));
             }
         }
-
         numcaptured.add(capt);
-
-
-        checkRepeated();
         if (_turn == WHITE) {
             _turn = BLACK;
         } else {
             _turn = WHITE;
         }
-
+        checkRepeated();
         positions.add(this.encodedBoard());
 
     }
 
+
+    /**
+     * Which section.
+     * @param to Square.
+     * @return String.
+     */
     String whichsection(Square to) {
         int row = to.row();
         int col = to.col();
         if (row <= 1) {
             if (col <= 1) {
                 return "RU";
-            } if (col >= 2 && col <= 6) {
+            }
+            if (col >= 2 && col <= 6) {
                 return "LRU";
-            } if (col >=7) {
+            }
+            if (col >= 7) {
                 return "LU";
             }
-        } if (row >= 2 && row <= 6) {
+        }
+        if (row >= 2 && row <= 6) {
             if (col <= 1) {
                 return "RUD";
-            } if (col >= 2 && col <= 6) {
+            }
+            if (col >= 2 && col <= 6) {
                 return "LRUD";
-            } if (col >=7) {
+            }
+            if (col >= 7) {
                 return "LUD";
             }
         } else {
             if (col <= 1) {
                 return "RD";
-            } if (col >= 2 && col <= 6) {
+            }
+            if (col >= 2 && col <= 6) {
                 return "LRD";
-            } if (col >= 7) {
+            }
+            if (col >= 7) {
                 return "LD";
             }
         }
@@ -364,20 +399,24 @@ class Board {
         makeMove(move.from(), move.to());
     }
 
-    /** Capture the piece between SQ0 and SQ2, assuming a piece just moved to
+    /** Capture the piece between SQ0 and SQ2, assuming a piece just moved to.
+     * @param sq0 Square.
+     * @param sq2 Square.
+     * @return boolean.
      *  SQ0 and the necessary conditions are satisfied. */
     private boolean capture(Square sq0, Square sq2) {
         Square sq1 = sq0.between(sq2);
         Piece between = this.allPieces.get(sq1.index());
         ArrayList<Square> thrones = new ArrayList<Square>();
-        thrones.add(Square.sq(4, 3)); //south
-        thrones.add(Square.sq(4, 4)); //throne
-        thrones.add(Square.sq(4, 5)); //north
-        thrones.add(Square.sq(5, 4)); // east
-        thrones.add(Square.sq(3, 4)); //west
+        thrones.add(Square.sq(4, 3));
+        thrones.add(Square.sq(4, 4));
+        thrones.add(Square.sq(4, 5));
+        thrones.add(Square.sq(5, 4));
+        thrones.add(Square.sq(3, 4));
 
         if (thrones.contains(sq1) && between == KING) {
             if (kingcapture(sq1)) {
+                assert 0 == 1 : "MOTHERFUCKER3";
                 _winner = BLACK;
                 this.allPieces.put(sq1.index(), EMPTY);
                 capturedpieces.add(KING);
@@ -392,12 +431,18 @@ class Board {
             this.allPieces.put(sq1.index(), EMPTY);
             capturedpieces.add(between);
             if (between.equals(KING)) {
+                assert 0 == 1 : "MOTHERFUCKER4";
                 _winner = BLACK;
             }
             return true;
         }
     }
 
+    /**
+     * If the king is captured.
+     * @param throne Square.
+     * @return boolean.
+     */
     boolean kingcapture(Square throne) {
         int row = throne.row();
         int col = throne.col();
@@ -414,19 +459,22 @@ class Board {
         if (!hostility.contains(false)) {
             return true;
         }
-        else {
-            return false;
-        }
+        return false;
     }
 
+    /**
+     * Checks if king is hostile.
+     * @param nextto Square.
+     * @return boolean.
+     */
     boolean kinghostile(Square nextto) {
         if (this.allPieces.get(nextto.index()) == BLACK) {
             return true;
-        } if (nextto.row() == THRONE.row() && nextto.col() == THRONE.col()) {
-            return true;
-        } else {
-            return false;
         }
+        if (nextto.row() == THRONE.row() && nextto.col() == THRONE.col()) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -442,23 +490,30 @@ class Board {
         Piece bet = this.allPieces.get(between.index());
         if (bet == BLACK) {
             hostile = WHITE;
-        } if (bet == WHITE || bet == KING) {
+        }
+        if (bet == WHITE || bet == KING) {
             hostile = BLACK;
-        } if (bet == EMPTY) {
+        }
+        if (bet == EMPTY) {
             return false;
         }
         int row = between.row();
         int col = between.col();
         if (ishostile(sq0, hostile) && ishostile(sq2, hostile)) {
             return true;
-        } else {
-            return false;
         }
+        return false;
+
 
     }
 
 
-
+    /**Checks if hostile.
+     *
+     * @param s Square.
+     * @param hostile Piece.
+     * @return boolean.
+     */
     boolean ishostile(Square s, Piece hostile) {
         ArrayList<Square> thronelist = new ArrayList<Square>();
         thronelist.add(NTHRONE);
@@ -467,7 +522,8 @@ class Board {
         thronelist.add(STHRONE);
 
         if (hostile == WHITE) {
-            if (this.allPieces.get(s.index()) == KING || this.allPieces.get(s.index()) == WHITE) {
+            Piece a = this.allPieces.get(s.index());
+            if (a == KING || a == WHITE) {
                 return true;
             }
         }
@@ -476,7 +532,7 @@ class Board {
         } else if (s.equals(THRONE)) {
             if (this.allPieces.get(s.index()) == EMPTY) {
                 return true;
-            } else { //if something is in the throne square
+            } else {
                 if (hostile == BLACK) {
                     int count = 0;
                     for (Square t : thronelist) {
@@ -522,7 +578,8 @@ class Board {
         Piece opp = null;
         if (p1 == KING || p1 == WHITE) {
             opp = WHITE;
-        } if (p1 == BLACK) {
+        }
+        if (p1 == BLACK) {
             opp = BLACK;
         }
         this._turn = opp;
@@ -658,10 +715,13 @@ class Board {
      * Accessor for positions.
      * @return a list of hashmaps.
      */
+    protected Stack<ArrayList> prevmoves = new Stack<ArrayList>();
 
-    Stack<ArrayList> prevmoves = new Stack<ArrayList>();
+    /**.
+     * a list of board positions
+     */
+    protected ArrayList<String> positions = new ArrayList<String>();
 
-    ArrayList<String> positions = new ArrayList<String>();
 
     /**
      * Positions.

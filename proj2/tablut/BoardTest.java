@@ -1,11 +1,8 @@
 package tablut;
 import org.junit.Test;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
-import static org.junit.Assert.*;
 import static tablut.Piece.*;
 
 
