@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,7 +40,13 @@ class GUI extends TopLevel implements View, Reporter {
     /** A new window with given TITLE providing a view of a Tablut board. */
     GUI(String title) {
         super(title, true);
+        addMenuButton("Game->New", this::redo);
         addMenuButton("Game->Quit", this::quit);
+        addMenuButton("Game->Undo", this::undomove);
+        addMenuButton("Player->Manual Black", this::manualb);
+        addMenuButton("Player->Auto Black", this::autob);
+        addMenuButton("Player->Manual White", this::manualw);
+        addMenuButton("Player->Auto White", this::autow);
         // More commands?
         _widget = new BoardWidget(_pendingCommands);
         add(_widget,
@@ -55,9 +62,20 @@ class GUI extends TopLevel implements View, Reporter {
     }
 
     /** Response to "Quit" button click. */
+    private void redo (String dummy){
+        _pendingCommands.offer("new");
+    }
     private void quit(String dummy) {
         _pendingCommands.offer("quit");
     }
+    private void undomove (String dummy) {_pendingCommands.offer("undo");}
+    private void manualb (String dummy) {_pendingCommands.offer("manual black");
+    }
+    private void manualw (String dummy) {_pendingCommands.offer("manual white");}
+    private void autob (String dummy) {_pendingCommands.offer("auto black");}
+    private void autow(String dummy) {_pendingCommands.offer("auto white");}
+
+
 
     // Other command responses?
 

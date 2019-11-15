@@ -13,6 +13,17 @@ import static tablut.Piece.*;
 public class BoardTest {
 
     @Test
+    public void squareindex() {
+        Square s = Square.sq(0,1);
+        System.out.println(s.index());
+        Square s1 = Square.sq(0,2);
+        System.out.println(s1.index());
+        Square s2 = Square.sq(0, 3);
+        System.out.println(s2.index());
+
+    }
+
+    @Test
     public void test() {
         Board testboard = new Board();
         testboard.makeMove(Square.sq(8, 5), Square.sq(6, 5));

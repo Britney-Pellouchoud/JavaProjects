@@ -76,6 +76,7 @@ class Board {
         _winner = null;
         prevmoves.clear();
         positions.clear();
+        _repeated = false;
         _turn = BLACK;
         this.allPieces = new HashMap<>();
         for (Square s : INITIAL_ATTACKERS) {
@@ -263,7 +264,9 @@ class Board {
 
     /** Move FROM-TO, assuming this is a legal move. */
     void makeMove(Square from, Square to) {
-        assert isLegal(from, to);
+        if (!isLegal(from, to)) {
+            return;
+        }
         Piece p = this.allPieces.get(from.index());
         revPut(EMPTY, from); // piece to square
         revPut(p, to);
@@ -271,6 +274,13 @@ class Board {
         int col = to.col();
         String section = whichsection(to);
         int capt = 0;
+
+        ArrayList<Integer> sides = new ArrayList();
+        sides.add(0);
+        sides.add(8);
+        if ((sides.contains(to.row()) || sides.contains(to.col())) && p.equals(KING)) {
+            _winner = WHITE;
+        }
 
 
         if (section.contains("L")) {
@@ -492,12 +502,13 @@ class Board {
         ArrayList l = prevmoves.pop();
         Square s2 = (Square) l.get(0);
         Piece moved = this.allPieces.get(s2.index());
-        Piece opp;
+        Piece opp = null;
         if (moved == KING || moved == WHITE) {
             opp = BLACK;
         } if (moved == BLACK) {
             opp = WHITE;
         }
+        _turn = opp;
         Piece p2 = (Piece) l.get(1);
         this.allPieces.put(s2.index(), p1);
         this.allPieces.put(s1.index(), p2);

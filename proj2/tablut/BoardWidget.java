@@ -2,16 +2,18 @@ package tablut;
 
 import ucb.gui2.Pad;
 
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Font;
 import java.awt.event.MouseEvent;
 
+import static java.awt.Color.*;
+import static java.awt.Font.ITALIC;
+import static tablut.Move.isGrammaticalMove;
 import static tablut.Piece.*;
-import static tablut.Square.sq;
 import static tablut.Move.mv;
+import static tablut.Square.*;
 
 /** A widget that displays a Tablut game.
  *  @author
@@ -29,9 +31,9 @@ class BoardWidget extends Pad {
         THRONE_COLOR = new Color(144, 215, 255),
         ADJACENT_THRONE_COLOR = new Color(220, 136, 189),
         CLICKED_SQUARE_COLOR = new Color(255, 158, 60),
-        GRID_LINE_COLOR = Color.black,
+        GRID_LINE_COLOR = black,
         WHITE_COLOR = Color.white,
-        BLACK_COLOR = Color.black;
+        BLACK_COLOR = black;
 
     /** Margins. */
     static final int
@@ -69,11 +71,40 @@ class BoardWidget extends Pad {
         g.setColor(THRONE_COLOR);
         g.fillRect(cx(Board.THRONE), cy(Board.THRONE),
                    SQUARE_SIDE, SQUARE_SIDE);
+        g.setColor(yellow);
+        g.fillRect(cx(Board.WTHRONE), cy(Board.WTHRONE), SQUARE_SIDE, SQUARE_SIDE);
+        g.fillRect(cx(Board.STHRONE), cy(Board.STHRONE), SQUARE_SIDE, SQUARE_SIDE);
+        g.fillRect(cx(Board.NTHRONE), cy(Board.NTHRONE), SQUARE_SIDE, SQUARE_SIDE);
+        g.fillRect(cx(Board.ETHRONE), cy(Board.ETHRONE), SQUARE_SIDE, SQUARE_SIDE);
+
         // OTHER SQUARE COLORINGS?
         g.setColor(GRID_LINE_COLOR);
         for (int k = 0; k <= SIZE; k += 1) {
             g.drawLine(cx(0), cy(k - 1), cx(SIZE), cy(k - 1));
             g.drawLine(cx(k), cy(-1), cx(k), cy(SIZE - 1));
+        }
+        String alph = "abcdefghi";
+        g.setColor(green);
+        g.setFont(KING_FONT);
+        for (int i = 0; i < alph.length(); i++) {
+            Square s = SQUARE_LIST.get(i);
+            char letter = alph.charAt(i);
+            g.drawString(String.valueOf(letter), cx(s) + 10, cy(s) + 45);
+
+        }
+
+        ArrayList<Square> vert = new ArrayList<Square>();
+        for (int i = 0; i <= 80; i += 9) {
+            Square a = SQUARE_LIST.get(i);
+            vert.add(a);
+        }
+
+        g.setColor(cyan);
+        String nums = "123456789";
+        for (int i = 0; i < nums.length(); i++) {
+            Square p = vert.get(i);
+            char num = nums.charAt(i);
+            g.drawString(String.valueOf(num), cx(p) - 15, cy(p) + 25);
         }
 
         // OTHER STUFF.
@@ -87,14 +118,44 @@ class BoardWidget extends Pad {
 
     /** Draw the contents of S on G. */
     private void drawPiece(Graphics2D g, Square s) {
+        Piece p = _board.getallPieces().get(s.index());
+        int x = s.col();
+        int y = s.row();
+        if (p.equals(Piece.BLACK)) {
+            g.setColor(black);
+            g.drawOval(cx(s), cy(s), 25, 25);
+            g.fillOval(cx(s), cy(s), 25, 25);
+        } if (p.equals(Piece.WHITE)) {
+            g.setColor(white);
+            g.drawOval(cx(s), cy(s), 25, 25);
+            g.fillOval(cx(s), cy(s), 25, 25);
+        } if (p.equals(KING)) {
+            g.setColor(white);
+            g.drawOval(cx(s), cy(s),25, 25);
+            g.fillOval(cx(s), cy(s), 25, 25);
+            g.setFont(KING_FONT);
+            g.setColor(blue);
+            g.drawString("K", cx(s) + 5, cx(y) + 5);
+        } if (p.equals(EMPTY)) {
+            return;
+        }
+
         // FIXME
     }
 
     /** Handle a click on S. */
     private void click(Square s) {
+        clicked.add(s);
+        if (clicked.size() ==  2) {
+            Move m = new Move(clicked.get(0), clicked.get(1));
+            _commands.offer(m.toString());
+            clicked.clear();
+        }
         // FIXME
         repaint();
     }
+
+    private ArrayList<Square> clicked = new ArrayList<Square>();
 
     /** Handle mouse click event E. */
     private synchronized void mouseClicked(String unused, MouseEvent e) {

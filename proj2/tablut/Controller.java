@@ -162,6 +162,7 @@ final class Controller {
         protected final Consumer<Matcher> _processor;
     }
 
+
     /** A list of Commands describing the valid textual commands to the
      *  Tablut program and the methods to process them. */
     private Command[] _commands = {
