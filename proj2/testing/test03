@@ -1,0 +1,25 @@
+#* java -ea tablut.Main
+# Check that king capture works.
+manual white
+manual black
+f1-g
+e4-b
+g1-4
+e3-g
+i6-g
+e5-3
+i4-g
+e3-4
+h5-g
+b4-1
+a4-d
+b1-a
+dump
+e2-3
+dump
+g3-2
+dump
+g4-f
+dump
+undo
+dump

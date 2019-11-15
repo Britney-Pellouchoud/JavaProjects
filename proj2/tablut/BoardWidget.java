@@ -25,10 +25,10 @@ class BoardWidget extends Pad {
 
     /** Colors of empty squares, pieces, grid lines, and boundaries. */
     static final Color
-        SQUARE_COLOR = new Color(238, 207, 161),
-        THRONE_COLOR = new Color(180, 255, 180),
-        ADJACENT_THRONE_COLOR = new Color(200, 220, 200),
-        CLICKED_SQUARE_COLOR = new Color(255, 255, 100),
+        SQUARE_COLOR = new Color(238, 190, 211),
+        THRONE_COLOR = new Color(144, 215, 255),
+        ADJACENT_THRONE_COLOR = new Color(220, 136, 189),
+        CLICKED_SQUARE_COLOR = new Color(255, 158, 60),
         GRID_LINE_COLOR = Color.black,
         WHITE_COLOR = Color.white,
         BLACK_COLOR = Color.black;

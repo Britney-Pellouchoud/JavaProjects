@@ -34,6 +34,8 @@ class GUI extends TopLevel implements View, Reporter {
     /** Resource name of Tablut help text. */
     static final String HELP_TEXT = "tablut/Help.html";
 
+
+
     /** A new window with given TITLE providing a view of a Tablut board. */
     GUI(String title) {
         super(title, true);

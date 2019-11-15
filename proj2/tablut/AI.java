@@ -40,8 +40,8 @@ class AI extends Player {
 
     @Override
     String myMove() {
-
-        return _lastFoundMove.toString(); // FIXME
+        findMove();
+        return "* " + _lastFoundMove.toString(); // FIXME
     }
 
     @Override
@@ -53,9 +53,13 @@ class AI extends Player {
      *  is a move. */
     private Move findMove() {
         Board b = new Board(board());
-        _lastFoundMove = null;
-        int x = findMove(b, maxDepth(b), true, 2, 2, 2);
-        // FIXME
+        int side = 0;
+        if (this.myPiece() == BLACK) {
+            side = -1;
+        } else {
+            side = 1;
+        }
+        int x = findMove(b, maxDepth(b), true, side, -INFTY, INFTY);
         return _lastFoundMove;
     }
 
@@ -71,51 +75,35 @@ class AI extends Player {
      *  of the board value and does not set _lastMoveFound. */
     private int findMove(Board board, int depth, boolean saveMove,
                          int sense, int alpha, int beta) {
-        if (sense == 1) {
-            Move m = findmax(board, depth, alpha, beta);
-            board.makeMove(m);
-            return staticScore(board);
-            //return the maximal value
-        }
-        else {
-            Move m = findmin(board, depth, alpha, beta);
-            board.makeMove(m);
-            return staticScore(board);
-            //return the minimum value
-        }
-    }
-
-    private Move findmax(Board b, int depth, int alpha, int beta) {
-        if (depth == 0 || b.winner() != null) {
-            return simplefindmax(b, alpha, beta);
-        }
-        //random move
-        Move bestsofar = new Move(Square.sq(13), Square.sq(12));
-        int best = Integer.MIN_VALUE;
-        for (Move m : b.legalMoves(_myPiece)) {
-            b.makeMove(m);
-            Board possible = b;
-            Move response = findmin(possible, depth - 1, alpha, beta);
-            if (staticScore(b) >= best) {
-                bestsofar = m;
-                best = staticScore(b);
-                alpha = max(alpha, best);
-                if (beta < alpha) {
-                    break;
-                }
+        assert sense == 1 || sense == -1;
+        if (sense == -1) {
+            Move min = findmin(board, depth, alpha, beta);
+            board.makeMove(min);
+            if (saveMove) {
+                _lastFoundMove = min;
             }
+            return staticScore(board);
+        } else {
+            Move max = findmax(board, depth, alpha, beta);
+            board.makeMove(max);
+            if (saveMove) {
+                _lastFoundMove = max;
+            }
+            return staticScore(board);
         }
-        return bestsofar;
     }
 
-    private Move simplefindmax(Board b, int alpha, int beta) {
-        Move bestsofar = new Move(Square.sq(13), Square.sq(12));
-        int best = Integer.MIN_VALUE;
-        for (Move m : b.legalMoves(_myPiece)) {
-            b.makeMove(m);
-            Board possible = b;
-            if (staticScore(b) >= best) {
+    private Move simplefindmax(Board board, int alpha, int beta) {
+        Move bestsofar = null;
+        int best = -INFTY;
+        for (Move m : board.legalMoves(myPiece())) {
+            Board next = new Board();
+            board.makeMove(m);
+            next.copy(board);
+            board.undo();
+            if (staticScore(next) >= best) {
                 bestsofar = m;
+                best = staticScore(next);
                 alpha = max(alpha, best);
                 if (beta <= alpha) {
                     break;
@@ -125,40 +113,46 @@ class AI extends Player {
         return bestsofar;
     }
 
-    private Move findmin(Board b, int depth, int alpha, int beta) {
-        if (depth == 0 || b.winner() != null) {
-            return simplefindmin(b, alpha, beta);
+
+    private Move findmax(Board board, int depth, int alpha, int beta) {
+        if (depth == 0 || staticScore(board) == WINNING_VALUE) {
+            return simplefindmax(board, alpha, beta);
         }
-        Move bestsofar = new Move(Square.sq(13), Square.sq(12));
-        int best = Integer.MAX_VALUE;
-        Board possible = b;
-        for (Move m : b.legalMoves(_myPiece)) {
-            b.makeMove(m);
-            possible = b;
-            Move response = findmax(possible, depth - 1, alpha, beta);
-            b.makeMove(response);
-            if (staticScore(b) <= best) {
-                bestsofar = m;
-                best = staticScore(b);
-                beta = min(beta, staticScore(b));
-                if (beta <= alpha) {
-                    break;
-                }
-            }
+        Move bestsofar = null;
+        int bestsofarval = -INFTY;
+        for (Move m : board.legalMoves(WHITE)) {
+             board.makeMove(m);
+             Board next = new Board();
+             next.copy(board);
+             board.undo();
+             Move response = findmin(next, depth - 1, alpha, beta);
+             next.makeMove(response);
+             if (staticScore(next) >= bestsofarval) {
+                 bestsofar = m;
+                 alpha = max(alpha, staticScore(next));
+                 if (beta <= alpha) {
+                     break;
+                 }
+             }
         }
         return bestsofar;
+   }
 
-    }
 
-    private Move simplefindmin(Board b, int alpha, int beta) {
-        Move bestsofar =  new Move(Square.sq(13), Square.sq(12));
-        int best = Integer.MAX_VALUE;
-        for (Move m : b.legalMoves(_myPiece)) {
-            b.makeMove(m);
-            Board x = b;
-            if (staticScore(x) <= best) {
+   private Move simplefindmin(Board board, int alpha, int beta) {
+        if (board.winner() != null) {
+            return null;
+        }
+        Move bestsofar = null;
+        int best = INFTY;
+        for (Move m : board.legalMoves(myPiece())) {
+            Board next = new Board();
+            board.makeMove(m);
+            next.copy(board);
+            board.undo();
+            if (staticScore(next) <= best) {
                 bestsofar = m;
-                best = staticScore(x);
+                best = staticScore(next);
                 beta = min(beta, best);
                 if (beta <= alpha) {
                     break;
@@ -166,7 +160,38 @@ class AI extends Player {
             }
         }
         return bestsofar;
+   }
+
+    private Move findmin(Board board, int depth, int alpha, int beta) {
+        if (depth == 0 || staticScore(board) == -WINNING_VALUE) {
+            return simplefindmin(board, alpha, beta);
+        }
+        Move bestsofar = null;
+        int best = INFTY;
+        for (Move m : board.legalMoves(BLACK)) {
+            Board next = new Board();
+            board.makeMove(m);
+            next.copy(board);
+            Board respboard = new Board();
+            Move response = findmax(next, depth - 1, alpha, beta);
+            respboard.copy(board);
+            if (staticScore(respboard) <= best) {
+                bestsofar = m;
+                best = staticScore(respboard);
+                beta = min(beta, staticScore(respboard));
+                if (beta <= alpha) {
+                    break;
+                }
+            }
+
+        }
+        return bestsofar;
     }
+
+
+
+
+
 
 
 
@@ -179,14 +204,38 @@ class AI extends Player {
     }
 
     /** Return a heuristic value for BOARD. */
-    //higher is better for white
-    //lower is better for black
+    //positive is better for white
+    //negative is better for black
     private int staticScore(Board board) {
         int blwh = whiteminusblack(board);
         Square k = board.kingPosition();
         double distfromcenter = Math.sqrt((k.row() - 4) ^ 2 + (k.col() - 4) ^ 2 );
-        return blwh + (int) distfromcenter;
+        int captureking = 0;
+        for (Square s : board.pieceLocations(BLACK)) {
+            if (s.isRookMove(k)) {
+                captureking -= 5;
+            }
+        }
+        int clearpathforking = clearpathwhitewin(k, board);
+
+        return blwh + (int) distfromcenter + captureking + clearpathforking;
     }
+
+    private int clearpathwhitewin(Square kingpos, Board board) {
+        int clearpathforking = 0;
+        if (board.isUnblockedMove(kingpos, Square.sq(0, kingpos.col()))) {
+            clearpathforking += 5;
+        } if (board.isUnblockedMove(kingpos, Square.sq(kingpos.row(), 0))) {
+            clearpathforking += 5;
+        } if (board.isUnblockedMove(kingpos, Square.sq(8, kingpos.col()))) {
+            clearpathforking += 5;
+        } if (board.isUnblockedMove(kingpos, Square.sq(kingpos.row(), 8))) {
+            clearpathforking += 5;
+        }
+        return clearpathforking;
+    }
+
+
 
 
 

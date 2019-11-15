@@ -73,6 +73,7 @@ class Board {
 
     /** Clears the board to the initial position. */
     void init() {
+        _winner = null;
         prevmoves.clear();
         positions.clear();
         _turn = BLACK;
@@ -102,6 +103,7 @@ class Board {
         }
         return copy;
     }
+
 
     /** @param n is an integer
      *Set the move limit to LIM.  It is an error if 2*LIM <= moveCount(). */
@@ -192,7 +194,7 @@ class Board {
     final void revPut(Piece p, Square s) {
         int i = s.index();
         this.allPieces.put(i, p);
-        ArrayList move = new ArrayList<>();
+        ArrayList<Object> move  = new ArrayList<>();
         move.add(s);
         move.add(p);
         prevmoves.add(move);
@@ -211,7 +213,6 @@ class Board {
         int i = from.index();
         int dir = from.direction(to);
         for (Square s : ROOK_SQUARES[i][dir]) {
-            System.out.println(s);
             int ind = s.index();
             Piece p = this.get(s.col(), s.row());
             if (s.equals(to)) {
@@ -221,7 +222,6 @@ class Board {
                 break;
             }
             if (!p.equals(EMPTY)) {
-                System.out.println("THIS IS IN THE WAY " + this.allPieces.get(ind));
                 return false;
             }
         }
@@ -257,27 +257,54 @@ class Board {
         return isLegal(move.from(), move.to());
     }
 
+    Stack<Piece> capturedpieces = new Stack<Piece>();
+    List<Integer> numcaptured = new ArrayList<Integer>();
+    List<Square> placecaptured = new ArrayList<Square>();
+
     /** Move FROM-TO, assuming this is a legal move. */
     void makeMove(Square from, Square to) {
         assert isLegal(from, to);
         Piece p = this.allPieces.get(from.index());
-        revPut(EMPTY, from);
+        revPut(EMPTY, from); // piece to square
         revPut(p, to);
         int row = to.row();
         int col = to.col();
         String section = whichsection(to);
+        int capt = 0;
+
+
         if (section.contains("L")) {
-            Square left = Square.sq(row, col - 2);
-            capture(to, left);
+            Square left = Square.sq(col - 2, row);
+            if (capture(to, left)) {
+                capt += 1;
+                placecaptured.add(to.between(left));
+            }
         } if (section.contains("R")) {
-            Square right = Square.sq(row, col + 2);
-            capture(to, right);
+            Square right = Square.sq(col + 2, row);
+
+            if (capture(to, right)) {
+                capt += 1;
+                placecaptured.add(to.between(right));
+            }
         } if (section.contains("U")) {
-            Square up = Square.sq(row + 2, col);
-            capture(to, up);
+            Square up = Square.sq(col,  row + 2);
+
+            if (capture(to, up)) {
+                capt += 1;
+                placecaptured.add(to.between(up));
+            }
         } if (section.contains("D")) {
-            Square down = Square.sq(row - 2, col);
+            Square down = Square.sq(col, row - 2);
+
+            if (capture(to, down)) {
+                capt += 1;
+                placecaptured.add(to.between(down));
+            }
         }
+
+        numcaptured.add(capt);
+
+
         checkRepeated();
         if (_turn == WHITE) {
             _turn = BLACK;
@@ -292,7 +319,7 @@ class Board {
         int col = to.col();
         if (row <= 1) {
             if (col <= 1) {
-                return "RD";
+                return "RU";
             } if (col >= 2 && col <= 6) {
                 return "LRU";
             } if (col >=7) {
@@ -325,12 +352,63 @@ class Board {
 
     /** Capture the piece between SQ0 and SQ2, assuming a piece just moved to
      *  SQ0 and the necessary conditions are satisfied. */
-    private void capture(Square sq0, Square sq2) {
+    private boolean capture(Square sq0, Square sq2) {
+        Square sq1 = sq0.between(sq2);
+        Piece between = this.allPieces.get(sq1.index());
+        ArrayList<Square> thrones = new ArrayList<Square>();
+        thrones.add(Square.sq(4, 3)); //south
+        thrones.add(Square.sq(4, 4)); //throne
+        thrones.add(Square.sq(4, 5)); //north
+        thrones.add(Square.sq(5, 4)); // east
+        thrones.add(Square.sq(3, 4)); //west
+
+        if (thrones.contains(sq1) && between == KING) {
+            if (kingcapture(sq1)) {
+                _winner = BLACK;
+                this.allPieces.put(sq1.index(), EMPTY);
+                capturedpieces.add(KING);
+                return true;
+            }
+            return false;
+
+        }
         if (!iscapturable(sq0, sq2)) {
-            return;
+            return false;
         } else {
-            Square sq1 = sq0.between(sq2);
             this.allPieces.put(sq1.index(), EMPTY);
+            capturedpieces.add(between);
+            return true;
+        }
+    }
+
+    boolean kingcapture(Square throne) {
+        int row = throne.row();
+        int col = throne.col();
+        Square left = Square.sq(col - 1, row);
+        Square right = Square.sq(col + 1, row);
+        Square up = Square.sq(col,  row + 1);
+        Square down = Square.sq(col, row - 1);
+        ArrayList<Boolean> hostility = new ArrayList<Boolean>();
+        hostility.add(kinghostile(left));
+        hostility.add(kinghostile(right));
+        hostility.add(kinghostile(up));
+        hostility.add(kinghostile(down));
+
+        if (!hostility.contains(false)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    boolean kinghostile(Square nextto) {
+        if (this.allPieces.get(nextto.index()) == BLACK) {
+            return true;
+        } if (nextto.row() == THRONE.row() && nextto.col() == THRONE.col()) {
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -341,6 +419,7 @@ class Board {
      * @return boolean.
      */
     boolean iscapturable(Square sq0, Square sq2) {
+
         Piece hostile = EMPTY;
         Square between = sq0.between(sq2);
         Piece bet = this.allPieces.get(between.index());
@@ -351,8 +430,43 @@ class Board {
         } if (bet == EMPTY) {
             return false;
         }
-        if (this.allPieces.get(sq0.index()) == hostile && this.allPieces.get(sq2.index()) == hostile) {
+        int row = between.row();
+        int col = between.col();
+        if (ishostile(sq0, hostile) && ishostile(sq2, hostile)) {
             return true;
+        }
+
+        return false;
+    }
+
+
+
+    boolean ishostile(Square s, Piece hostile) {
+        ArrayList<Square> thronelist = new ArrayList<Square>();
+        thronelist.add(NTHRONE);
+        thronelist.add(WTHRONE);
+        thronelist.add(ETHRONE);
+        thronelist.add(STHRONE);
+        if (this.allPieces.get(s.index()) == hostile) {
+            return true;
+        } else if (s.equals(THRONE)) {
+            if (this.allPieces.get(s.index()) == EMPTY) {
+                return true;
+            } else { //if something is in the throne square
+                if (hostile == BLACK) {
+                    int count = 0;
+                    for (Square t : thronelist) {
+                        if (this.allPieces.get(t.index()) == BLACK) {
+                            count += 1;
+                        }
+                    }
+                    if (count >= 3) {
+                        return true;
+                    }
+                }
+                return false;
+
+            }
         }
         return false;
     }
@@ -360,6 +474,7 @@ class Board {
 
 
     /** Undo one move.  Has no effect on the initial board. */
+    //if you win you can undo and keep playing
     void undo() {
         this.undoPosition();
     }
@@ -376,9 +491,24 @@ class Board {
         Piece p1 = (Piece) k.get(1);
         ArrayList l = prevmoves.pop();
         Square s2 = (Square) l.get(0);
+        Piece moved = this.allPieces.get(s2.index());
+        Piece opp;
+        if (moved == KING || moved == WHITE) {
+            opp = BLACK;
+        } if (moved == BLACK) {
+            opp = WHITE;
+        }
         Piece p2 = (Piece) l.get(1);
         this.allPieces.put(s2.index(), p1);
         this.allPieces.put(s1.index(), p2);
+        int numreplace = numcaptured.remove(numcaptured.size() - 1);
+        while (numreplace > 0) {
+            Piece replace = capturedpieces.pop();
+            Square putter = placecaptured.remove(placecaptured.size() - 1);
+            put(replace, putter);
+            numreplace -= 1;
+        }
+
 
         _repeated = false;
     }
@@ -452,7 +582,7 @@ class Board {
     }
 
     /** Return the locations of all pieces on SIDE. */
-    private HashSet<Square> pieceLocations(Piece side) {
+    protected HashSet<Square> pieceLocations(Piece side) {
         assert side != EMPTY;
         assert side == BLACK
                 || side == WHITE

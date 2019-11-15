@@ -12,6 +12,27 @@ import static tablut.Piece.*;
 
 public class BoardTest {
 
+    @Test
+    public void test() {
+        Board testboard = new Board();
+        testboard.makeMove(Square.sq(8, 5), Square.sq(6, 5));
+        System.out.println(testboard);
+        testboard.makeMove(Square.sq(2, 4), Square.sq(2, 3));
+        System.out.println(testboard);
+        testboard.makeMove(Square.sq(8, 3), Square.sq(6, 3));
+        System.out.println(testboard);
+        testboard.undo();
+        System.out.println(testboard);
+    }
+
+
+    @Test
+    public void sectiontest() {
+        Square sthrone = Square.sq(4, 3);
+        Board test = new Board();
+        Square s = Square.sq(1,0);
+        System.out.println(test.whichsection(s));
+    }
 
 
     @Test
@@ -20,15 +41,16 @@ public class BoardTest {
         Square s1 = Square.sq(8, 5);
         Square s01 = Square.sq(6, 5);
         testboard.makeMove(s1, s01);
+        System.out.println(testboard);
         Square d1 = Square.sq(3, 4);
         Square d2 = Square.sq(3, 6);
         testboard.makeMove(d1, d2);
+        System.out.println(testboard);
         Square e1 = Square.sq(8, 3);
         Square e2 = Square.sq(6, 3);
         testboard.makeMove(e1, e2);
         System.out.println(testboard);
         Square fix =  Square.sq(6, 4);
-        System.out.println(testboard);
         assert testboard.getallPieces().get(fix.index()) == EMPTY;
 
     }

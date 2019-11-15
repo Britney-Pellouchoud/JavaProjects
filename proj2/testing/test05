@@ -1,0 +1,11 @@
+#* java -ea tablut.Main
+manual white
+manual white
+i6-g
+dump
+c5-4
+dump
+i4-g
+dump
+undo
+dump
