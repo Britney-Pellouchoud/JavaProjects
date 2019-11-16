@@ -74,8 +74,22 @@ class Board {
         if (model == this) {
             return;
         }
-        this.allPieces = deepcopy(model.allPieces);
+        init();
+        prevmoves = model.prevmoves;
+        _moveLimit = model.movelimit();
 
+        this.allPieces = deepcopy(model);
+
+    }
+    /**
+     * Deepcopy.
+     * @param model board.
+     * @return Hashmap.
+     */
+    HashMap<Integer, Piece> deepcopy(Board model) {
+        HashMap<Integer, Piece> copy = new HashMap<>();
+        copy.putAll(model.getallPieces());
+        return copy;
     }
 
     /** Clears the board to the initial position. */
@@ -104,18 +118,7 @@ class Board {
     }
 
 
-    /**
-     * Deepcopy.
-     * @param k HashMap.
-     * @return Hashmap.
-     */
-    HashMap<Integer, Piece> deepcopy(HashMap<Integer, Piece> k) {
-        HashMap<Integer, Piece> copy = new HashMap<>();
-        for (Integer a : k.keySet()) {
-            copy.put(a, k.get(a));
-        }
-        return copy;
-    }
+
 
 
     /** @param n is an integer
@@ -394,6 +397,7 @@ class Board {
 
     /** Move according to MOVE, assuming it is a legal move. */
     void makeMove(Move move) {
+        assert move != null : legalMoves(turn());
         makeMove(move.from(), move.to());
     }
 
@@ -611,12 +615,11 @@ class Board {
             for (int dir = 0; dir <= 3; dir++) {
                 for (Square b : ((Square) sq).ROOK_SQUARES[i][dir]) {
                     Move m = new Move(a, b);
-                    if (isUnblockedMove(a, b)) {
+                    if (isUnblockedMove(a, b) && a.isRookMove(b)) {
                         legalmoves.add(m);
                     }
                 }
             }
-
         }
         return legalmoves;
     }

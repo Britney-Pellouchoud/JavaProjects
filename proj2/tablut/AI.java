@@ -1,5 +1,7 @@
 package tablut;
 
+import jdk.swing.interop.SwingInterOpUtils;
+
 import java.util.HashMap;
 
 import static java.lang.Math.*;
@@ -51,6 +53,8 @@ class AI extends Player {
         return false;
     }
 
+    private int x;
+
     /** Return a move for me from the current position, assuming there
      *  is a move. */
     private Move findMove() {
@@ -61,7 +65,7 @@ class AI extends Player {
         } else {
             side = 1;
         }
-        findMove(b, maxDepth(b), true, side, -INFTY, INFTY);
+        x = findMove(b, maxDepth(b), true, side, -INFTY, INFTY);
         return _lastFoundMove;
     }
 
@@ -88,7 +92,9 @@ class AI extends Player {
                 Board test = new Board();
                 board.makeMove(m);
                 test.copy(board);
+                System.out.println(board);
                 board.undo();
+                System.out.println(test);
                 int value = findMove(test, depth - 1, false, 1, alpha, beta);
                 bestval = min(bestval, value);
                 beta = min(bestval, value);
@@ -143,7 +149,7 @@ class AI extends Player {
     /** Return a heuristically determined maximum search depth
      *  based on characteristics of BOARD. */
     private static int maxDepth(Board board) {
-        return 5; // FIXME?
+        return 4; // FIXME?
     }
 
     /** Return a heuristic value for BOARD. */
@@ -165,8 +171,9 @@ class AI extends Player {
         } if (board.winner() == WHITE) {
             return INFTY;
         }
-
         return blwh + (int) distfromcenter + captureking + clearpathforking;
+
+
     }
 
     private int clearpathwhitewin(Square kingpos, Board board) {

@@ -9,6 +9,23 @@ import static tablut.Piece.*;
 
 public class BoardTest {
 
+
+
+    @Test
+    public void copytestr() {
+        Square s = Square.sq(7, 4);
+        Square s1 = Square.sq(7, 5);
+        Board test = new Board();
+        test.makeMove(s, s1);
+        Board test2 = new Board();
+        test2.copy(test);
+        test.undo();
+        System.out.println(test.getallPieces().get(s1.index()));
+        System.out.println(test2.getallPieces().get(s1.index()));
+
+        assert test.getallPieces().equals(test2.getallPieces());
+    }
+
     @Test
     public void copytester(){
         Square s = Square.sq(7, 4);
