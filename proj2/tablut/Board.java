@@ -93,6 +93,7 @@ class Board {
 
     /** Clears the board to the initial position. */
     void init() {
+
         _winner = null;
         prevmoves.clear();
         positions.clear();
