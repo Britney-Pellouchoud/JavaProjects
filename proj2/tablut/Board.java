@@ -75,8 +75,7 @@ class Board {
             return;
         }
         init();
-        prevmoves = model.prevmoves;
-        _moveLimit = model.movelimit();
+
 
         this.allPieces = deepcopy(model);
 
