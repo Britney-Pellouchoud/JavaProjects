@@ -109,7 +109,7 @@ class Board {
             this.allPieces.put(s.index(), white);
         }
         this.allPieces.put(THRONE.index(), KING);
-        for (int i = 0; i <= 80; i++) {
+        for (int i = 0; i <= l; i++) {
             if (this.allPieces.get(i) == null) {
                 this.allPieces.put(i, EMPTY);
             }
@@ -117,6 +117,10 @@ class Board {
         positions.add(this.encodedBoard());
     }
 
+    /**
+     * l.
+     */
+    private final int l = 80;
 
 
 
@@ -226,10 +230,12 @@ class Board {
     }
 
     /** Return true iff FROM - TO is an unblocked rook move on the current
-     *  board.  For this to be true, FROM-TO must be a rook move and the
+     *  board.  For this to be
+     *  true, FROM-TO must be a rook move and the
      *  squares along it, other than FROM, must be empty. */
     boolean isUnblockedMove(Square from, Square to) {
-        assert from.isRookMove(to) : "NOT A ROOK MOVE " + from.toString() + to.toString();
+        assert from.isRookMove(to) : "NOT A ROOK MOVE "
+                + from.toString() + to.toString();
         int i = from.index();
         int dir = from.direction(to);
         for (Square s : ROOK_SQUARES[i][dir]) {
@@ -573,8 +579,8 @@ class Board {
         ArrayList k = prevmoves.pop();
         Square s1 = (Square) k.get(0);
         Piece p1 = (Piece) k.get(1);
-        ArrayList l = prevmoves.pop();
-        Square s2 = (Square) l.get(0);
+        ArrayList j = prevmoves.pop();
+        Square s2 = (Square) j.get(0);
         Piece opp = null;
         if (p1 == KING || p1 == WHITE) {
             opp = WHITE;
@@ -583,7 +589,7 @@ class Board {
             opp = BLACK;
         }
         this._turn = opp;
-        Piece p2 = (Piece) l.get(1);
+        Piece p2 = (Piece) j.get(1);
         this.allPieces.put(s2.index(), p1);
         this.allPieces.put(s1.index(), p2);
         int numreplace = numcaptured.remove(numcaptured.size() - 1);

@@ -1,17 +1,14 @@
 package tablut;
 
-import jdk.swing.interop.SwingInterOpUtils;
 
 import java.util.HashMap;
 
 import static java.lang.Math.*;
 
-import static tablut.Square.sq;
-import static tablut.Board.THRONE;
 import static tablut.Piece.*;
 
 /** A Player that automatically generates moves.
- *  @BritneyPellouchoud
+ *  @author BritneyPellouchoud
  */
 class AI extends Player {
 
@@ -45,7 +42,6 @@ class AI extends Player {
         Move found = findMove();
         _controller.reportMove(found);
         return found.toString();
-        // FIXME
     }
 
     @Override
@@ -53,6 +49,9 @@ class AI extends Player {
         return false;
     }
 
+    /**
+     * I just don't want to live.
+     */
     private int x;
 
     /** Return a move for me from the current position, assuming there
@@ -85,7 +84,8 @@ class AI extends Player {
         assert sense == -1 || sense == 1;
         if (depth == 0) {
             return staticScore(board);
-        } if (sense == -1) {
+        }
+        if (sense == -1) {
             int bestval = INFTY;
             Move bestsofar = null;
             for (Move m : board.legalMoves(BLACK)) {
@@ -149,26 +149,32 @@ class AI extends Player {
     /** Return a heuristically determined maximum search depth
      *  based on characteristics of BOARD. */
     private static int maxDepth(Board board) {
-        return 4; // FIXME?
+        return 4;
     }
 
+
+    /**
+     * Fin.
+     */
+    private final int a = 30;
+
     /** Return a heuristic value for BOARD. */
-    //positive is better for white
-    //negative is better for black
     private int staticScore(Board board) {
         int blwh = whiteminusblack(board);
         Square k = board.kingPosition();
-        double distfromcenter = Math.sqrt((k.row() - 4) ^ 2 + (k.col() - 4) ^ 2 );
+        double distfromcenter = Math.sqrt((k.row() - 4) ^ 2
+                + (k.col() - 4) ^ 2);
         int captureking = 0;
         for (Square s : board.pieceLocations(BLACK)) {
             if (s.isRookMove(k)) {
                 captureking -= 5;
             }
         }
-        int clearpathforking = clearpathwhitewin(k, board) * 30;
+        int clearpathforking = clearpathwhitewin(k, board) * a;
         if (board.winner() == BLACK) {
             return -INFTY;
-        } if (board.winner() == WHITE) {
+        }
+        if (board.winner() == WHITE) {
             return INFTY;
         }
         return blwh + (int) distfromcenter + captureking + clearpathforking;
@@ -176,40 +182,50 @@ class AI extends Player {
 
     }
 
+    /**
+     * If the path for king is clear.
+     * @param kingpos Square.
+     * @param board Board.
+     * @return Integer.
+     */
     private int clearpathwhitewin(Square kingpos, Board board) {
         int clearpathforking = 0;
         if (board.isUnblockedMove(kingpos, Square.sq(0, kingpos.col()))) {
             clearpathforking += 5;
-        } if (board.isUnblockedMove(kingpos, Square.sq(kingpos.row(), 0))) {
+        }
+        if (board.isUnblockedMove(kingpos, Square.sq(kingpos.row(), 0))) {
             clearpathforking += 5;
-        } if (board.isUnblockedMove(kingpos, Square.sq(8, kingpos.col()))) {
+        }
+        if (board.isUnblockedMove(kingpos, Square.sq(8, kingpos.col()))) {
             clearpathforking += 5;
-        } if (board.isUnblockedMove(kingpos, Square.sq(kingpos.row(), 8))) {
+        }
+        if (board.isUnblockedMove(kingpos, Square.sq(kingpos.row(), 8))) {
             clearpathforking += 5;
         }
         return clearpathforking;
     }
 
 
-
-
+    /**
+     * Whiteminusblack.
+     * @param board Board.
+     * @return Integer.
+     */
 
     private int whiteminusblack(Board board) {
-        HashMap<Integer, Piece> x = board.getallPieces();
+        HashMap<Integer, Piece> b = board.getallPieces();
         int numwhite = 0;
         int numblack = 0;
-        for (int i : board.getallPieces().keySet()){
-            if (board.getallPieces().get(i) == BLACK) {
+        for (int i : board.getallPieces().keySet()) {
+            if (b.get(i) == BLACK) {
                 numblack += 1;
-            } if (board.getallPieces().get(i) == EMPTY) {
+            }
+            if (b.get(i) == EMPTY) {
                 continue;
             } else {
                 numwhite += 1;
             }
         }
-        return numwhite - numblack;  // FIXME
+        return numwhite - numblack;
     }
-
-    // FIXME: More here.
-
 }

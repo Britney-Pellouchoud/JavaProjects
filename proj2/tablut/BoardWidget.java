@@ -2,21 +2,20 @@ package tablut;
 
 import ucb.gui2.Pad;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.awt.Color;
+import java.awt.Font;
 
 import java.awt.event.MouseEvent;
 
 import static java.awt.Color.*;
-import static java.awt.Font.ITALIC;
-import static tablut.Move.isGrammaticalMove;
 import static tablut.Piece.*;
-import static tablut.Move.mv;
 import static tablut.Square.*;
+import java.awt.Graphics2D;
 
 /** A widget that displays a Tablut game.
- *  @author
+ *  @author Britney Pellouchoud
  */
 class BoardWidget extends Pad {
 
@@ -64,6 +63,17 @@ class BoardWidget extends Pad {
         _acceptingMoves = false;
     }
 
+
+    /**
+     * Final integer magic.
+     */
+    private final int n = 45;
+
+    /**
+     * Final s.
+     */
+    private final int w = 80;
+
     /** Draw the bare board G.  */
     private void drawGrid(Graphics2D g) {
         g.setColor(SQUARE_COLOR);
@@ -72,12 +82,14 @@ class BoardWidget extends Pad {
         g.fillRect(cx(Board.THRONE), cy(Board.THRONE),
                    SQUARE_SIDE, SQUARE_SIDE);
         g.setColor(yellow);
-        g.fillRect(cx(Board.WTHRONE), cy(Board.WTHRONE), SQUARE_SIDE, SQUARE_SIDE);
-        g.fillRect(cx(Board.STHRONE), cy(Board.STHRONE), SQUARE_SIDE, SQUARE_SIDE);
-        g.fillRect(cx(Board.NTHRONE), cy(Board.NTHRONE), SQUARE_SIDE, SQUARE_SIDE);
-        g.fillRect(cx(Board.ETHRONE), cy(Board.ETHRONE), SQUARE_SIDE, SQUARE_SIDE);
-
-        // OTHER SQUARE COLORINGS?
+        g.fillRect(cx(Board.WTHRONE),
+                cy(Board.WTHRONE), SQUARE_SIDE, SQUARE_SIDE);
+        g.fillRect(cx(Board.STHRONE),
+                cy(Board.STHRONE), SQUARE_SIDE, SQUARE_SIDE);
+        g.fillRect(cx(Board.NTHRONE),
+                cy(Board.NTHRONE), SQUARE_SIDE, SQUARE_SIDE);
+        g.fillRect(cx(Board.ETHRONE),
+                cy(Board.ETHRONE), SQUARE_SIDE, SQUARE_SIDE);
         g.setColor(GRID_LINE_COLOR);
         for (int k = 0; k <= SIZE; k += 1) {
             g.drawLine(cx(0), cy(k - 1), cx(SIZE), cy(k - 1));
@@ -89,12 +101,12 @@ class BoardWidget extends Pad {
         for (int i = 0; i < alph.length(); i++) {
             Square s = SQUARE_LIST.get(i);
             char letter = alph.charAt(i);
-            g.drawString(String.valueOf(letter), cx(s) + 10, cy(s) + 45);
+            g.drawString(String.valueOf(letter), cx(s) + 10, cy(s) + n);
 
         }
 
         ArrayList<Square> vert = new ArrayList<Square>();
-        for (int i = 0; i <= 80; i += 9) {
+        for (int i = 0; i <= w; i += 9) {
             Square a = SQUARE_LIST.get(i);
             vert.add(a);
         }
@@ -104,11 +116,15 @@ class BoardWidget extends Pad {
         for (int i = 0; i < nums.length(); i++) {
             Square p = vert.get(i);
             char num = nums.charAt(i);
-            g.drawString(String.valueOf(num), cx(p) - 15, cy(p) + 25);
+            g.drawString(String.valueOf(num), cx(p) - 15, cy(p) + o);
         }
 
-        // OTHER STUFF.
     }
+
+    /**
+     * H.
+     */
+    private final int o = 25;
 
     @Override
     public synchronized void paintComponent(Graphics2D g) {
@@ -116,31 +132,38 @@ class BoardWidget extends Pad {
         Square.SQUARE_LIST.iterator().forEachRemaining(s -> drawPiece(g, s));
     }
 
+    /**
+     * Tf.
+     */
+    private final int tf = 25;
+
     /** Draw the contents of S on G. */
     private void drawPiece(Graphics2D g, Square s) {
         Piece p = _board.getallPieces().get(s.index());
         int x = s.col();
         int y = s.row();
+
         if (p.equals(Piece.BLACK)) {
             g.setColor(black);
-            g.drawOval(cx(s), cy(s), 25, 25);
-            g.fillOval(cx(s), cy(s), 25, 25);
-        } if (p.equals(Piece.WHITE)) {
+            g.drawOval(cx(s), cy(s), tf, tf);
+            g.fillOval(cx(s), cy(s), tf, tf);
+        }
+        if (p.equals(Piece.WHITE)) {
             g.setColor(white);
-            g.drawOval(cx(s), cy(s), 25, 25);
-            g.fillOval(cx(s), cy(s), 25, 25);
-        } if (p.equals(KING)) {
+            g.drawOval(cx(s), cy(s), tf, tf);
+            g.fillOval(cx(s), cy(s), tf, tf);
+        }
+        if (p.equals(KING)) {
             g.setColor(white);
-            g.drawOval(cx(s), cy(s),25, 25);
-            g.fillOval(cx(s), cy(s), 25, 25);
+            g.drawOval(cx(s), cy(s), tf, tf);
+            g.fillOval(cx(s), cy(s), tf, tf);
             g.setFont(KING_FONT);
             g.setColor(blue);
             g.drawString("K", cx(s) + 5, cx(y) + 5);
-        } if (p.equals(EMPTY)) {
+        }
+        if (p.equals(EMPTY)) {
             return;
         }
-
-        // FIXME
     }
 
     /** Handle a click on S. */
@@ -151,10 +174,12 @@ class BoardWidget extends Pad {
             _commands.offer(m.toString());
             clicked.clear();
         }
-        // FIXME
         repaint();
     }
 
+    /**
+     * Clicked.
+     */
     private ArrayList<Square> clicked = new ArrayList<Square>();
 
     /** Handle mouse click event E. */

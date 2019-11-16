@@ -27,7 +27,7 @@ public class UnitTest {
     @Test
     public void inittest() {
         Board testboard = new Board();
-        assert testboard.getallPieces().get(03).toString() == "B";
+        assert testboard.getallPieces().get(03).toString().equals("B");
     }
 
     @Test
@@ -35,9 +35,9 @@ public class UnitTest {
         Board testboard = new Board();
         Board modelboard = new Board();
         Piece k = KING;
-        modelboard.makeMove(Square.sq(3,0), Square.sq(2,0));
-        modelboard.makeMove(modelboard.NTHRONE, Square.sq(5,5));
-        modelboard.makeMove(Square.sq(5, 0), Square.sq(6,0));
+        modelboard.makeMove(Square.sq(3, 0), Square.sq(2, 0));
+        modelboard.makeMove(modelboard.NTHRONE, Square.sq(5, 5));
+        modelboard.makeMove(Square.sq(5, 0), Square.sq(6, 0));
         modelboard.makeMove(modelboard.THRONE, modelboard.NTHRONE);
         assert modelboard.get(modelboard.NTHRONE) == KING;
         assert modelboard.get(modelboard.THRONE) == EMPTY;

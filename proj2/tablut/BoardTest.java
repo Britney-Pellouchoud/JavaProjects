@@ -1,8 +1,5 @@
 package tablut;
 import org.junit.Test;
-
-import java.util.*;
-
 import static tablut.Piece.*;
 
 
@@ -27,7 +24,7 @@ public class BoardTest {
     }
 
     @Test
-    public void copytester(){
+    public void copytester() {
         Square s = Square.sq(7, 4);
         Square s1 = Square.sq(7, 5);
         Board test = new Board();
@@ -57,9 +54,9 @@ public class BoardTest {
 
     @Test
     public void squareindex() {
-        Square s = Square.sq(0,1);
+        Square s = Square.sq(0, 1);
         System.out.println(s.index());
-        Square s1 = Square.sq(0,2);
+        Square s1 = Square.sq(0, 2);
         System.out.println(s1.index());
         Square s2 = Square.sq(0, 3);
         System.out.println(s2.index());
@@ -82,9 +79,9 @@ public class BoardTest {
 
     @Test
     public void sectiontest() {
-        Square sthrone = Square.sq(4, 3);
+        Square sthrone = Square.sq(4,  3);
         Board test = new Board();
-        Square s = Square.sq(1,0);
+        Square s = Square.sq(1, 0);
         System.out.println(test.whichsection(s));
     }
 
@@ -121,9 +118,9 @@ public class BoardTest {
         Board modelboard = new Board();
         Piece k = KING;
         modelboard.setMoveLimit(5);
-        modelboard.makeMove(Square.sq(3,0), Square.sq(2,0));
-        modelboard.makeMove(modelboard.NTHRONE, Square.sq(5,5));
-        modelboard.makeMove(Square.sq(5, 0), Square.sq(6,0));
+        modelboard.makeMove(Square.sq(3, 0), Square.sq(2, 0));
+        modelboard.makeMove(modelboard.NTHRONE, Square.sq(5, 5));
+        modelboard.makeMove(Square.sq(5,  0), Square.sq(6, 0));
         modelboard.makeMove(modelboard.THRONE, modelboard.NTHRONE);
         assert modelboard.get(modelboard.NTHRONE) == KING;
         assert modelboard.get(modelboard.THRONE) == EMPTY;
@@ -136,7 +133,7 @@ public class BoardTest {
     @Test
     public void undotest() {
         Board testboard = new Board();
-        testboard.makeMove((Square.sq(7,4)), Square.sq(7,5));
+        testboard.makeMove((Square.sq(7, 4)), Square.sq(7, 5));
         System.out.println(testboard);
         testboard.undo();
         System.out.println(testboard);
@@ -169,8 +166,8 @@ public class BoardTest {
     public void gettest() {
         Board testboard = new Board();
         Piece k = KING;
-        assert testboard.get(4,4).equals(k);
-        assert testboard.get('e', '5').equals(k);
+        assert testboard.get(4, 4).equals(k);
+        assert testboard.get('e',  '5').equals(k);
     }
 
     @Test
@@ -185,30 +182,30 @@ public class BoardTest {
     public void unblockedtest() {
         Board testboard = new Board();
         Square s1 = Square.sq(0, 3);
-        Square s2 = Square.sq(2, 3);
-        assert testboard.isUnblockedMove(s1, s2) == true;
-        Square a1 = Square.sq(0,4);
+        Square s2 = Square.sq(2,  3);
+        assert testboard.isUnblockedMove(s1, s2);
+        Square a1 = Square.sq(0, 4);
         Square a2 = Square.sq(2, 4);
-        assert testboard.isUnblockedMove(a1, a2) == false;
+        assert !testboard.isUnblockedMove(a1, a2);
     }
 
 
     @Test
     public void kingmovestest() {
         Board testboard = new Board();
-        Square h5 = Square.sq(7,4);
-        Square h6 = Square.sq(7,5);
+        Square h5 = Square.sq(7, 4);
+        Square h6 = Square.sq(7, 5);
         testboard.makeMove(h5, h6);
-        Square e4 = Square.sq(4, 3);
-        Square b4 = Square.sq(1, 3);
+        Square e4 = Square.sq(4,  3);
+        Square b4 = Square.sq(1,  3);
         testboard.makeMove(e4, b4);
-        Square h7 = Square.sq(7,6);
+        Square h7 = Square.sq(7, 6);
         testboard.makeMove(h6, h7);
         System.out.println(testboard);
-        Square e5 = Square.sq(4, 4);
+        Square e5 = Square.sq(4,  4);
         testboard.makeMove(e5, e4);
         System.out.println(testboard);
-        Square h8 = Square.sq(7,7);
+        Square h8 = Square.sq(7, 7);
         testboard.makeMove(h7, h8);
         Square h4 = Square.sq(7, 3);
         testboard.makeMove(e4, h4);
@@ -218,8 +215,8 @@ public class BoardTest {
     @Test
     public void initialclear() {
         Board testboard = new Board();
-        Square h5 = Square.sq(7,4);
-        Square h6 = Square.sq(7,5);
+        Square h5 = Square.sq(7, 4);
+        Square h6 = Square.sq(7, 5);
         testboard.makeMove(h5, h6);
         System.out.println(testboard);
         testboard.init();
