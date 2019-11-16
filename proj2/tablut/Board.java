@@ -226,7 +226,7 @@ class Board {
      *  board.  For this to be true, FROM-TO must be a rook move and the
      *  squares along it, other than FROM, must be empty. */
     boolean isUnblockedMove(Square from, Square to) {
-        assert from.isRookMove(to) : "NOT A ROOK MOVE";
+        assert from.isRookMove(to) : "NOT A ROOK MOVE " + from.toString() + to.toString();
         int i = from.index();
         int dir = from.direction(to);
         for (Square s : ROOK_SQUARES[i][dir]) {
@@ -414,7 +414,6 @@ class Board {
 
         if (thrones.contains(sq1) && between == KING) {
             if (kingcapture(sq1)) {
-                assert 0 == 1 : "MOTHERFUCKER3";
                 _winner = BLACK;
                 this.allPieces.put(sq1.index(), EMPTY);
                 capturedpieces.add(KING);
@@ -429,7 +428,6 @@ class Board {
             this.allPieces.put(sq1.index(), EMPTY);
             capturedpieces.add(between);
             if (between.equals(KING)) {
-                assert 0 == 1 : "MOTHERFUCKER4";
                 _winner = BLACK;
             }
             return true;
