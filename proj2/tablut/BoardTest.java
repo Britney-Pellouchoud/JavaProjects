@@ -10,6 +10,18 @@ import static tablut.Piece.*;
 public class BoardTest {
 
     @Test
+    public void copytester(){
+        Square s = Square.sq(7, 4);
+        Square s1 = Square.sq(7, 5);
+        Board test = new Board();
+        test.makeMove(s, s1);
+        System.out.println(test.turn());
+        Board test2 = new Board();
+        test2.copy(test);
+        System.out.println(test2.turn());
+    }
+
+    @Test
     public void undoer() {
         Square s = Square.sq(7, 4);
         Square s1 = Square.sq(7, 5);

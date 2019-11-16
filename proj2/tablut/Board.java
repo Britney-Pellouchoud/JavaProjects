@@ -151,7 +151,6 @@ class Board {
 
                 _winner = BLACK;
             } else {
-                assert 0 == 1 : "MOTHERFUCKER6";
 
                 _winner = WHITE;
             }
@@ -177,7 +176,6 @@ class Board {
             }
         }
         if (ind == -1) {
-            assert 0 == 1 : "MOTHERFUCKER";
             _winner = BLACK;
         }
         return Square.sq(ind);
@@ -228,7 +226,7 @@ class Board {
      *  board.  For this to be true, FROM-TO must be a rook move and the
      *  squares along it, other than FROM, must be empty. */
     boolean isUnblockedMove(Square from, Square to) {
-        assert from.isRookMove(to) : "CANNOT MAKE THIS MOVE, NOT A ROOK MOVE";
+        assert from.isRookMove(to) : "NOT A ROOK MOVE";
         int i = from.index();
         int dir = from.direction(to);
         for (Square s : ROOK_SQUARES[i][dir]) {

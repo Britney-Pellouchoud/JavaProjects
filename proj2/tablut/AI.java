@@ -159,7 +159,7 @@ class AI extends Player {
                 captureking -= 5;
             }
         }
-        int clearpathforking = clearpathwhitewin(k, board);
+        int clearpathforking = clearpathwhitewin(k, board) * 30;
         if (board.winner() == BLACK) {
             return -INFTY;
         } if (board.winner() == WHITE) {
