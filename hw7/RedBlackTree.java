@@ -33,7 +33,36 @@ public class RedBlackTree<T extends Comparable<T>> {
      */
     RBTreeNode<T> buildRedBlackTree(BTree.Node<T> r) {
         // YOUR CODE HERE
-        return null;
+        if (r.equals(null)) {
+            return null;
+        } else if (r.getItemCount() == 2) {
+            RBTreeNode node = new RBTreeNode(true, r.getItemAt(0));
+            node.right = new RBTreeNode(false, r.getItemAt(1));
+            if (! (r.getChildrenCount()==0)) {
+                node.left = buildRedBlackTree(r.getChildAt(0));
+                node.right.left = buildRedBlackTree(r.getChildAt(1));
+                node.right.right = buildRedBlackTree(r.getChildAt(2));
+            }
+            return node;
+        } else if (r.getItemCount() == 3) {
+            RBTreeNode node = new RBTreeNode(true, r.getItemAt(1));
+            node.left = new RBTreeNode(false, r.getItemAt(0));
+            node.right = new RBTreeNode(false, r.getItemAt(2));
+            if (!(r.getChildrenCount() == 0)) {
+                node.left.left = buildRedBlackTree(r.getChildAt(0));
+                node.left.right = buildRedBlackTree(r.getChildAt(1));
+                node.right.left = buildRedBlackTree(r.getChildAt(2));
+                node.right.right = buildRedBlackTree(r.getChildAt(3));
+            }
+            return node;
+        } else {
+            RBTreeNode node = new RBTreeNode(true, r.getItemAt(0));
+            if (!(r.getChildrenCount() == 0)) {
+                node.left = buildRedBlackTree(r.getChildAt(0));
+                node.right = buildRedBlackTree(r.getChildAt(1));
+            }
+            return node;
+        }
     }
 
     /**
@@ -46,6 +75,10 @@ public class RedBlackTree<T extends Comparable<T>> {
      */
     RBTreeNode<T> rotateRight(RBTreeNode<T> node) {
         // YOUR CODE HERE
+        if (node == null ) {
+            return null;
+        }
+        RBTreeNode a = node;
         return null;
     }
 

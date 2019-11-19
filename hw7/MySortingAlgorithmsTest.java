@@ -37,6 +37,7 @@ public class MySortingAlgorithmsTest {
             sa.sort(input, input.length);
             assertArrayEquals("Result for " + sa + " incorrect",
                     correct, input);
+            System.out.println("HITS");
         }
     }
 

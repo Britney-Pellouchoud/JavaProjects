@@ -208,38 +208,38 @@ public class MySortingAlgorithms {
     public static class LSDSort implements SortingAlgorithm {
         @Override
         public void sort(int[] a, int k) {
-            int bit = 32;
-            int bitforby = 8;
-            int w = bit/bitforby;
-            int r = 1 << bitforby;
-            int mask = r - 1;
-            int n = Math.min(a.length, k);
-            int[] answer = new int[n];
+            int bitsforbyte = 8;
+            int w = 32/bitsforbyte;
+            int rshift = 1 << bitsforbyte;
+            int mask = rshift - 1;
+            int n  = Math.min(a.length, k);
 
-            for (int i = 0; i < w; i++) {
-                int[] c = new int[r + 1];
-                for (int j = 0; j < n; j++) {
-                    int m = (a[j] >> bitforby * i) & mask;
-                    c[m + 1]++;
+            int [] answer = new int[n];
+
+            for (int ind = 0; ind < w; ind++) {
+                int [] count = new int[rshift + 1];
+                for (int i = 0; i < n; i++) {
+                    int c = (a[i] >> bitsforbyte * ind) & mask;
+                    count[c + 1]++;
                 }
-                for (int u = 0; u < r; u++) {
-                    c[u + 1] += c[u];
-                    if (i == w -1) {
-                        int firstshift = c[r] - c[r/2];
-                        int secondshift = c[r/2];
-                        for (int l = 0; l < r/2; l++) {
-                            c[l] += firstshift;
-                        }
-                        for (int l = 0; l < r/2; l++) {
-                            c[l] -= secondshift;
-                        }
+                for (int r = 0; r < rshift; r++) {
+                    count[r + 1] = count[r + 1] + count[r];
+                }
+                if (ind == w - 1) {
+                    int s1 = count[rshift] - count[rshift/2];
+                    int s2 = count[rshift/2];
+                    for (int x = 0; x < rshift/2; x++) {
+                        count[x] += s1;
+                    }
+                    for (int y = rshift/2; y < rshift; y++) {
+                        count[rshift] -= s2;
                     }
                 }
-                for (int s = 0; s < n; s++) {
-                    int cu = (a[i] >> bitforby * i) & mask;
-                    answer[c[cu]++] = a[i];
+                for (int f = 0; f < n; f++) {
+                    int c = (a[f] >> bitsforbyte * ind) & mask;
+                    answer[count[c]++] = a[f];
                 }
-                for (int u = 0; u < n; u++) {
+                for (int i = 0; i < n; i++) {
                     a[i] = answer[i];
                 }
             }
