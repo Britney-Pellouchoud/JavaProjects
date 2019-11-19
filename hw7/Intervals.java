@@ -14,7 +14,20 @@ public class Intervals {
      *  total length covered by the union of the intervals. */
     public static int coveredLength(List<int[]> intervals) {
         // REPLACE WITH APPROPRIATE STATEMENTS.
-        return 0;
+        int outer = 0;
+        int starter = Integer.MIN_VALUE;
+        int ender = Integer.MIN_VALUE;
+        for (int i = 0; i < intervals.size(); i++ ){
+            if (intervals.get(i)[0] > ender) {
+                outer += ender - starter;
+                starter = intervals.get(i)[0];
+                ender = intervals.get(i)[1];
+            } if (intervals.get(i)[1] > ender && intervals.get(i)[0] <= ender){
+                ender = intervals.get(i)[1];
+            }
+        }
+        outer += ender - starter;
+        return outer;
     }
 
     /** Test intervals. */

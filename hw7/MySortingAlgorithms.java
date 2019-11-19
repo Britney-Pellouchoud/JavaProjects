@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -38,8 +39,18 @@ public class MySortingAlgorithms {
     public static class InsertionSort implements SortingAlgorithm {
         @Override
         public void sort(int[] array, int k) {
-            // FIXME
+        int len = array.length;
+        for (int i = 1; i < len; i++){
+            int spot = array[i];
+            int j = i - 1;
+            while (j >= 0 && array[j] > spot) {
+                array[j + 1] = array[j];
+                j = j - 1;
+            }
+            array[j + 1] = spot;
         }
+    }
+
 
         @Override
         public String toString() {
@@ -56,13 +67,33 @@ public class MySortingAlgorithms {
     public static class SelectionSort implements SortingAlgorithm {
         @Override
         public void sort(int[] array, int k) {
-            // FIXME
+            if (array.length == 1 || array.length == 0) {
+                return;
+            }
+            int minind;
+            int j;
+            for (int i = 0; i < k - 1; i++) {
+                minind = i;
+                for (j = i+1; j< k; j++) {
+                    if (array[j] < array[minind]) {
+                        minind = j;
+                        swap(array, minind, i);
+                    }
+                }
+            }
+        }
+
+        public void swap(int[] list, int orig, int n) {
+            int temp = list[orig];
+            list[orig] = list[n];
+            list[n] = temp;
         }
 
         @Override
         public String toString() {
             return "Selection Sort";
         }
+
     }
 
     /** Your mergesort implementation. An iterative merge
@@ -73,8 +104,41 @@ public class MySortingAlgorithms {
     public static class MergeSort implements SortingAlgorithm {
         @Override
         public void sort(int[] array, int k) {
-            // FIXME
+            int[] answer = new int[array.length];
+            int smol = Math.min(k - 1, array.length - 1);
+            sorter(array, answer, 0, smol);
         }
+        public void merge(int[] filler, int[] answer, int small, int midind, int big) {
+            for (int i = 0; i <= big; i++) {
+                answer[i] = filler[i];
+            }
+            int j = small;
+            int k = midind + 1;
+            for (int i = small; i <= big; i++) {
+                if (j > midind) {
+                    filler[i] = answer[k++];
+                }
+                else if (k > big) {
+                    filler[i] = answer[j++];
+                }
+                else if (answer[k] < answer[j]){
+                    filler[i] = answer[k++];
+                }
+                else {
+                    filler[i] = answer[j++];
+                }
+            }
+        }
+        public void sorter(int[] filler, int[] answer, int small, int big) {
+            if (big <= small) {
+                return;
+            }
+            int midind = small + (big - small) / 2;
+            sorter(filler, answer, small, midind);
+            sorter(filler, answer, midind + 1, big);
+            merge(filler, answer, small, midind, big);
+        }
+
 
         // may want to add additional methods
 
@@ -144,7 +208,41 @@ public class MySortingAlgorithms {
     public static class LSDSort implements SortingAlgorithm {
         @Override
         public void sort(int[] a, int k) {
-            // FIXME
+            int bit = 32;
+            int bitforby = 8;
+            int w = bit/bitforby;
+            int r = 1 << bitforby;
+            int mask = r - 1;
+            int n = Math.min(a.length, k);
+            int[] answer = new int[n];
+
+            for (int i = 0; i < w; i++) {
+                int[] c = new int[r + 1];
+                for (int j = 0; j < n; j++) {
+                    int m = (a[j] >> bitforby * i) & mask;
+                    c[m + 1]++;
+                }
+                for (int u = 0; u < r; u++) {
+                    c[u + 1] += c[u];
+                    if (i == w -1) {
+                        int firstshift = c[r] - c[r/2];
+                        int secondshift = c[r/2];
+                        for (int l = 0; l < r/2; l++) {
+                            c[l] += firstshift;
+                        }
+                        for (int l = 0; l < r/2; l++) {
+                            c[l] -= secondshift;
+                        }
+                    }
+                }
+                for (int s = 0; s < n; s++) {
+                    int cu = (a[i] >> bitforby * i) & mask;
+                    answer[c[cu]++] = a[i];
+                }
+                for (int u = 0; u < n; u++) {
+                    a[i] = answer[i];
+                }
+            }
         }
 
         @Override
