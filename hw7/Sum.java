@@ -1,3 +1,5 @@
+import org.junit.Test;
+
 /** HW #7, Two-sum problem.
  * @author
  */
@@ -13,6 +15,13 @@ public class Sum {
             }
         }
         return false;  // REPLACE WITH YOUR ANSWER
+    }
+
+    @Test
+    public void sumtest() {
+        int[] A = new int[]{1,2,3,4,5};
+        int[] B = new int[]{7,6,5,4,3};
+        System.out.println(sumsTo(A, B, 0));
     }
 
 }

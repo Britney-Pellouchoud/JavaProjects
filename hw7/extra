@@ -1,0 +1,31 @@
+ArrayList<Integer> arg = new ArrayList<Integer>();
+        for (T i : args) {
+            int a = Integer.valueOf((String) i);
+            arg.add(a);
+        }
+        int counter = 0;
+        for (int i = 0; i < arg.size() - 1; i++) {
+            if((int)arg.get(i) > (int)arg.get(i + 1)) {
+               swap((List<Integer>) arg, i, i + 1);
+               counter += 1;
+                System.out.println(arg);
+            }
+        }
+        return counter; // REPLACE WITH YOUR ANSWER
+
+
+        public static void swap(List<Integer> arr, int index1, int index2) {
+                int save = arr.get(index1);
+                int save2 = arr.get(index2);
+                arr.remove(index1);
+                arr.remove(index2);
+                arr.add(index1, save2);
+                arr.add(index2, save);
+            }
+            public static void swapper(){
+                ArrayList<Integer> x = new ArrayList<Integer>();
+                x.add(3);
+                x.add(4);
+                x.add(0, 2);
+                System.out.println(x);
+            }
