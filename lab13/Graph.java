@@ -2,6 +2,8 @@ import org.w3c.dom.Node;
 
 import java.util.*;
 
+import static java.util.Collections.min;
+
 /**
  *  A weighted graph.
  *  @author
@@ -74,48 +76,52 @@ public class Graph {
         return neighbors;
     }
 
+    HashMap<Integer, Integer> costs= new HashMap<Integer, Integer>();
+
+
     /** Runs Dijkstra's algorithm starting from vertex STARTVERTEX and returns
      *  an integer array consisting of the shortest distances
      *  from STARTVERTEX to all other vertices. */
     public int[] dijkstras(int startVertex) {
-        int[]x = new int[vertexCount];
-        for (int i = 0; i < vertexCount; i++) {
-            dist[i] = Integer.MAX_VALUE;
-            x = new int[vertexCount];
-            x[0] = startVertex;
-            pq.add(x);
-            dist[startVertex] = 0;
-            while(settled.size() < vertexCount) {
-                int a = pq.remove()[0];
-                settled.add(a);
-                neighborhelper(a);
+        //maps vertex and costs
+        for(Integer e : neighbors(startVertex)) {
+            if (!costs.containsKey(e)) {
+                Edge ed = getEdge(startVertex, e);
+                costs.put(e, ed.info());
             }
+            return dijkstras(e);
         }
-        return x;
+        return sorter(costs, new int[costs.keySet().size()], 0);
 
     }
 
-    private void neighborhelper(int u) {
-        int edgeDistance = -1;
-        int newDistance = -1;
-        for(int i = 0; i < adjLists[u].size(); i++) {
-            Edge a = adjLists[u].remove();
-            if (!settled.contains(a.to())) {
-                edgeDistance = a.info();
-                newDistance = dist[u] + edgeDistance;
-                if (newDistance < dist[a.to()]) {
-                    pq.add(new int[]{a.to(), dist[u]});
+    public int[] sorter(HashMap<Integer, Integer> values, int[] store, int count) {
+        if(count == store.length) {
+            return store;
+        } else {
+            int minner = min(values.values());
+            int k = -1;
+            for(int key : values.keySet()) {
+                if(values.get(key) == minner) {
+                    k = key;
+                    values.remove(key);
+                    break;
                 }
             }
-
+            store[count] = k;
+            count += 1;
+            return sorter(values, store, count);
         }
     }
-
-
 
 
     /** Returns the edge (V1, V2). (ou may find this helpful to implement!) */
     private Edge getEdge(int v1, int v2) {
+        for (Edge e : adjLists[v1]) {
+            if(e.to() == v2) {
+                return e;
+            }
+        }
         return null;
     }
 
