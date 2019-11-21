@@ -1,6 +1,6 @@
-import java.util.LinkedList;
-import java.util.ArrayList;
-import java.util.List;
+import org.w3c.dom.Node;
+
+import java.util.*;
 
 /**
  *  A weighted graph.
@@ -12,6 +12,12 @@ public class Graph {
     private LinkedList<Edge>[] adjLists;
     /** Number of vertices in me. */
     private int vertexCount;
+
+    private int[] dist;
+
+    private PriorityQueue<int[]> pq;
+    private HashSet<Integer> settled = new HashSet<Integer>();
+
 
     /** A graph with NUMVERTICES vertices and no edges. */
     @SuppressWarnings("unchecked")
@@ -72,10 +78,41 @@ public class Graph {
      *  an integer array consisting of the shortest distances
      *  from STARTVERTEX to all other vertices. */
     public int[] dijkstras(int startVertex) {
-        int[] answer = new int[vertexCount];
-        return answer;
+        int[]x = new int[vertexCount];
+        for (int i = 0; i < vertexCount; i++) {
+            dist[i] = Integer.MAX_VALUE;
+            x = new int[vertexCount];
+            x[0] = startVertex;
+            pq.add(x);
+            dist[startVertex] = 0;
+            while(settled.size() < vertexCount) {
+                int a = pq.remove()[0];
+                settled.add(a);
+                neighborhelper(a);
+            }
+        }
+        return x;
 
     }
+
+    private void neighborhelper(int u) {
+        int edgeDistance = -1;
+        int newDistance = -1;
+        for(int i = 0; i < adjLists[u].size(); i++) {
+            Edge a = adjLists[u].remove();
+            if (!settled.contains(a.to())) {
+                edgeDistance = a.info();
+                newDistance = dist[u] + edgeDistance;
+                if (newDistance < dist[a.to()]) {
+                    pq.add(new int[]{a.to(), dist[u]});
+                }
+            }
+
+        }
+    }
+
+
+
 
     /** Returns the edge (V1, V2). (ou may find this helpful to implement!) */
     private Edge getEdge(int v1, int v2) {
