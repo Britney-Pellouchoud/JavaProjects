@@ -72,8 +72,9 @@ public class Graph {
      *  an integer array consisting of the shortest distances
      *  from STARTVERTEX to all other vertices. */
     public int[] dijkstras(int startVertex) {
-        int[] answer = new int[]{1, 2, 3};
+        int[] answer = new int[vertexCount];
         return answer;
+
     }
 
     /** Returns the edge (V1, V2). (ou may find this helpful to implement!) */
