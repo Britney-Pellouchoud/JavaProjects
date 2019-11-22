@@ -1,3 +1,5 @@
+import org.junit.Test;
+
 /**
  *  @author Josh Hug
  */
@@ -17,5 +19,6 @@ public class DepthFirstDemo {
             new MazeDepthFirstPaths(maze, startX, startY, targetX, targetY);
         mdfp.solve();
     }
+
 
 }

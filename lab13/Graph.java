@@ -1,3 +1,4 @@
+import org.junit.Test;
 import org.w3c.dom.Node;
 
 import java.util.*;
@@ -19,6 +20,8 @@ public class Graph {
 
     private PriorityQueue<int[]> pq;
     private HashSet<Integer> settled = new HashSet<Integer>();
+
+
 
 
     /** A graph with NUMVERTICES vertices and no edges. */
@@ -56,6 +59,9 @@ public class Graph {
         addEdge(v2, v1, edgeWeight);
     }
 
+
+
+
     /** Returns true iff there is an edge from vertex FROM to vertex TO. */
     public boolean isAdjacent(int from, int to) {
         for (Edge e : adjLists[from]) {
@@ -82,37 +88,45 @@ public class Graph {
     /** Runs Dijkstra's algorithm starting from vertex STARTVERTEX and returns
      *  an integer array consisting of the shortest distances
      *  from STARTVERTEX to all other vertices. */
+    PriorityQueue<Integer> fringe;
+
     public int[] dijkstras(int startVertex) {
         //maps vertex and costs
-        for(Integer e : neighbors(startVertex)) {
-            if (!costs.containsKey(e)) {
-                Edge ed = getEdge(startVertex, e);
-                costs.put(e, ed.info());
-            }
-            return dijkstras(e);
+        costs.put(startVertex, 0);
+        fringe = new PriorityQueue<Integer>();
+        fringe.add(startVertex);
+
+
+        for (int i = 1; i < vertexCount; i++) {
+            costs.put(i, Integer.MAX_VALUE);
+            fringe.add(i);
         }
-        return sorter(costs, new int[costs.keySet().size()], 0);
 
-    }
 
-    public int[] sorter(HashMap<Integer, Integer> values, int[] store, int count) {
-        if(count == store.length) {
-            return store;
-        } else {
-            int minner = min(values.values());
-            int k = -1;
-            for(int key : values.keySet()) {
-                if(values.get(key) == minner) {
-                    k = key;
-                    values.remove(key);
+        while(!fringe.isEmpty()) {
+            int v = fringe.remove();
+            for (Edge e : adjLists[v]) {
+                if ((costs.get(e.from()) + e.info()) < costs.get(e.to())) {
+                    int d = costs.get(e.from);
+                    costs.put(e.to(), d + e.info());
+                }
+            }
+        }
+
+        int[] answer = new int[costs.keySet().size()];
+        for(int i = 0; costs.keySet().size() != 0; i++) {
+            int small = min(costs.values());
+            for (int j : costs.keySet()) {
+                if (costs.get(j) == small) {
+                    costs.remove(j);
+                    answer[i] = j;
                     break;
                 }
             }
-            store[count] = k;
-            count += 1;
-            return sorter(values, store, count);
         }
+        return answer;
     }
+
 
 
     /** Returns the edge (V1, V2). (ou may find this helpful to implement!) */
@@ -140,10 +154,13 @@ public class Graph {
             this.edgeWeight = weight;
         }
 
-        /** Return neighbor vertex along this edge. */
         public int to() {
             return to;
         }
+
+        public int from() {return from;}
+
+        /** Return neighbor vertex along this edge. */
 
         /** Return weight of this edge. */
         public int info() {
