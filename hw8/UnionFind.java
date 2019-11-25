@@ -14,12 +14,14 @@ public class UnionFind {
 
     /** A union-find structure consisting of the sets { 1 }, { 2 }, ... { N }.
      */
-    private int[][] structure;
+    private int[] structure;
+    private int[] lengths;
 
     public UnionFind(int N) {
-        structure = new int[N][];
-        for (int i = 1; i <= N; i++) {
-            structure[i] = new int[]{i};
+        structure = new int[N];
+        for (int i = 0; i < N; i++) {
+            structure[i] = i;
+            lengths[i] = 1;
         }
         // FIXME
     }
@@ -27,14 +29,11 @@ public class UnionFind {
     /** Return the representative of the partition currently containing V.
      *  Assumes V is contained in one of the partitions.  */
     public int find(int v) {
-        int index = -1;
-        for (int i = 0; i < structure.length; i++) {
-            if(structure[i][0] == v) {
-                index = i;
-                break;
-            }
+        while (v != structure[v]) {
+            structure[v] = structure[structure[v]];
+            v = structure[v];// FIXME
         }
-        return index;  // FIXME
+        return v;
     }
 
     /** Return true iff U and V are in the same partition. */
@@ -44,14 +43,19 @@ public class UnionFind {
 
     /** Union U and V into a single partition, returning its representative. */
     public int union(int u, int v) {
-        if (!samePartition(u, v)) {
-            int a = find(u);
-            int[] c = new int[]{u, v};
-            structure[a] = c;
-            return find(u);
+        int upos = find(u);
+        int vpos = find(v);
+        if (samePartition(u, v)) {
+            return upos;
+        } else if (lengths[upos] < lengths[vpos]) {
+            structure[upos] = vpos;
+            lengths[vpos] += lengths[upos];
+            return upos;
+        } else {
+            structure[vpos] = upos;
+            lengths[upos] += lengths[vpos];
+            return vpos;
         }
-        structure[u] = new int[]{u, v};
-        return find(u);  // FIXME
     }
 
     // FIXME
