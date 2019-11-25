@@ -1,3 +1,5 @@
+import org.junit.Test;
+
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -17,7 +19,43 @@ public class MST {
      *  are a subset of those in E (they do not include copies of the
      *  original edges, just the original edges themselves.) */
     public static int[][] mst(int V, int[][] E) {
+        int[][] answer;
+        int[] weights = new int[E.length];
+        for(int i = 0; i < E.length; i++) {
+            weights[i] = E[i][2];
+        }
+        int[] sortedweights = incweight(weights);
+        int[][]sortedbyweight = new int[E.length][];
+        for (int i = 0; i < sortedbyweight.length; i++) {
+            for(int j = 0; j < E.length; j++) {
+                if (E[j][2] == sortedweights[i]) {
+                    sortedbyweight[j] = E[j];
+                }
+            }
+        }
+        //now, sorted by weight
+
+
         return null;  // FIXME
+    }
+
+    public static int[] incweight(int[] weights) {
+        for (int i = 1; i < weights.length; i++) {
+            int current = weights[i];
+            int j = i - 1;
+            while(j >= 0 && current < weights[j]) {
+                weights[j+1] = weights[j];
+                j--;
+            }
+            weights[j+1] = current;
+        }
+        return weights;
+    }
+
+    @Test
+    public void incweighter() {
+        int[] x = new int[]{7,6,5,4,3,2,1};
+        System.out.println(Arrays.toString(incweight(x)));
     }
 
     /** An ordering of edges by weight. */

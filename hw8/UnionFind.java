@@ -19,6 +19,7 @@ public class UnionFind {
 
     public UnionFind(int N) {
         structure = new int[N];
+        lengths = new int[N];
         for (int i = 0; i < N; i++) {
             structure[i] = i;
             lengths[i] = 1;
@@ -29,11 +30,7 @@ public class UnionFind {
     /** Return the representative of the partition currently containing V.
      *  Assumes V is contained in one of the partitions.  */
     public int find(int v) {
-        while (v != structure[v]) {
-            structure[v] = structure[structure[v]];
-            v = structure[v];// FIXME
-        }
-        return v;
+        return structure[v];
     }
 
     /** Return true iff U and V are in the same partition. */
