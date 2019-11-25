@@ -88,12 +88,12 @@ public class Graph {
     /** Runs Dijkstra's algorithm starting from vertex STARTVERTEX and returns
      *  an integer array consisting of the shortest distances
      *  from STARTVERTEX to all other vertices. */
-    PriorityQueue<Integer> fringe;
+    TreeSet<Integer> fringe;
 
     public int[] dijkstras(int startVertex) {
         //maps vertex and costs
         costs.put(startVertex, 0);
-        fringe = new PriorityQueue<Integer>();
+        fringe = new TreeSet<Integer>();
         fringe.add(startVertex);
 
 
@@ -104,7 +104,7 @@ public class Graph {
 
 
         while(!fringe.isEmpty()) {
-            int v = fringe.remove();
+            int v = fringe.first();
             for (Edge e : adjLists[v]) {
                 if ((costs.get(e.from()) + e.info()) < costs.get(e.to())) {
                     int d = costs.get(e.from);

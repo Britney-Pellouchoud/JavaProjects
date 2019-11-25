@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="50b1a002-a156-4fe1-b68d-5430ed3901e9" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/../hw5/CompactLinkedList.java" beforeDir="false" afterPath="$PROJECT_DIR$/../hw5/CompactLinkedList.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../proj1/enigma/Machine.java" beforeDir="false" afterPath="$PROJECT_DIR$/../proj1/enigma/Machine.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../proj1/enigma/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/../proj1/enigma/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../proj1/enigma/output" beforeDir="false" afterPath="$PROJECT_DIR$/../proj1/enigma/output" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="IgnoredFileRootStore">
+    <option name="generatedRoots">
+      <set>
+        <option value="$PROJECT_DIR$/.idea" />
+      </set>
+    </option>
+  </component>
+  <component name="ProjectId" id="1RzFWYQE0NzAAR7tlhF7JElvi8u" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="project.structure.last.edited" value="Facets" />
+    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.2" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="JUnit.RowReduction.checkinvert">
+    <configuration name="RowReduction" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="RowReduction" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.company.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.company" />
+      <option name="MAIN_CLASS_NAME" value="com.company.RowReduction" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="RowReduction.checkdependent" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="RowReduction" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.company.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.company" />
+      <option name="MAIN_CLASS_NAME" value="com.company.RowReduction" />
+      <option name="METHOD_NAME" value="checkdependent" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="RowReduction.checkinvert" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="RowReduction" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.company.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.company" />
+      <option name="MAIN_CLASS_NAME" value="com.company.RowReduction" />
+      <option name="METHOD_NAME" value="checkinvert" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="RowReduction.checkrematrix" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="RowReduction" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.company.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.company" />
+      <option name="MAIN_CLASS_NAME" value="com.company.RowReduction" />
+      <option name="METHOD_NAME" value="checkrematrix" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="RowReduction.checkrematrix2" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="RowReduction" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.company.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.company" />
+      <option name="MAIN_CLASS_NAME" value="com.company.RowReduction" />
+      <option name="METHOD_NAME" value="checkrematrix2" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.RowReduction.checkinvert" />
+        <item itemvalue="JUnit.RowReduction.checkrematrix2" />
+        <item itemvalue="JUnit.RowReduction.checkrematrix" />
+        <item itemvalue="JUnit.RowReduction" />
+        <item itemvalue="JUnit.RowReduction.checkdependent" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="50b1a002-a156-4fe1-b68d-5430ed3901e9" name="Default Changelist" comment="" />
+      <created>1570662049423</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1570662049423</updated>
+      <workItem from="1570662050898" duration="1758000" />
+      <workItem from="1570663836911" duration="1786000" />
+      <workItem from="1570665653938" duration="1176000" />
+      <workItem from="1570679419042" duration="1779000" />
+      <workItem from="1570681234997" duration="1830000" />
+      <workItem from="1570718632530" duration="1783000" />
+      <workItem from="1570720444580" duration="2273000" />
+      <workItem from="1570728253604" duration="1785000" />
+      <workItem from="1570730067644" duration="1331000" />
+      <workItem from="1570735487603" duration="2254000" />
+      <workItem from="1570743316807" duration="657000" />
+      <workItem from="1570760341454" duration="1781000" />
+      <workItem from="1570762158824" duration="1580000" />
+      <workItem from="1570996624105" duration="9000" />
+      <workItem from="1572227841890" duration="632000" />
+      <workItem from="1572229404345" duration="525000" />
+      <workItem from="1572388184330" duration="3000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
