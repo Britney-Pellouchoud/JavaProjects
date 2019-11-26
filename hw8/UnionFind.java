@@ -29,8 +29,8 @@ public class UnionFind {
     /** Return the representative of the partition currently containing V.
      *  Assumes V is contained in one of the partitions.  */
     public int find(int v) {
-        if (parent[v] != v) {
-            return find(parent[v]);
+        while(parent[v] != v) {
+           v = parent[v];
         }
         return v;
     }
