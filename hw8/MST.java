@@ -19,6 +19,7 @@ public class MST {
      *  are a subset of those in E (they do not include copies of the
      *  original edges, just the original edges themselves.) */
     public static int[][] mst(int V, int[][] E) {
+
         int[][] answer;
         int[] weights = new int[E.length];
         for(int i = 0; i < E.length; i++) {
@@ -29,17 +30,43 @@ public class MST {
         for (int i = 0; i < sortedbyweight.length; i++) {
             for(int j = 0; j < E.length; j++) {
                 if (E[j][2] == sortedweights[i]) {
-                    sortedbyweight[j] = E[j];
+                    sortedbyweight[i] = E[j];
                 }
             }
         }
 
+        UnionFind graph = new UnionFind(E.length + 1);
+
+        int[][] answers = new int[E.length][];
+        int counter = 0;
+
+        for (int e = 0; e < E.length; e++) {
+            int v1 = sortedbyweight[e][0];
+            int v2 = sortedbyweight[e][1];
+            int weight = sortedbyweight[e][2];
+            if(!graph.samePartition(v1, v2)) {
+                answers[counter] = sortedbyweight[e];
+                counter += 1;
+                graph.union(v1, v2);
+            }
+        }
+
+        int count = 0;
+        for (int i = 0; i < E.length; i++) {
+            if(answers[i] != null) {
+                count += 1;
+            }
+        }
+
+        int[][] a = (int[][]) Arrays.copyOf(answers, count);
 
         //now, sorted by weight
 
-
-        return null;  // FIXME
+        return a;  // FIXME
     }
+
+
+
 
     public static int[] incweight(int[] weights) {
         for (int i = 1; i < weights.length; i++) {
@@ -54,11 +81,6 @@ public class MST {
         return weights;
     }
 
-    @Test
-    public void incweighter() {
-        int[] x = new int[]{7,6,5,4,3,2,1};
-        System.out.println(Arrays.toString(incweight(x)));
-    }
 
     /** An ordering of edges by weight. */
     private static final Comparator<int[]> EDGE_WEIGHT_COMPARATOR =

@@ -54,6 +54,7 @@ public class MSTTest {
                    Arrays.equals(E, E0));
         assertTrue(String.format("Edges modified: (%s)", desc),
                    sameContents(E, E1));
+
         assertTrue(String.format("Not a subset: (%s)", desc),
                    isSubset(mst, E0));
         assertTrue(String.format("Result not a tree: (%s)", desc),
