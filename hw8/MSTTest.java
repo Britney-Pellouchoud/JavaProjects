@@ -5,10 +5,12 @@ import ucb.junit.textui;
 import java.util.Arrays;
 import java.util.IdentityHashMap;
 
+
 /** Tests for minimal spanning trees.
  *  @author P. N. Hilfinger
  */
 public class MSTTest {
+
 
     /** Return true iff the multiset of edges in E0 is a subset
      *  of those in E1, where two edges are considered the same iff

@@ -1,5 +1,6 @@
 import com.sun.xml.internal.xsom.impl.scd.Iterators;
 import org.antlr.v4.runtime.tree.Tree;
+import org.junit.Test;
 
 import java.util.Arrays;
 
@@ -14,30 +15,28 @@ public class UnionFind {
 
     /** A union-find structure consisting of the sets { 1 }, { 2 }, ... { N }.
      */
-    private int[] structure;
-    private int[] lengths;
-    private int count;
+
+    private int[] parent;
 
     public UnionFind(int N) {
-        structure = new int[N];
-        lengths = new int[N];
+        parent = new int[N];
         for (int i = 0; i < N; i++) {
-            structure[i] = i;
-            lengths[i] = 1;
+            parent[i] = i;
         }
-        count = N;
         // FIXME
     }
 
     /** Return the representative of the partition currently containing V.
      *  Assumes V is contained in one of the partitions.  */
     public int find(int v) {
-        while (v != structure[v]) {
-            structure[v] = structure[structure[v]];
-            v = structure[v];
+        if (parent[v] != v) {
+            return find(parent[v]);
         }
         return v;
     }
+
+
+
 
     /** Return true iff U and V are in the same partition. */
     public boolean samePartition(int u, int v) {
@@ -46,21 +45,13 @@ public class UnionFind {
 
     /** Union U and V into a single partition, returning its representative. */
     public int union(int u, int v) {
-        int upos = find(u);
-        int vpos = find(v);
-        if (samePartition(u, v)) {
-            return upos;
+        if (samePartition(u, v)){
+            return find(u);
         }
-        count -= 1;
-        if (lengths[upos] < lengths[vpos]) {
-            structure[upos] = vpos;
-            lengths[vpos] += lengths[upos];
-            return upos;
-        } else {
-            structure[vpos] = upos;
-            lengths[upos] += lengths[vpos];
-            return vpos;
-        }
+        int a = find(u);
+        int b = find(v);
+        parent[b] = a;
+        return a;
     }
 
     // FIXME
