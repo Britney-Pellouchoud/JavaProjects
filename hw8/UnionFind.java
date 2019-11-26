@@ -21,7 +21,7 @@ public class UnionFind {
     public UnionFind(int N) {
        parent = new int[N];
        for(int i = 0; i < N; i++) {
-           parent[i] = -1;
+           parent[i] = i + 1;
        }
         // FIXME
     }
@@ -29,11 +29,10 @@ public class UnionFind {
     /** Return the representative of the partition currently containing V.
      *  Assumes V is contained in one of the partitions.  */
     public int find(int v) {
-        int root = v;
-        while(root != parent[root] && parent[root] >= 0) {
-            root = parent[root];
+        while(v + 1 != parent[v]) {
+            v = parent[v];
         }
-        return root;
+        return v;
     }
 
 
@@ -52,7 +51,7 @@ public class UnionFind {
         int uroot = find(u);
         int vroot = find(v);
         parent[uroot] = vroot;
-        return uroot;
+        return vroot;
     }
 
     // FIXME
