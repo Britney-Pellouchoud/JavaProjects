@@ -30,7 +30,7 @@ public class UnionFind {
      *  Assumes V is contained in one of the partitions.  */
     public int find(int v) {
         int root = v;
-        while(parent[root] >= 0) {
+        while(root != parent[root] && parent[root] >= 0) {
             root = parent[root];
         }
         return root;
