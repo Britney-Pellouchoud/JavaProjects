@@ -21,44 +21,51 @@ public class MST {
     public static int[][] mst(int V, int[][] E) {
 
         int[][] answer;
-        int[] weights = new int[E.length];
-        for(int i = 0; i < E.length; i++) {
-            weights[i] = E[i][2];
+        int[][] sortedbyweight = new int[E.length][];
+        for (int i = 0; i < E.length; i++) {
+            sortedbyweight[i] = E[i];
         }
-        int[] sortedweights = incweight(weights);
-        int[][]sortedbyweight = new int[E.length][];
-        for (int i = 0; i < sortedbyweight.length; i++) {
-            for(int j = 0; j < E.length; j++) {
-                if (E[j][2] == sortedweights[i]) {
-                    sortedbyweight[i] = E[j];
-                }
+        for (int i = 1; i < sortedbyweight.length; i++) {
+            int[] key = sortedbyweight[i];
+            int j = i - 1;
+            while(j >= 0 && sortedbyweight[j][2] > key[2]) {
+                sortedbyweight[j + 1] = sortedbyweight[j];
+                j--;
             }
+            sortedbyweight[j + 1] = key;
+
         }
 
-        UnionFind graph = new UnionFind(E.length + 1);
 
-        int[][] answers = new int[E.length][];
+        UnionFind graph = new UnionFind(V);
+
+        int[][] answers = new int[sortedbyweight.length][];
         int counter = 0;
 
-        for (int e = 0; e < E.length; e++) {
-            int v1 = sortedbyweight[e][0];
-            int v2 = sortedbyweight[e][1];
-            int weight = sortedbyweight[e][2];
+
+        int index = 0;
+        while(index < V - 1){
+            int v1 = sortedbyweight[index][0];
+            int v2 = sortedbyweight[index][1];
             if(!graph.samePartition(v1, v2)) {
-                answers[counter] = sortedbyweight[e];
+                answers[counter] = sortedbyweight[index];
                 counter += 1;
                 graph.union(v1, v2);
             }
+            index += 1;
         }
 
-        int count = 0;
-        for (int i = 0; i < E.length; i++) {
-            if(answers[i] != null) {
-                count += 1;
+        /*for (int[] a : sortedbyweight) {
+            if (graph.samePartition(a[0], a[1])) {
+                answers[counter] = a;
+                graph.union(a[0], a[1]);
+                counter += 1;
             }
-        }
+        }*/
 
-        int[][] a = (int[][]) Arrays.copyOf(answers, count);
+
+        int[][] a = (int[][]) Arrays.copyOf(answers, counter);
+
 
         //now, sorted by weight
 
@@ -68,7 +75,7 @@ public class MST {
 
 
 
-    public static int[] incweight(int[] weights) {
+    /*public static int[] incweight(int[] weights) {
         for (int i = 1; i < weights.length; i++) {
             int current = weights[i];
             int j = i - 1;
@@ -79,7 +86,7 @@ public class MST {
             weights[j+1] = current;
         }
         return weights;
-    }
+    }*/
 
 
     /** An ordering of edges by weight. */
