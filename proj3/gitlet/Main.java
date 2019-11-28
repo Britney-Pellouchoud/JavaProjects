@@ -9,7 +9,7 @@ public class Main {
      *  <COMMAND> <OPERAND> .... */
     public static void main(String... args) {
         if (args[0] == "init") {
-            new init();
+
         }
         // FILL THIS IN
     }

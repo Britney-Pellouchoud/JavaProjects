@@ -1,5 +1,7 @@
 package gitlet;
 
+import org.junit.Test;
+
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -17,12 +19,18 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Formatter;
 import java.util.List;
+import org.junit.Test;
+
 
 
 /** Assorted utilities.
  *  @author P. N. Hilfinger
  */
+
+
 class Utils {
+
+
 
     /* SHA-1 HASH VALUES. */
 
