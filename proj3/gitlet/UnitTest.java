@@ -8,6 +8,7 @@ import static org.junit.Assert.*;
  *  @BritneyPellouchoud
  */
 public class UnitTest {
+    private int x;
 
     /** Run the JUnit tests in the loa package. Add xxxTest.class entries to
      *  the arguments of runClasses to run other JUnit tests. */
@@ -18,6 +19,19 @@ public class UnitTest {
     /** A dummy test to avoid complaint. */
     @Test
     public void placeholderTest() {
+    }
+
+    @Test
+    public void testchange() {
+        changertest();
+        next();
+    }
+    void next() {
+        System.out.println(x);
+    }
+
+    void changertest() {
+        x = 3;
     }
 
 }

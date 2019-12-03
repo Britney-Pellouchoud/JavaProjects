@@ -10,7 +10,14 @@ public class CommitTree<Commit> {
         root = new Node<Commit>();
         root.data = rootData;
         root.children = new ArrayList<CommitTree>();
+
     }
+
+    public Commit getdata() {
+        return root.data;
+    }
+
+
 
     public static class Node<Commit> {
         private Commit data;
@@ -28,7 +35,17 @@ public class CommitTree<Commit> {
         Node<Commit> getParent() {
             return parent;
         }
+    }
 
+    public void setParent(Commit c) {
+        Node n = new Node();
+        n.data = c;
+        this.root.parent = n;
+    }
+    public void setRoot(Commit c){
+        this.root = new Node<Commit>();
+        root.data = c;
+        root.parent = null;
     }
 
     Node<Commit> root() {
