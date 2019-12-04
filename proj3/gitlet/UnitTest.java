@@ -19,13 +19,13 @@ public class UnitTest {
     /** A dummy test to avoid complaint. */
     @Test
     public void placeholderTest() {
-        System.out.println("THIS HITS");
+       // System.out.println("THIS HITS");
     }
 
     @Test
     public void testchange() {
         changertest();
-        next();
+        //next();
     }
     void next() {
         System.out.println(x);
