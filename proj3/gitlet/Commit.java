@@ -22,6 +22,7 @@ public class Commit implements Serializable {
     private FileOutputStream fileOut;
     private ObjectOutputStream objectOut;
     private File csha;
+    private File jk;
     public void init(Gitlet g, String message, String sha1, String timestamp, ArrayList<File> files, Commit parentcommit) throws IOException {
         this.message = message;
         this.sha1 = sha1;
@@ -54,8 +55,10 @@ public class Commit implements Serializable {
         commitsha1 = Utils.sha1(h, m, message, timestamp);
         File k = new File("commit");
         k.mkdirs();
-        csha = new File("commit/" + commitsha1);
+        csha = new File("commit/" + message);
         csha.mkdir();
+        jk = new File("commit/" + message +"/" + commitsha1);
+        jk.mkdirs();
         //need to make separate sha1 based on parent
     }
 

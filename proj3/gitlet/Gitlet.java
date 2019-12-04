@@ -201,33 +201,45 @@ public class Gitlet implements Serializable {
 
         Commit temp = _mostrecent;
 
-        File r = new File("./commit");
-        File[] q = r.listFiles();
-        //THEY'RE NOT IN ORDER DUMBO
-        for (File a : q) {
-            if (a.getName().equals(commitid)) {
-                Path t = Paths.get("./.gitlet/commit/" + temp.getMessage() + "/" + filename);
-                File b = new File(t.toString());
-                Path f = Paths.get(filename);
-                File c = new File(f.toString());
-                File y = new File("./.gitlet/commit/" + temp.getMessage());
-                y.mkdirs();
-                System.out.println(Arrays.toString(y.listFiles()));
-                String m = Utils.readContentsAsString(b);
-                System.out.println(m);
-                System.out.println(Utils.readContentsAsString(c));
-                Utils.writeContents(c, m);
-               // Files.copy(t, f, StandardCopyOption.REPLACE_EXISTING);
-                break;
-            } else {
-                if (temp.getParent() != null) {
-                    temp = temp.getParent();
-                    continue;
-                }
-                break;
 
+        Path x = Paths.get(filename);
+        File p = new File(x.toString());
+
+        //System.out.println(Arrays.toString(w.listFiles()));
+        //System.out.println("MESSAGE " + temp.getMessage());
+        //System.out.println("KILL MEEEEEEEEEEE");
+
+        String mssg = "";
+
+        while(temp != null) {
+            File w = new File("./commit/" + temp.getMessage());
+            w.mkdirs();
+            for (File i : w.listFiles()) {
+                if (i.getName().equals(commitid)) {
+                    mssg += temp.getMessage();
+                    //System.out.println("THIS HITS HERE !!!!!!!!!");
+                } else {
+                    break;
+                }
             }
+            temp = temp.getParent();
         }
+
+        //System.out.println("THIS IS THE MESSAGE " + mssg);
+
+        Path b = Paths.get(".gitlet/commit/" + mssg + "/" + filename);
+        File j = new File(b.toString());
+        String h = Utils.readContentsAsString(j);
+        //j.mkdirs();
+        //System.out.println(Arrays.toString(j.listFiles()));
+        Path file = Paths.get(filename);
+        File i = new File(file.toString());
+        Utils.writeContents(i, h);
+
+
+        //Files.copy(b, file, StandardCopyOption.REPLACE_EXISTING);
+
+
 
 
     }
@@ -238,10 +250,14 @@ public class Gitlet implements Serializable {
 
     void checkoutfile(String filename) throws IOException, ClassNotFoundException {
         Path a = Paths.get(".gitlet/commit/" + _mostrecent.getMessage() + "/" + filename);
+        File b = new File(a.toString());
         //assert new File(a.toString()).exists();
         Path file = Paths.get(filename);
+        File j = new File(file.toString());
+        String p = Utils.readContentsAsString(b);
+        Utils.writeContents(j, p);
         //assert new File(file.toString()).exists();
-        Files.copy(a, file, StandardCopyOption.REPLACE_EXISTING);
+        //Files.copy(a, file, StandardCopyOption.REPLACE_EXISTING);
 
     }
 
@@ -267,7 +283,7 @@ public class Gitlet implements Serializable {
         Instant now = Instant.now();
         String m = Utils.sha1(message + all + now.toString() +
                 null);
-        File r = new File(".gitlet/commit/" + message + "/");
+        File r = new File(".gitlet/commit/"+ message);
         r.mkdirs();
         for (File x: files) {
             String filename = x.toPath().toString().substring(16);
