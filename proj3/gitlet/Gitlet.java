@@ -1,8 +1,6 @@
 package gitlet;
 
-import com.sun.codemodel.internal.JWhileLoop;
-import org.antlr.v4.runtime.tree.Tree;
-import org.w3c.dom.Node;
+
 
 //IDEA: MAKE A LINKED LIST WITH FILES FOR EACH COMMIT
 
