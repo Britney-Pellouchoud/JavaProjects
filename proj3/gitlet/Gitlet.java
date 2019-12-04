@@ -162,10 +162,6 @@ public class Gitlet implements Serializable {
     }
 
     void log() throws IOException, ClassNotFoundException {
-        //File k = mostrec;
-        //mostrec.mkdirs();
-        //System.out.println(mostrec.listFiles().length);
-        //Commit c = (Commit) k.readObject();
 
         Commit temp = _mostrecent;
         while (temp != null) {
@@ -176,6 +172,9 @@ public class Gitlet implements Serializable {
             System.out.println();
             temp = temp.getParent();
         }
+        //String newLine = System.getProperty("line.separator");
+        //System.out.println(newLine);
+
     }
 
     String globallog(CommitTree ct) {
@@ -202,32 +201,33 @@ public class Gitlet implements Serializable {
 
         Commit temp = _mostrecent;
 
-        while (temp != null) {
-            //System.out.println("HITS HERE");
-
-            File r = new File("./commit");
-            File[] q = r.listFiles();
-            File a = q[0];
+        File r = new File("./commit");
+        File[] q = r.listFiles();
+        //THEY'RE NOT IN ORDER DUMBO
+        for (File a : q) {
             if (a.getName().equals(commitid)) {
-                File d = new File("./.gitlet/commit/version 1 of wug.txt");
-                d.mkdirs();
-                //System.out.println(" AHAHHAHAHAHAHAHAHAHAHAHAHAHAH ");
                 Path t = Paths.get("./.gitlet/commit/" + temp.getMessage() + "/" + filename);
-                //System.out.println("HELLLOOOOOOOOOOOOOOOO   " + Utils.readContentsAsString(new File(t.toString())));
+                File b = new File(t.toString());
                 Path f = Paths.get(filename);
-                //File h = new File(f.toString());
-                //System.out.println("HERE WE GOOOOOOOOOOOOO" + h.toPath());
-                //System.out.println("GOODBYEEEEEEEEEEEEEE " + Utils.readContentsAsString(new File(f.toString())));
-                Files.copy(t, f, StandardCopyOption.REPLACE_EXISTING);
+                File c = new File(f.toString());
+                File y = new File("./.gitlet/commit/" + temp.getMessage());
+                y.mkdirs();
+                System.out.println(Arrays.toString(y.listFiles()));
+                String m = Utils.readContentsAsString(b);
+                System.out.println(m);
+                System.out.println(Utils.readContentsAsString(c));
+                Utils.writeContents(c, m);
+               // Files.copy(t, f, StandardCopyOption.REPLACE_EXISTING);
                 break;
             } else {
-                temp = temp.getParent();
+                if (temp.getParent() != null) {
+                    temp = temp.getParent();
+                    continue;
+                }
+                break;
+
             }
         }
-
-
-
-
 
 
     }
@@ -252,9 +252,7 @@ public class Gitlet implements Serializable {
         Path tofile = Paths.get(".gitlet/staging/" + filename);
         Path secfile = Paths.get(".gitlet/other/" + filename);
         Files.copy(file, tofile, StandardCopyOption.REPLACE_EXISTING);
-
          */
-
         FileOutputStream fileOut;
         ObjectOutputStream objectOut;
         FileInputStream fileIn;
@@ -277,10 +275,13 @@ public class Gitlet implements Serializable {
             //System.out.println("HIIIII " + p.toString().substring(16, p.toString().length()));
             Path file = Paths.get(filename);
             Path tofile = Paths.get(".gitlet/commit/" + message + "/" + filename);
-            Files.copy(file, tofile, StandardCopyOption.REPLACE_EXISTING);
+            File g = new File(tofile.toString());
+            File a = new File(file.toString());
+            String f = Utils.readContentsAsString(a);
+            Utils.writeContents(g, f);
+            //Files.copy(file, tofile, StandardCopyOption.REPLACE_EXISTING);
             fil.add(x);;
         }
-
 
         //List<String> q = Utils.plainFilenamesIn(new File(".gitlet/alreadycommit/"));
         Commit a = new Commit();
