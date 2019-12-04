@@ -1,9 +1,11 @@
 package gitlet;
 
 import java.util.ArrayList;
+import java.io.Serializable;
+
 import java.util.List;
 
-public class CommitTree<Commit> {
+public class CommitTree<Commit> implements Serializable {
     private Node<Commit> root;
 
     public CommitTree(Commit rootData) {
@@ -21,7 +23,7 @@ public class CommitTree<Commit> {
 
     public static class Node<Commit> {
         private Commit data;
-        private Node<Commit> parent;
+        private Node parent;
         private List<CommitTree> children;
         Commit getData() {
             return data;
@@ -32,14 +34,14 @@ public class CommitTree<Commit> {
         void setParent(Node p) {
             parent = p;
         }
-        Node<Commit> getParent() {
+        Node getParent() {
             return parent;
         }
     }
 
     public void setParent(Commit c) {
         Node n = new Node();
-        n.data = c;
+        //n.data = c;
         this.root.parent = n;
     }
     public void setRoot(Commit c){

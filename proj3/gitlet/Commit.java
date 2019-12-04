@@ -1,11 +1,17 @@
 package gitlet;
 
-import java.io.File;
+import java.io.*;
 import java.nio.file.Files;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.io.Serializable;
 
-public class Commit {
+
+
+
+public class Commit implements Serializable {
     private String message;
     private String sha1;
     private String timestamp;
@@ -13,7 +19,10 @@ public class Commit {
     private HashMap<String, Boolean> tracked;
     private String commitsha1;
     private Commit parent;
-    public void init(Gitlet g, String message, String sha1, String timestamp, ArrayList<File> files, Commit parentcommit) {
+    private FileOutputStream fileOut;
+    private ObjectOutputStream objectOut;
+    private File csha;
+    public void init(Gitlet g, String message, String sha1, String timestamp, ArrayList<File> files, Commit parentcommit) throws IOException {
         this.message = message;
         this.sha1 = sha1;
         this.timestamp = timestamp;
@@ -43,7 +52,19 @@ public class Commit {
             m += parentcommit.getCommitsha1();
         }
         commitsha1 = Utils.sha1(h, m, message, timestamp);
+        File k = new File("commit");
+        k.mkdirs();
+        csha = new File("commit/" + commitsha1);
+        csha.mkdir();
         //need to make separate sha1 based on parent
+    }
+
+    String getcsha() {
+        return csha.getName();
+    }
+
+    String getSha1() {
+        return sha1;
     }
 
     Commit getParent() {
@@ -55,7 +76,9 @@ public class Commit {
     }
 
     String getTimestamp() {
-        return timestamp;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy XX");
+        Date commitDate = new Date();
+        return dateFormat.format(commitDate);
     }
     String getMessage() {
         return message;
@@ -70,7 +93,7 @@ public class Commit {
     }
 
 
-
+/*
     public void connecttoparent(Commit parentcommit, Commit childcommit, CommitTree t) {
         if (t.getdata().equals(parentcommit)) {
             CommitTree<Commit> child = new CommitTree<>(childcommit);
@@ -79,4 +102,10 @@ public class Commit {
             return;
         }
     }
+
+ */
+
+
+
+
 }
