@@ -10,6 +10,7 @@ public class Branch implements Serializable {
     private String name;
     private ArrayList<Commit>  commits = new ArrayList<>();
     private String mrcsha1;
+    private Commit latest;
     void init(String name) {
         this.name = name;
         File branch = new File(name);
@@ -22,6 +23,7 @@ public class Branch implements Serializable {
 
     void addCsha1(Commit c) {
         commits.add(c);
+        latest = c;
     }
 
     String getMrcsha1() {
@@ -30,5 +32,9 @@ public class Branch implements Serializable {
 
     ArrayList<Commit> getCsha1s (){
         return commits;
+    }
+
+    Commit latestcommit() {
+        return latest;
     }
 }

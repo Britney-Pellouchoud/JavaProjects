@@ -69,19 +69,18 @@ public class Main implements Serializable{
                 baby.commit(mess);
                 break;
             case "checkout" :
-                //System.out.println("SIDE EFFECT");
                 if (args[1].equals("--")) {
                     String fname = args[2];
                     baby.checkoutfile(fname);
                     break;
                 } else if (args.length == 4) {
-                    //System.out.println("AHAHAHAHAHAHAHAHHHHHHHHHHH");
                     String commitid = args[1];
                     String fname = args[3];
                     baby.checkoutversionfile(commitid, fname);
                     break;
                 } else if (args.length == 2) {
                     String branchname = args[1];
+                    baby.checkoutbranch(branchname);
                     break;
                 } else {
                     throw new GitletException("Wrong number of arguments");
@@ -92,6 +91,17 @@ public class Main implements Serializable{
                 break;
             case "global-log":
                 baby.globallog();
+                break;
+            case "branch":
+                baby.branch(args[1]);
+            case "rm-branch":
+                baby.removebranch(args[1]);
+            case "find" :
+                baby.find(args[1]);
+                break;
+            case "status":
+                baby.status();
+                break;
         }
 
         try {

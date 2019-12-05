@@ -226,6 +226,74 @@ public class Gitlet implements Serializable {
 
     }
 
+    void checkoutbranch(String branchname) {
+        Branch k = null;
+        for (Branch b : branches) {
+            if (b.getName().equals(branchname)) {
+                k = b;
+            }
+        }
+        if (k == null) {
+            System.out.println("No such branch exists.");
+        } else if (k.getName().equals(curr.getName())) {
+            System.out.println("No need to checkout the current branch.");
+        }
+        Commit c = k.latestcommit();
+        Path a = Paths.get(".gitlet/commit/" + c.getMessage());
+        File x = new File(a.toString());
+        x.mkdirs();
+        assert x.listFiles() != null;
+        for (File f : x.listFiles()) {
+            if (new File(f.getName()).exists()) {
+                String contents = Utils.readContentsAsString(f);
+                Utils.writeContents(new File(f.getName()), contents);
+            }
+        }
+    }
+
+
+    void branch (String branchname) {
+        for (Branch b : branches) {
+            if (b.getName().equals(branchname)) {
+                throw new GitletException("A branch with that name already exists.");
+            }
+        }
+        Branch b = new Branch();
+        b.init(branchname);
+        b.addCsha1(curr.latestcommit());
+    }
+
+
+    void removebranch(String branchname) {
+        Branch toremove = null;
+        for (Branch b : branches) {
+            if (b.getName().equals(branchname)) {
+                if (b.getName().equals(curr.getName())) {
+                    throw new GitletException("Cannot remove the current branch.");
+                }
+                toremove = b;
+                branches.remove(b);
+            }
+        }
+        if (toremove == null) {
+            throw new GitletException("A branch with that name does not exist.");
+        }
+    }
+
+    void find(String commitmsg) {
+        int x = 0;
+        for (Branch b : branches) {
+            for (Commit c : b.getCsha1s()) {
+                if (c.getMessage().equals(commitmsg)) {
+                    System.out.println(c.getCommitsha1());
+                    x += 1;
+                }
+            }
+        }
+        if (x == 0) {
+            System.out.println("Found no commit with that message.");
+        }
+    }
 
 
 
@@ -299,12 +367,42 @@ public class Gitlet implements Serializable {
 
         //System.out.println("HITS HERE HITS HERE " + curr.getCsha1s());
 
-
-
-
-
-
     }
+
+    void status() {
+        System.out.println("=== Branches ===");
+        for (Branch b : branches) {
+            if (b.getName().equals(curr.getName())) {
+                System.out.println("*" + b.getName());
+            } else {
+                System.out.println(b.getName());
+            }
+        }
+        System.out.println();
+        File f = new File(".gitlet/staging");
+        f.mkdirs();
+        System.out.println("=== Staged Files ===");
+        for (File c : f.listFiles()) {
+            System.out.println(c.getName());
+        }
+        System.out.println();
+        System.out.println("=== Modifications Not Staged For Commit");
+        for (File d : f.listFiles()) {
+            if (!new File(d.getName()).exists()) {
+                System.out.println(d.getName() + " (deleted)");
+                continue;
+            }
+            String dcont = Utils.readContentsAsString(d);
+            String dcur = Utils.readContentsAsString(new File(d.getName()));
+            if (!dcont.equals(dcur)) {
+                System.out.println(d.getName() + " (modified)");
+            }
+        }
+        System.out.println();
+        System.out.println("=== Untracked Files ===");
+    }
+
+
 
     //serialize EVERYTHING
 
