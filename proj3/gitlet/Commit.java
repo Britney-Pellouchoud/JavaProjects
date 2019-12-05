@@ -29,17 +29,10 @@ public class Commit implements Serializable {
         this.timestamp = timestamp;
         this.files = files;
         CommitTree t = g.getCommittree();
-        //t.setRoot(this);
         if (!message.equals("initial commit")) {
             parent = parentcommit;
             g.clearstaged();
-            //connecttoparent(parentcommit, this, t);
-            //for (String file : files) {
-            //    tracked.put(file, false);
-            //}
         }
-        g.setPointer(this);
-
         String h = "";
         if (files != null) {
             for (File f : files) {
@@ -47,7 +40,6 @@ public class Commit implements Serializable {
                 h += a;
             }
         }
-
         String m = "";
         if (parentcommit != null) {
             m += parentcommit.getCommitsha1();
@@ -59,7 +51,6 @@ public class Commit implements Serializable {
         csha.mkdir();
         jk = new File("commit/" + message +"/" + commitsha1);
         jk.mkdirs();
-        //need to make separate sha1 based on parent
     }
 
     String getcsha() {
@@ -94,21 +85,5 @@ public class Commit implements Serializable {
     void markfortracking(String f) {
         tracked.put(f, true);
     }
-
-
-/*
-    public void connecttoparent(Commit parentcommit, Commit childcommit, CommitTree t) {
-        if (t.getdata().equals(parentcommit)) {
-            CommitTree<Commit> child = new CommitTree<>(childcommit);
-            t.root().getChildren().add(child);
-            child.setParent(parentcommit);
-            return;
-        }
-    }
-
- */
-
-
-
 
 }

@@ -4,6 +4,8 @@ package gitlet;
 
 //IDEA: MAKE A LINKED LIST WITH FILES FOR EACH COMMIT
 
+import net.sf.saxon.style.XSLOutput;
+
 import java.io.*;
 
 import java.nio.file.Files;
@@ -25,7 +27,9 @@ public class Gitlet implements Serializable {
     private File other;
     private Commit _initialcommit;
     private File commits;
-
+    private Branch master;
+    private ArrayList<Branch> branches = new ArrayList<>();
+    private Branch curr;
 
 
     void init() throws IOException, ClassNotFoundException {
@@ -42,7 +46,6 @@ public class Gitlet implements Serializable {
         babydir = new File(".gitlet");
         babydir.mkdirs();
         staged = new File(".gitlet/staging");
-        //other stores the previous commit
         other = new File(".gitlet/other");
         other.mkdirs();
         staged.mkdirs();
@@ -50,25 +53,21 @@ public class Gitlet implements Serializable {
         String initial = "initial commit";
         Commit m = new Commit();
         m.init(this, "initial commit", Utils.sha1(initial), now.toString(), null, null);
-        //committree = new CommitTree<>(m);
-        _initialcommit = m;
-        Branch master = new Branch();
+        master = new Branch();
         master.init("master");
+        master.addCsha1(m);
+        branches.add(master);
+        File br = new File("branches");
+        br.mkdirs();
+        File ms = new File("branches/" + "master");
+        Utils.writeObject(ms, master);
+        curr = master;
         commits = new File(".gitlet/commit");
         commits.mkdirs();
-
-
-
         _mostrecent = m;
         fileOut = new FileOutputStream(".gitlet/mostrecent");
         objectOut = new ObjectOutputStream(fileOut);
         objectOut.writeObject(_mostrecent);
-
-        //mostrec = new File(".gitlet/mostrecent");
-        //mostrec.mkdir();
-        //Utils.writeObject(mostrec, m);
-
-
     }
 
 
@@ -104,8 +103,6 @@ public class Gitlet implements Serializable {
     }
 
     void add(String filename) throws IOException {
-
-
         File toadd = new File(filename);
        String sha1 = Utils.sha1(Utils.readContentsAsString(toadd));
 
@@ -121,9 +118,6 @@ public class Gitlet implements Serializable {
         Files.copy(file, secfile, StandardCopyOption.REPLACE_EXISTING);
 
         //assert new File(".gitlet/staging/filename" + sha1).exists();
-
-
-
 
     }
 
@@ -159,9 +153,15 @@ public class Gitlet implements Serializable {
         System.out.println("No reason to remove the file.");
     }
 
-    void log() throws IOException, ClassNotFoundException {
+    void log(String branchname) throws IOException, ClassNotFoundException {
 
-        Commit temp = _mostrecent;
+        FileInputStream f = new FileInputStream("branches" + "/" + branchname);
+        ObjectInputStream o = new ObjectInputStream(f);
+        Branch c = (Branch) o.readObject();
+        //System.out.println(c.getCsha1s().size());
+        ArrayList<Commit> a = c.getCsha1s();
+        int l = a.size();
+        Commit temp = a.get(l - 1);
         while (temp != null) {
             System.out.println("===");
             System.out.println("commit " + temp.getCommitsha1());
@@ -170,22 +170,13 @@ public class Gitlet implements Serializable {
             System.out.println();
             temp = temp.getParent();
         }
-        //String newLine = System.getProperty("line.separator");
-        //System.out.println(newLine);
 
     }
 
-    String globallog(CommitTree ct) {
-        CommitTree.Node thisnode = ct.root();
-        if (thisnode.getChildren().size() == 0) {
-            Commit d = (Commit) thisnode.getData();
-            return "===/ncommit " + d.getCommitsha1() + "/nDate: " + d.getTimestamp() + "/n" + d.getMessage();
+    void globallog() throws IOException, ClassNotFoundException {
+        for (Branch b : branches) {
+            log(b.getName());
         }
-        List c = ct.root().getChildren();
-        for (int i = 0; i < c.size(); i++ ) {
-            globallog += globallog((CommitTree) c.get(i));
-        }
-        return globallog;
     }
 
     /*
@@ -203,10 +194,6 @@ public class Gitlet implements Serializable {
         Path x = Paths.get(filename);
         File p = new File(x.toString());
 
-        //System.out.println(Arrays.toString(w.listFiles()));
-        //System.out.println("MESSAGE " + temp.getMessage());
-        //System.out.println("KILL MEEEEEEEEEEE");
-
         String mssg = "";
 
         while(temp != null) {
@@ -215,7 +202,6 @@ public class Gitlet implements Serializable {
             for (File i : w.listFiles()) {
                 if (i.getName().equals(commitid)) {
                     mssg += temp.getMessage();
-                    //System.out.println("THIS HITS HERE !!!!!!!!!");
                 } else {
                     break;
                 }
@@ -223,13 +209,11 @@ public class Gitlet implements Serializable {
             temp = temp.getParent();
         }
 
-        //System.out.println("THIS IS THE MESSAGE " + mssg);
 
         Path b = Paths.get(".gitlet/commit/" + mssg + "/" + filename);
         File j = new File(b.toString());
         String h = Utils.readContentsAsString(j);
-        //j.mkdirs();
-        //System.out.println(Arrays.toString(j.listFiles()));
+
         Path file = Paths.get(filename);
         File i = new File(file.toString());
         Utils.writeContents(i, h);
@@ -297,7 +281,6 @@ public class Gitlet implements Serializable {
             fil.add(x);;
         }
 
-        //List<String> q = Utils.plainFilenamesIn(new File(".gitlet/alreadycommit/"));
         Commit a = new Commit();
         a.init(this, message, Utils.sha1(message + all + now.toString() +
                 null), now.toString(), fil, _mostrecent);
@@ -306,8 +289,16 @@ public class Gitlet implements Serializable {
         objectOut = new ObjectOutputStream(fileOut);
         objectOut.writeObject(_mostrecent);
 
+        FileInputStream fi = new FileInputStream("branches/" + curr.getName());
+        ObjectInputStream oi = new ObjectInputStream(fi);
+        curr = (Branch) oi.readObject();
+        //System.out.println("HITS HERE HITS HERE " + curr.getCsha1s());
+        curr.addCsha1(a);
+        File f = new File("branches/" + curr.getName());
+        Utils.writeObject(f, curr);
 
-        //Utils.writeObject(mostrec, a);
+        //System.out.println("HITS HERE HITS HERE " + curr.getCsha1s());
+
 
 
 

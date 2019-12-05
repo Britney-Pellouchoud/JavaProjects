@@ -56,6 +56,7 @@ public class Main implements Serializable{
 
         switch (command){
             case "init":
+                assert args.length == 1 : "Wrong number of arguments";
                 baby = new Gitlet();
                 baby.init();
                 break;
@@ -79,11 +80,18 @@ public class Main implements Serializable{
                     String fname = args[3];
                     baby.checkoutversionfile(commitid, fname);
                     break;
+                } else if (args.length == 2) {
+                    String branchname = args[1];
+                    break;
+                } else {
+                    throw new GitletException("Wrong number of arguments");
                 }
 
             case "log":
-                baby.log();
+                baby.log("master");
                 break;
+            case "global-log":
+                baby.globallog();
         }
 
         try {
