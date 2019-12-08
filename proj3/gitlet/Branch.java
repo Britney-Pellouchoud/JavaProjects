@@ -11,6 +11,7 @@ public class Branch implements Serializable {
     private ArrayList<Commit>  commits = new ArrayList<>();
     private String mrcsha1;
     private Commit latest;
+    private Commit splitpoint;
     void init(String name) {
         this.name = name;
         File branch = new File(name);
@@ -36,5 +37,13 @@ public class Branch implements Serializable {
 
     Commit latestcommit() {
         return latest;
+    }
+
+    void setSplitpoint(Commit c) {
+        splitpoint = c;
+    }
+
+    Commit getSplitpoint() {
+        return splitpoint;
     }
 }

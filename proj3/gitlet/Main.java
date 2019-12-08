@@ -94,14 +94,28 @@ public class Main implements Serializable{
                 break;
             case "branch":
                 baby.branch(args[1]);
+                break;
             case "rm-branch":
                 baby.removebranch(args[1]);
+                break;
             case "find" :
                 baby.find(args[1]);
                 break;
             case "status":
                 baby.status();
                 break;
+            case "reset":
+                baby.reset(args[1]);
+                break;
+            case "merge":
+                baby.merge(args[1]);
+                break;
+            case "rm" :
+                baby.rm(args[1]);
+                break;
+            default:
+                System.out.println("No command with that name exists.");
+                return;
         }
 
         try {
