@@ -153,6 +153,7 @@ public class Gitlet implements Serializable {
                 continue;
             }
             for (File file : stagedfiles) {
+                //System.out.println("HITS HERE HITS HERE ");
                 if (file.getName().equals(filename)) {
                     File cur = new File(file.getName());
                     if (cur.exists()) {
@@ -218,25 +219,6 @@ public class Gitlet implements Serializable {
 
         String mssg = "";
         mssg = mssgtoid.get(commitid);
-        //System.out.println("MESSAGE " + mssg);
-
-        /*
-        while(temp != null) {
-            File w = new File(".gitlet/commit/" + temp.getMessage());
-            w.mkdirs();
-            for (File i : w.listFiles()) {
-                System.out.println("NAME " + i.getName());
-                if (i.getName().equals(commitid)) {
-                    mssg += temp.getMessage();
-                    //System.out.println("THIS IS THE MESSAGE " + mssg);
-                } else {
-                    break;
-                }
-            }
-            temp = temp.getParent();
-        }
-
-         */
 
         //".gitlet/commit/" + message + "/" + filename
         Path b = Paths.get(".gitlet/commit/" + mssg + "/" + filename);
@@ -268,6 +250,7 @@ public class Gitlet implements Serializable {
         } else if (k.getName().equals(curr.getName())) {
             System.out.println("No need to checkout the current branch.");
         }
+
         Commit c = k.latestcommit();
 
         File tr = new File("tracking/" + k.getName());
@@ -284,15 +267,18 @@ public class Gitlet implements Serializable {
         ArrayList<File> u = new ArrayList<>();
 
         if (curr.latestcommit().getFiles() != null) {
+            int ke = curr.latestcommit().getFiles().size();
             for (File f : curr.latestcommit().getFiles()) {
                 File r = new File(f.getName());
                 if (r.exists() && !u.contains(r)) {
-                    r.delete();
+                    File n = new File(r.getName());
+                    //System.out.println("THIS IS THE PATH " + n.toPath());
+                    n.delete();
+                    assert curr.latestcommit().getFiles().size() == ke;
+                    //r.delete();
                 }
             }
         }
-
-
 
         curr = k;
     }
@@ -307,26 +293,20 @@ public class Gitlet implements Serializable {
 
         Branch b = new Branch();
         b.init(branchname);
-        b.addCsha1(curr.latestcommit());
+        //b.addCsha1(curr.latestcommit());
         b.setSplitpoint(curr.latestcommit());
         Utils.writeObject(new File("branches/" + branchname), b);
         File dir = new File(".gitlet/staging/" + branchname);
         dir.mkdirs();
         branches.add(b);
+        b.addCsha1(curr.latestcommit());
         curr = b;
-        Commit t = curr.latestcommit();
 
         clearstaged();
         File tr = new File("tracking/" + curr.getName());
         tr.mkdirs();
 
-        /*
-        ArrayList<File> o = t.getFiles();
-        if (o != null && o.size() != 0) {
-            System.out.println(o);
-        }
 
-         */
     }
 
 
@@ -398,15 +378,20 @@ public class Gitlet implements Serializable {
                 null);
         File r = new File(".gitlet/commit/"+ message);
         r.mkdirs();
+        File k = new File(message);
+        k.mkdirs();
+        File mod = new File("modified/" + curr.getName());
+        mod.mkdirs();
         for (File x: files) {
             String filename = x.getName();
-            //System.out.println("THIS IS FILENAME " + filename);
-            fil.add(x);
+            String content = Utils.readContentsAsString(x);
+            File kr = new File(message + "/" + filename);
+            Utils.writeContents(kr, content);
+            fil.add(kr);
+            File modi = new File("modified/" + curr.getName() + "/" + filename);
 
             Path file = Paths.get(".gitlet/staging/" + curr.getName() + "/" + filename);
             Path tofile = Paths.get(".gitlet/commit/" + message + "/" + filename);
-
-            //Files.copy(t, tofile, StandardCopyOption.REPLACE_EXISTING);
             File g = new File(tofile.toString());
             File a = new File(file.toString());
 
@@ -425,16 +410,23 @@ public class Gitlet implements Serializable {
         mssgtoid.put(a.getCommitsha1(), message);
 
 
-
         fileOut = new FileOutputStream(".gitlet/mostrecent");
         objectOut = new ObjectOutputStream(fileOut);
         objectOut.writeObject(_mostrecent);
+
+
         FileInputStream fi = new FileInputStream("branches/" + curr.getName());
         ObjectInputStream oi = new ObjectInputStream(fi);
         curr = (Branch) oi.readObject();
+
+
         curr.addCsha1(a);
         File f = new File("branches/" + curr.getName());
         Utils.writeObject(f, curr);
+
+
+
+
         clearstaged();
 
     }
@@ -475,50 +467,129 @@ public class Gitlet implements Serializable {
     }
 
 
-    void merge(String branchname) throws IOException {
+    void merge(String branchname) throws IOException, ClassNotFoundException {
         File [] staging = staged.listFiles();
         if (staging.length != 0) {
             throw new GitletException("You have uncommitted changes.");
         }
-        Branch cur = null;
-        for (Branch b : branches) {
-            if (b.getName().equals(branchname)) {
-                cur = b;
-                break;
-            }
-        }
+
+        FileInputStream fir = new FileInputStream("branches/" + branchname);
+        ObjectInputStream o = new ObjectInputStream(fir);
+        Branch cur = (Branch) o.readObject();
+        FileInputStream fore = new FileInputStream("branches/" + curr.getName());
+        ObjectInputStream or = new ObjectInputStream(fore);
+        curr = (Branch) or.readObject();
+
         if (cur == null) {
             throw new GitletException("A branch with that name does not exist.");
         } if (cur.getName().equals(curr.getName())) {
             throw new GitletException("Cannot merge a branch with itself.");
         }
+       if (cur.latestcommit().equals(curr.latestcommit())) {
+         throw new GitletException("Given branch is an ancestor of the current branch.");
+        }
         Commit c = cur.latestcommit();
         Commit d = cur.getSplitpoint();
+        Commit e = curr.latestcommit();
+
+        //Any files that were not present at the split point and are
+        // present only in the given branch should be checked out and staged.
         for (File f : c.getFiles()) {
-            File orig = new File(".gitlet/commit/" + c.getMessage() + "/" + f.getName());
-            String m = Utils.readContentsAsString(orig);
-            File version = new File(".gitlet/commit/" + d.getMessage() + "/" + f.getName());
-            if (!version.exists()) {
-                checkoutversionfile(d.getCommitsha1(), f.getName());
-                File k = new File(".gitlet/staging/" + f.getName());
-                String s = Utils.readContentsAsString(new File(f.getName()));
-                Utils.writeContents(k, s);
-                continue;
-            }
-            if (version.exists() && !f.exists() && ! new File(".gitlet/commit/" + curr.latestcommit().getMessage()
-                    + "/" + f.getName()).exists()) {
-                continue;
-            }
-            String a = Utils.readContentsAsString(version);
-            if (!a.equals(m)) { //modified in the given branch since the split point but not modified in the current branch
-                Utils.writeContents(version, m);
-                File k = new File(".gitlet/staging/" + f.getName());
-                String s = Utils.readContentsAsString(new File(f.getName()));
-                Utils.writeContents(k, s);
+            if (!contains(d, f)) {
+                checkoutversionfile(c.getCommitsha1(), f.getName());
+                File stager = new File("staging/" + curr.getName());
+                stager.mkdirs();
+                File stager1 = new File("staging/" + curr.getName() + f.getName());
+                String fe = Utils.readContentsAsString(f);
+                Utils.writeContents(stager1, fe);
             }
         }
-        //System.out.println("Merged " + branchname + " into " + curr.getName());
 
+        Commit r = null;
+        if (d.getParent() != null) {
+            r = d.getParent();
+        }
+
+        //Any files present at the split point, unmodified in the current branch,
+        // and absent in the given branch should be removed (and untracked).
+        for (File f : d.getFiles()) { //present at split point
+            if (unmodified(e, f.getName())) { //absent in current branch
+                if (unmodified(c, f.getName())) { //absent in given branch
+                    rm(f.getName());
+                }
+            }
+        }
+
+        //Any files present at the split point, unmodified in the given branch,
+        // and absent in the current branch should remain absent.
+
+
+        //Any files modified in different ways in the current and given branches are in conflict.
+        // "Modified in different ways" can mean that the contents of both are changed and different
+        // from other, or the contents of one are changed and the other file is deleted, or the file was absent
+        // at the split point and has different contents in the given and current branches.
+        // In this case, replace the contents of the conflicted file with
+        File mod = new File("modified/" + cur.getName());
+        mod.mkdirs();
+        File mod2 = new File("modified/" + curr.getName());
+        mod2.mkdirs();
+        for (File f : mod.listFiles()) {
+            for (File j : mod2.listFiles()) {
+                if (f.getName().equals(j.getName())) {
+
+                }
+            }
+        }
+
+
+        //if a file is "modified in the given branch since the split point"
+        // this means the version of the file as it exists in the commit at
+        // the front of the given branch has different content from the version of the file at the split point.
+        //should be changed to their versions in the given branch
+       for (File i : c.getFiles()) {
+           for (File j : d.getFiles()) {
+               if (i.getName().equals(j.getName())) {
+                   String is = Utils.readContentsAsString(i);
+                   String js = Utils.readContentsAsString(j);
+                   if (!is.equals(js)) {
+                       File stagers = new File(".gitlet/staging/" + curr.getName() + "/" + i.getName());
+                        File correct = new File(i.getName());
+                        Utils.writeContents(correct, js);
+                        Utils.writeContents(stagers, js);
+                   }
+               }
+           }
+       }
+
+
+
+
+    }
+
+    boolean unmodified(Commit e, String filename) {
+        Commit temp = e;
+        while (temp != null && !temp.getMessage().equals("initial commit")) {
+            for (File f : temp.getFiles()) {
+                if (f.getName().equals(filename)) {
+                    return false;
+                }
+            }
+            temp = temp.getParent();
+        }
+        return true;
+    }
+
+
+    boolean contains(Commit d, File f) {
+        if (d.getFiles() == null) {
+            return true;
+        }
+        for (File h : d.getFiles()) {
+            if (h.getName().equals(f.getName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
