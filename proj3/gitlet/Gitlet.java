@@ -269,16 +269,13 @@ public class Gitlet implements Serializable {
             System.out.println("No need to checkout the current branch.");
         }
         Commit c = k.latestcommit();
-        ArrayList<File> fls = c.getFiles();
 
-        if (fls != null) {
-            for (File f : fls) {
-                String m = Utils.readContentsAsString(f);
-                Utils.writeContents(new File(f.getName()), m);
-            }
+        File tr = new File("tracking/" + k.getName());
+        tr.mkdirs();
+        for (File f : tr.listFiles()) {
+            String s = Utils.readContentsAsString(f);
+            Utils.writeContents(new File(f.getName()), s);
         }
-
-
 
 
         Path a = Paths.get(".gitlet/commit/" + c.getMessage());
@@ -520,7 +517,7 @@ public class Gitlet implements Serializable {
                 Utils.writeContents(k, s);
             }
         }
-        System.out.println("Merged " + branchname + " into " + curr.getName());
+        //System.out.println("Merged " + branchname + " into " + curr.getName());
 
     }
 
