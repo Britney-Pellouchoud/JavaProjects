@@ -157,7 +157,7 @@ public class Gitlet implements Serializable {
                 if (file.getName().equals(filename)) {
                     File cur = new File(file.getName());
                     if (cur.exists()) {
-                        File m = new File("tracking/" + file.getName());
+                        File m = new File("tracking/" +curr.getName() + "/" + file.getName());
                         String s = Utils.readContentsAsString(cur);
                         Utils.writeContents(m, s);
                     }
