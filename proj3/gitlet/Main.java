@@ -18,7 +18,13 @@ public class Main implements Serializable{
     /** Usage: java gitlet.Main ARGS, where ARGS contains
      *  <COMMAND> <OPERAND> .... */
     public static void main(String... args) throws IOException, ClassNotFoundException {
-        String command = args[0];
+        String command = null;
+
+        if (args.length == 0) {
+            command = " ";
+        } else {
+            command = args[0];
+        }
         Gitlet baby = null;
         Commit mr = null;
         File commitfiles = null;
@@ -34,6 +40,8 @@ public class Main implements Serializable{
         ObjectInputStream objectIn = null;
         FileInputStream fileIn2 = null;
         ObjectInputStream objectIn2 = null;
+
+        boolean letby = true;
 
         if (gitdir.exists()) {
             try {
@@ -55,6 +63,9 @@ public class Main implements Serializable{
 
 
         switch (command){
+            case " " :
+                System.out.println("Please enter a command");
+                break;
             case "init":
                 assert args.length == 1 : "Wrong number of arguments";
                 baby = new Gitlet();
@@ -66,6 +77,10 @@ public class Main implements Serializable{
                 break;
             case "commit":
                 String mess = args[1];
+                if (mess.equals("")){
+                    System.out.println("Please enter a commit message.");
+                    break;
+                }
                 baby.commit(mess);
                 break;
             case "checkout" :
@@ -102,6 +117,11 @@ public class Main implements Serializable{
                 baby.find(args[1]);
                 break;
             case "status":
+                if (baby == null) {
+                    System.out.println("Not in an initialized Gitlet directory.");
+                    letby = false;
+                    break;
+                }
                 baby.status();
                 break;
             case "reset":
@@ -117,21 +137,23 @@ public class Main implements Serializable{
                 System.out.println("No command with that name exists.");
                 return;
         }
+        if (command != " " && letby == true) {
+            try {
+                fileOut = new FileOutputStream(serialize);
+                objectOut = new ObjectOutputStream(fileOut);
+                objectOut.writeObject(baby);
+                fileOut2 = new FileOutputStream(mostrecent);
+                objectOut2 = new ObjectOutputStream(fileOut2);
+                objectOut2.writeObject(mr);
+                objectOut.writeObject(commitfiles);
 
-        try {
-            fileOut = new FileOutputStream(serialize);
-            objectOut = new ObjectOutputStream(fileOut);
-            objectOut.writeObject(baby);
-            fileOut2 = new FileOutputStream(mostrecent);
-            objectOut2 = new ObjectOutputStream(fileOut2);
-            objectOut2.writeObject(mr);
-            objectOut.writeObject(commitfiles);
 
 
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Error while serializing gitlet.");
+            }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Error while serializing gitlet.");
         }
 
 
