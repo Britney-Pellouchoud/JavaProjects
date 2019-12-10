@@ -34,6 +34,7 @@ public class Gitlet implements Serializable {
     private HashMap<String, String> mssgtoid = new HashMap<>();
     private ArrayList<File> files = new ArrayList<>();
     private File removed = null;
+    private ArrayList<String> toberemoverd = new ArrayList<>();
 
 
     void init() throws IOException, ClassNotFoundException {
@@ -112,6 +113,12 @@ public class Gitlet implements Serializable {
     }
 
     void add(String filename) throws IOException {
+        // If the current working version of the file is identical
+        // to the version in the current commit, do not stage it
+        // to be added, and remove it from the staging area if it is already there
+
+
+        //If the file had been marked to be removed (see gitlet rm), delete that mark.
         File toadd = new File(filename);
         if (!toadd.exists()) {
             System.out.println("File does not exist.");
@@ -125,17 +132,27 @@ public class Gitlet implements Serializable {
 
         Path file = Paths.get(filename);
         File a = new File(filename);
+        String y = Utils.readContentsAsString(a);
+        Commit lt = curr.latestcommit();
+        if (lt.getFiles() != null) {
+            for (File f : lt.getFiles()) {
+                if (f.getName().equals(a.getName())) {
+                    String qu = Utils.readContentsAsString(f);
+                    if (qu.equals(y)) {
+                        File mre = new File(".gitlet/staging/"+curr.getName()+ "/" + filename);
+                        if (mre.exists()) {
+                            rm(filename);
+                        }
+                    }
+                }
+            }
+        }
+
         Path tofile = Paths.get(".gitlet/staging/" + curr.getName() + "/" + filename);
         File b = new File(tofile.toString());
         String x = Utils.readContentsAsString(a);
         Utils.writeContents(b, x);
         files.add(a);
-        //Path secfile = Paths.get(".gitlet/other/" + filename);
-
-        //Files.copy(file, tofile, StandardCopyOption.REPLACE_EXISTING);
-        //Files.copy(file, secfile, StandardCopyOption.REPLACE_EXISTING);
-
-        //assert new File(".gitlet/staging/filename" + sha1).exists();
 
     }
 
@@ -154,31 +171,44 @@ public class Gitlet implements Serializable {
     void rm(String filename) {
         File rme = new File("removed/" + filename);
         for (Branch b : branches) {
+            //Unstage the file if it is currently staged.
             File[] stagedfiles = new File(".gitlet/staging/" + b.getName()).listFiles();
             if (! new File(".gitlet/staging/" + b.getName()).exists()) {
                 continue;
             }
             for (File file : stagedfiles) {
-                //System.out.println("HITS HERE HITS HERE ");
                 if (file.getName().equals(filename)) {
                     File cur = new File(file.getName());
                     if (cur.exists()) {
                         File m = new File("tracking/" +curr.getName() + "/" + file.getName());
+
                         String s = Utils.readContentsAsString(cur);
                         Utils.writeContents(m, s);
+                        Utils.writeContents(rme, s);
                     }
                     cur.delete();
-                    if (new File(filename).exists()) {
-                        File del = new File(filename);
-                        del.delete();
-                        return;
-                    }
 
                     return;
                 }
             }
+            File[] tracked = new File("tracking/" + curr.getName()).listFiles();
+            if (tracked.length != 0) {
+                for (File t : tracked) {
+                    if (t.getName().equals(filename)) {
+                        toberemoverd.add(filename);
+                    }
+                }
+            }
 
         }
+        if (new File(filename).exists()) {
+            File del = new File(filename);
+            String mimi = Utils.readContentsAsString(del);
+            Utils.writeContents(rme);
+            del.delete();
+            return;
+        }
+
 
 
 
@@ -374,6 +404,7 @@ public class Gitlet implements Serializable {
 
 
     void commit(String message) throws IOException, ClassNotFoundException {
+        //The commit is said to be tracking the saved files.
         FileOutputStream fileOut;
         ObjectOutputStream objectOut;
         String all = "";
@@ -410,6 +441,30 @@ public class Gitlet implements Serializable {
             Utils.writeContents(track, s);
 
         }
+
+
+
+        //tracking all files in parent commit
+        if (curr.latestcommit().getFiles() != null) {
+            for (File ke : curr.latestcommit().getFiles()) {
+                File ne = new File(".gitlet/staging/"+curr.getName()+"/" + ke.getName());
+                if (ne.exists()) {
+                    continue;
+                } else {
+                    // if it was marked to be removed
+                    if (toberemoverd.contains(ke.getName())) {
+                        continue;
+                    }
+                    String yu = Utils.readContentsAsString(ke);
+                    File bre = new File("tracking/" + curr.getName() + "/" + ke.getName());
+                    Utils.writeContents(bre, yu);
+                    File ner = new File(message + "/" + ke.getName());
+                    Utils.writeContents(ner, yu);
+                }
+            }
+        }
+        toberemoverd = new ArrayList<>();
+
         Commit a = new Commit();
         a.init(this, message, Utils.sha1(message + all + now.toString() +
                 null), now.toString(), fil, _mostrecent);
