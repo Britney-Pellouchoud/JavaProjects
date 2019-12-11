@@ -34,7 +34,9 @@ public class Gitlet implements Serializable {
     private HashMap<String, String> mssgtoid = new HashMap<>();
     private ArrayList<File> files = new ArrayList<>();
     private File removed = null;
+    private File removed1 = null;
     private ArrayList<String> toberemoverd = new ArrayList<>();
+    private ArrayList<Commit> allcommits = new ArrayList<Commit>();
 
 
     void init() throws IOException, ClassNotFoundException {
@@ -57,6 +59,7 @@ public class Gitlet implements Serializable {
         Commit m = new Commit();
         m.init(this, "initial commit", Utils.sha1(initial), now.toString(), null, null);
         _initialcommit = m;
+        allcommits.add(m);
         master = new Branch();
         master.init("master");
         master.addCsha1(m);
@@ -78,6 +81,8 @@ public class Gitlet implements Serializable {
         tracking.mkdirs();
         mssgtoid.put(m.getCommitsha1(), "initial commit");
         removed = new File("removed");
+        removed.mkdirs();
+        removed1 = new File("removed1");
         removed.mkdirs();
 
     }
@@ -121,6 +126,19 @@ public class Gitlet implements Serializable {
 
 
         //If the file had been marked to be removed (see gitlet rm), delete that mark.
+
+        File rme = new File("removed1");
+        rme.mkdirs();
+        if (rme.listFiles().length != 0) {
+            for (File f : rme.listFiles()) {
+                if (f.getName().equals(filename)) {
+                    File t = new File("removed1/" + f.getName());
+                    t.delete();
+                    return;
+                }
+            }
+        }
+
         File toadd = new File(filename);
         if (!toadd.exists()) {
             System.out.println("File does not exist.");
@@ -131,6 +149,15 @@ public class Gitlet implements Serializable {
         if (new File(".gitlet/staging/" + curr.getName() + "/" + filename).exists()) {
            return;
        }
+        if (removed1.listFiles() != null) {
+            for (File f : removed1.listFiles()) {
+                if (f.getName().equals(filename)) {
+                    File kre = new File("removed1/" + filename);
+                    kre.delete();
+                }
+            }
+        }
+
 
         Path file = Paths.get(filename);
         File a = new File(filename);
@@ -172,7 +199,6 @@ public class Gitlet implements Serializable {
 
     void rm(String filename) {
         for (Branch b : branches) {
-            File[] stagedfiles = new File(".gitlet/staging/" + b.getName()).listFiles();
             if (! new File(".gitlet/staging/" + b.getName()).exists()) {
                 continue;
             }
@@ -180,26 +206,41 @@ public class Gitlet implements Serializable {
             if (new File(".gitlet/staging/" + b.getName() + "/" + filename).exists()) {
                 File stag = new File(".gitlet/staging/" + b.getName() + "/" + filename);
                 stag.delete();
+                return;
             }
             //If the file is tracked in the current commit, mark it to indicate
             // that it is not to be included in the next commit
             File rem = new File("removed/" + _mostrecent.getCommitsha1());
             rem.mkdirs();
             File remf = new File("removed/" + _mostrecent.getCommitsha1() + "/" + filename);
-            String yu = Utils.readContentsAsString(new File(filename));
-            Utils.writeContents(remf, yu);
+            if (new File(filename).exists()) {
+                String yu = Utils.readContentsAsString(new File(filename));
+                Utils.writeContents(remf, yu);
+                File r = new File("removed1");
+                r.mkdirs();
+                File removere = new File("removed1/" + filename);
+                Utils.writeContents(removere, yu);
+            } else {
+                return;
+            }
 
-           for (File f : _mostrecent.getFiles()) {
-               if (f.getName().equals(filename)) {
-                   toberemoverd.add(f.getName());
-                   if (new File(f.getName()).exists()) {
-                       new File(f.getName()).delete();
+
+
+           if (_mostrecent.getFiles() != null) {
+               for (File f : _mostrecent.getFiles()) {
+                   if (f.getName().equals(filename)) {
+                       toberemoverd.add(f.getName());
+                       if (new File(f.getName()).exists()) {
+                           new File(f.getName()).delete();
+                       }
+                       return;
                    }
-                   return;
                }
+
            }
 
         }
+        System.out.println("No reason to remove the file.");
 
     }
 
@@ -212,7 +253,12 @@ public class Gitlet implements Serializable {
         ArrayList<Commit> a = c.getCsha1s();
         int l = a.size();
         Commit temp = a.get(l - 1);
+        //System.out.println("HITS HERE ");
         while (temp != null) {
+            if (commiters.contains(temp.getCommitsha1())) {
+                continue;
+            }
+            commiters.add(temp.getCommitsha1());
             System.out.println("===");
             System.out.println("commit " + temp.getCommitsha1());
             System.out.println("Date: " + temp.getTimestamp());
@@ -223,10 +269,55 @@ public class Gitlet implements Serializable {
 
     }
 
+    private ArrayList<String> commiters = new ArrayList<String>();
+
     void globallog() throws IOException, ClassNotFoundException {
+
         for (Branch b : branches) {
             log(b.getName());
+            //System.out.println("BRANCH IS " + b.getName());
         }
+
+
+
+
+        File newbr = new File("deletedbr");
+        if (newbr.exists() && newbr.listFiles() != null) {
+            newbr.mkdirs();
+
+            for (File f : newbr.listFiles()) {
+                FileInputStream fileIn2 = new FileInputStream(f);
+                ObjectInputStream objectIn2 = new ObjectInputStream(fileIn2);
+                Commit a = (Commit) objectIn2.readObject();
+
+                if (commiters.contains(a.getCommitsha1())) {
+                    continue;
+                }
+
+                commiters.add(a.getCommitsha1());
+
+                System.out.println("===");
+                System.out.println("commit " + a.getCommitsha1());
+                System.out.println("Date: " + a.getTimestamp());
+                System.out.println(a.getMessage());
+                System.out.println();
+
+
+
+
+            }
+
+
+
+        }
+
+
+
+
+
+        commiters.clear();
+
+
     }
 
     /*
@@ -237,33 +328,36 @@ public class Gitlet implements Serializable {
      */
 
     void checkoutversionfile(String commitid, String filename) throws IOException {
-        Commit temp = _mostrecent;
-        Path x = Paths.get(filename);
-        File p = new File(x.toString());
-
-
-        String mssg = "";
-        mssg = mssgtoid.get(commitid);
-
-        //".gitlet/commit/" + message + "/" + filename
-        Path b = Paths.get(".gitlet/commit/" + mssg + "/" + filename);
-        File j = new File(b.toString());
-        String h = Utils.readContentsAsString(j); //text to copy
-        //System.out.println("THIS IS ORIG " + h);
-
-        Path file = Paths.get(filename);
-        File i = new File(file.toString());
-        Utils.writeContents(i, h);
-
-
-        //Files.copy(b, file, StandardCopyOption.REPLACE_EXISTING);
-
-
-
+        boolean finished = false;
+        boolean hithere = false;
+        for (Commit c : allcommits) {
+            if (c.getCommitsha1().equals(commitid)) {
+                hithere = true;
+                if (c.getFiles() != null) {
+                    for (File f : c.getFiles()) {
+                        if (f.getName().equals(filename)) {
+                            String contents = Utils.readContentsAsString(f);
+                            Utils.writeContents(new File(f.getName()), contents);
+                            finished = true;
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+        if (! hithere) {
+            System.out.println("File does not exist in that commit.");
+            return;
+        }
+        if (! finished) {
+            System.out.println("No commit with that id exists.");
+            return;
+        }
 
     }
 
     void checkoutbranch(String branchname) {
+
         Branch k = null;
         for (Branch b : branches) {
             if (b.getName().equals(branchname)) {
@@ -276,14 +370,14 @@ public class Gitlet implements Serializable {
             System.out.println("No need to checkout the current branch.");
         }
 
+
+        //If a working file is untracked in the current branch
+        // and would be overwritten by the checkout, print
+        // There is an untracked file in the way; delete it or
+        // add it first. and exit; perform this check before doing anything else.
+
         Commit c = k.latestcommit();
 
-
-        //Takes all files in the commit at the head of the given branch,
-        // and puts them in the working directory, overwriting the
-        // versions of the files that are already there if they exist.
-
-        //Commit kl = k.latestcommit();
         File tr = new File("tracking/" + k.getName());
         tr.mkdirs();
 
@@ -319,6 +413,7 @@ public class Gitlet implements Serializable {
 
 
         curr = k;
+
 
 
     }
@@ -359,30 +454,42 @@ public class Gitlet implements Serializable {
     }
 
 
-    void removebranch(String branchname) {
+    void removebranch(String branchname) throws IOException, ClassNotFoundException {
         Branch toremove = null;
+        if (branchname.equals(curr.getName())) {
+            throw new GitletException("Cannot remove the current branch.");
+        }
         for (Branch b : branches) {
-            if (b.getName().equals(branchname)) {
-                if (b.getName().equals(curr.getName())) {
-                    throw new GitletException("Cannot remove the current branch.");
-                }
+            if (branchname.equals(b.getName())) {
                 toremove = b;
-                branches.remove(b);
             }
         }
         if (toremove == null) {
             throw new GitletException("A branch with that name does not exist.");
         }
+        branches.remove(toremove);
+        //System.out.println("THIS IS BRANCHES " + branches);
+        FileInputStream fileIn2 = new FileInputStream(new File("branches/" + branchname));
+        ObjectInputStream objectIn2 = new ObjectInputStream(fileIn2);
+        toremove = (Branch) objectIn2.readObject();
+
+        Commit c = toremove.latestcommit();
+        File rem = new File("deletedbr");
+        rem.mkdirs();
+        while (c != null) {
+            File rembr = new File("deletedbr/" + c.getCommitsha1());
+            Utils.writeObject(rembr, c);
+            c = c.getParent();
+        }
+
     }
 
     void find(String commitmsg) {
         int x = 0;
-        for (Branch b : branches) {
-            for (Commit c : b.getCsha1s()) {
-                if (c.getMessage().equals(commitmsg)) {
-                    System.out.println(c.getCommitsha1());
-                    x += 1;
-                }
+        for (Commit c : allcommits) {
+            if (c.getMessage().equals(commitmsg)) {
+                System.out.println(c.getCommitsha1());
+                x += 1;
             }
         }
         if (x == 0) {
@@ -404,8 +511,12 @@ public class Gitlet implements Serializable {
 
 
     void checkoutfile(String filename) throws IOException, ClassNotFoundException {
-        Path a = Paths.get(".gitlet/commit/" + _mostrecent.getMessage() + "/" + filename);
+        Path a = Paths.get(".gitlet/commit/" + curr.latestcommit().getMessage() + "/" + filename);
         File b = new File(a.toString());
+        if (! b.exists()) {
+            System.out.println("File does not exist in that commit.");
+            return;
+        }
         Path file = Paths.get(filename);
         File j = new File(file.toString());
         String p = Utils.readContentsAsString(b);
@@ -423,6 +534,18 @@ public class Gitlet implements Serializable {
         String all = "";
         File u = new File(".gitlet/staging/" + curr.getName());
         File[] files = u.listFiles();
+        File[] kru = removed1.listFiles();
+
+
+        if (files.length == 0 && kru.length == 0) {
+            System.out.println("No changes added to the commit.");
+            return;
+        }
+
+        for (File f : kru) {
+            File fe = new File("removed1/" + f.getName());
+            fe.delete();
+        }
         ArrayList<File> fil = new ArrayList<File>();
         Instant now = Instant.now();
         String m = Utils.sha1(message + all + now.toString() +
@@ -441,10 +564,12 @@ public class Gitlet implements Serializable {
             fil.add(kr);
             File modi = new File("modified/" + curr.getName() + "/" + filename);
 
+
             Path file = Paths.get(".gitlet/staging/" + curr.getName() + "/" + filename);
             Path tofile = Paths.get(".gitlet/commit/" + message + "/" + filename);
             File g = new File(tofile.toString());
             File a = new File(file.toString());
+
 
             String s = Utils.readContentsAsString(a);
             Utils.writeContents(g, s);
@@ -487,6 +612,7 @@ public class Gitlet implements Serializable {
                 null), now.toString(), fil, parent);
         _mostrecent = a;
         mssgtoid.put(a.getCommitsha1(), message);
+        allcommits.add(a);
 
         if (message.contains("Merged") && message.contains("into")){
             int ind = message.indexOf("Merged");
@@ -548,8 +674,9 @@ public class Gitlet implements Serializable {
         }
         System.out.println();
         System.out.println("=== Removed Files ===");
-        removed.mkdirs();
-        for (File rme : removed.listFiles()) {
+        File r = new File("removed1");
+        r.mkdirs();
+        for (File rme : r.listFiles()) {
             System.out.println(rme.getName());
         }
         System.out.println();
@@ -582,33 +709,6 @@ public class Gitlet implements Serializable {
         //Not staged for removal, but tracked in the current commit and deleted from the working directory.
         System.out.println();
         System.out.println("=== Untracked Files ===");
-        File ur = new File(".");
-        ur.mkdirs();
-        boolean tracking = false;
-        boolean staged = false;
-        for (File fru : ur.listFiles()) {
-            if (fru.getName().contains("txt") || fru.getName().contains("stuff")) {
-                for (Branch b : branches) {
-                    File bre = new File("tracking/" + b.getName());
-                    File[] fe = bre.listFiles();
-                    for (File e : fe) {
-                        if (e.getName().equals(fru.getName())) {
-                            tracking = true;
-                        }
-                    }
-                    File stager = new File(".gitlet/staging/" + curr.getName());
-                    stager.mkdirs();
-                    for (File s : stager.listFiles()) {
-                        if (s.getName().equals(fru.getName())) {
-                            staged = true;
-                        }
-                    }
-                    if (!tracking && !staged) {
-                        System.out.println(fru.getName());
-                    }
-                }
-            }
-        }
         System.out.println();
     }
 
@@ -656,14 +756,16 @@ public class Gitlet implements Serializable {
             } else {
                 d = a;
             }
-            //System.out.println("THIS IS MOST RECENT " + d.getMessage());
         } else {
             d = findsplitpoint(curr, cur);
 
         }
+        if (d.getCommitsha1().equals(curr.latestcommit().getCommitsha1())) {
+            System.out.println("Current branch fastforwarded.");
+            return;
+        }
         Commit fo = cure.latestcommit();
         Commit chosen = c;
-        //"removed/" + _mostrecent.getCommitsha1() + "/" + filename
         while (chosen != null) {
             File kur = new File("removed/" + chosen.getCommitsha1());
             if (kur.exists()) {
