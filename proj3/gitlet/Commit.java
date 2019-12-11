@@ -23,6 +23,10 @@ public class Commit implements Serializable {
     private ObjectOutputStream objectOut;
     private File csha;
     private File jk;
+    private ArrayList<Commit> parents = new ArrayList<Commit>();
+    private boolean doubleparent = false;
+    private ArrayList<Branch> branchparents = new ArrayList<>();
+
     public void init(Gitlet g, String message, String sha1, String timestamp, ArrayList<File> files, Commit parentcommit) throws IOException {
         this.message = message;
         this.sha1 = sha1;
@@ -51,6 +55,31 @@ public class Commit implements Serializable {
         csha.mkdir();
         jk = new File("commit/" + message +"/" + commitsha1);
         jk.mkdirs();
+    }
+
+    void settwoparents(Commit a, Commit b) {
+        parents.add(a);
+        parents.add(b);
+        doubleparent = true;
+
+    }
+
+    boolean twoparents() {
+        //System.out.println("HITS RIGHT HERE");
+       return doubleparent;
+    }
+
+    ArrayList<Commit> gettwoparents() {
+        return parents;
+    }
+
+    void setbranchparents(Branch a, Branch b){
+        branchparents.add(a);
+        branchparents.add(b);
+    }
+
+    ArrayList<Branch> getBranchparents() {
+        return branchparents;
     }
 
     String getcsha() {

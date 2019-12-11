@@ -27,6 +27,8 @@ public class Branch implements Serializable {
         latest = c;
     }
 
+
+
     String getMrcsha1() {
         return mrcsha1;
     }
