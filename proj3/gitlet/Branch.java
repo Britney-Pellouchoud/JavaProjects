@@ -48,4 +48,8 @@ public class Branch implements Serializable {
     Commit getSplitpoint() {
         return splitpoint;
     }
+
+    void setLatestcommit(Commit c){
+        latest = c;
+    }
 }

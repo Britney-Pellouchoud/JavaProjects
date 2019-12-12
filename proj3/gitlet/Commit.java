@@ -32,7 +32,6 @@ public class Commit implements Serializable {
         this.sha1 = sha1;
         this.timestamp = timestamp;
         this.files = files;
-        CommitTree t = g.getCommittree();
         if (!message.equals("initial commit")) {
             parent = parentcommit;
             g.clearstaged();

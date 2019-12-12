@@ -20,7 +20,6 @@ import java.util.*;
 public class Gitlet implements Serializable {
 
 
-    private static CommitTree<Commit> committree;
     private File babydir;
     private File staged;
     private Commit _mostrecent;
@@ -37,6 +36,7 @@ public class Gitlet implements Serializable {
     private File removed1 = null;
     private ArrayList<String> toberemoverd = new ArrayList<>();
     private ArrayList<Commit> allcommits = new ArrayList<Commit>();
+
 
 
     void init() throws IOException, ClassNotFoundException {
@@ -83,7 +83,7 @@ public class Gitlet implements Serializable {
         removed = new File("removed");
         removed.mkdirs();
         removed1 = new File("removed1");
-        removed.mkdirs();
+        removed1.mkdirs();
 
     }
 
@@ -101,9 +101,6 @@ public class Gitlet implements Serializable {
         return pointer;
     }
 
-    public CommitTree getCommittree() {
-        return committree;
-    }
 
     static boolean checkunique() {
         String directory = ".gitlet";
@@ -202,14 +199,25 @@ public class Gitlet implements Serializable {
             if (! new File(".gitlet/staging/" + b.getName()).exists()) {
                 continue;
             }
-            //Unstage the file if it is currently staged.
             if (new File(".gitlet/staging/" + b.getName() + "/" + filename).exists()) {
                 File stag = new File(".gitlet/staging/" + b.getName() + "/" + filename);
+                String coy = Utils.readContentsAsString(stag);
                 stag.delete();
+                File rme = new File("removed1");
+                rme.mkdirs();
+                File rec = new File("removed1/" + filename);
+                Utils.writeContents(rec, coy);
+                if (new File(filename).exists()) {
+                    File ne = new File(filename);
+                    String cop = Utils.readContentsAsString(ne);
+                    ne.delete();
+                    File rem = new File("removed1");
+                    rem.mkdirs();
+                    File rce = new File("removed1/" + filename);
+                    Utils.writeContents(rce, cop);
+                }
                 return;
             }
-            //If the file is tracked in the current commit, mark it to indicate
-            // that it is not to be included in the next commit
             File rem = new File("removed/" + _mostrecent.getCommitsha1());
             rem.mkdirs();
             File remf = new File("removed/" + _mostrecent.getCommitsha1() + "/" + filename);
@@ -277,9 +285,6 @@ public class Gitlet implements Serializable {
             log(b.getName());
             //System.out.println("BRANCH IS " + b.getName());
         }
-
-
-
 
         File newbr = new File("deletedbr");
         if (newbr.exists() && newbr.listFiles() != null) {
@@ -537,7 +542,7 @@ public class Gitlet implements Serializable {
         File[] kru = removed1.listFiles();
 
 
-        if (files.length == 0 && kru.length == 0) {
+        if ((files.length == 0 && kru.length == 0) && ! message.contains("Merged")) {
             System.out.println("No changes added to the commit.");
             return;
         }

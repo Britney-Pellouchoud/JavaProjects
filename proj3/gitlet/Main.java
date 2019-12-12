@@ -73,6 +73,7 @@ public class Main implements Serializable{
                 break;
             case "add":
                 String filename = args[1];
+                //what to do if they enter nothing at all?
                 baby.add(filename);
                 break;
             case "commit":
