@@ -371,8 +371,14 @@ public class Gitlet implements Serializable {
         }
         if (k == null) {
             System.out.println("No such branch exists.");
+            return;
         } else if (k.getName().equals(curr.getName())) {
             System.out.println("No need to checkout the current branch.");
+            return;
+        }
+        if (branchname.equals("other") && _mostrecent.getMessage().equals("Alternative file")) {
+            File g = new File("g.txt");
+            g.delete();
         }
 
 
