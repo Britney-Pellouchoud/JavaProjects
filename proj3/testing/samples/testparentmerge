@@ -1,49 +1,38 @@
-# Basic initialization
 > init
 <<<
-> branch B1
-<<<
-> branch B2
-<<<
-> checkout B1
-<<<
-+ h.txt wug.txt
-> add h.txt
-<<<
-> commit "Add h.txt"
-<<<
-> checkout B2
-<<<
 + f.txt wug.txt
-> add f.txt
-<<<
-> commit "f.txt added"
-<<<
-> branch C1
-<<<
 + g.txt notwug.txt
 > add g.txt
 <<<
+> add f.txt
+<<<
+> commit "Two files"
+<<<
+> branch other
+<<<
++ h.txt wug2.txt
+> add h.txt
+<<<
+> rm g.txt
+<<<
+> commit "Add h.txt and remove g.txt"
+<<<
+> checkout other
+<<<
 > rm f.txt
 <<<
-> commit "g.txt added, f.txt removed"
++ k.txt wug3.txt
+> add k.txt
 <<<
-= g.txt notwug.txt
-* f.txt
-* h.txt
-> checkout B1
+> commit "Add k.txt and remove f.txt"
 <<<
-= h.txt wug.txt
+> checkout master
+<<<
+> merge other
+<<<
 * f.txt
 * g.txt
-> merge C1
+= h.txt wug2.txt
+= k.txt wug3.txt
+> status
 <<<
-= f.txt wug.txt
-= h.txt wug.txt
-* g.txt
-> merge B2
-<<<
-* f.txt
-= g.txt notwug.txt
-= h.txt wug.txt
-------------------------------------
