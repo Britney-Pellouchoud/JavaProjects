@@ -1,0 +1,53 @@
+Classes and Data Structures
+- Gitlet Class
+    - init() method - creates a gitlet instance in current directory
+        - Default first commit
+        - Creates master branch
+        - If there’s already gitlet instance in current directory, does nothing
+        - Staging file - stores all files added and ready to be staged, clears when committed
+    - log() method - shows log from current commit backwards
+        - Ignores other branches and future commits
+    - globallog() method - shows every commit ever made
+    - find(String message) method - prints ids of commits with same message
+    - status() method - prints branches, staged files, marked for untracking files
+    - checkoutfile(file) method - head commit file is restored, overwrites current file
+    - checkoutcommit(commit id, file) method - restores commit with that id, overwrites current file
+    - checkoutbranch(branch) method - restores file(s) at head of branch, branch is now considered current branch
+    - rmbranch(branch name) - deletes branch (pointer, not commits)
+    - merge(branch name) - merges files from specified branch to current branch
+    - add(file names) method - copies file(s) and adds copies to staging area
+    - Rm(file) method - unstage file if staged, mark file so not included in next commit
+    -  Reset(commit id) method - checks out files under specified commit, pointer moves to that commit node
+
+- Commit Class
+    - commit(files, message, author) method - saves copies of files, saves it in the commit tree
+    - Gives commit a SHA-1 ID
+    - basic helper functions to access all aspects of the commit class
+
+- Branch Class
+    - holds the different aspects of the branch, is a pointer to certain commits
+    - has helper functions to access all aspects of hte branch class
+    - init(branch name) method - creates new branch, adds to commit tree
+
+- Algorithms
+    - Branches only hold minimal information, most importantly the pointers to the latest commits.
+        - all branches will retain the initial commit
+        - branches also recognize split points
+        - branches find splitpoints by working backwards until meeting a shared commit with another branch.
+    - Commits are big wads of data that point to their parents.  In the case of merge commits, they point to both their branche's
+        most recent commit but also the other parent
+    - Commits also hold what files they have
+    - Commits are also pointers to files.
+    - Gitlet uses serializing to remember it's past moves.
+        - There may only be a single Gitlet baby.
+    - Merging can occur through the Gitlet class.
+        - it checks for all possible outcomes (detailed in the spec).
+        - it also checks for edge cases (again listed in the spec).
+
+- Persistence
+    - Update mostrecent commit every time you create a commit instance.
+    - Update latest commit to your current branch every time you create a commit instance.
+    - Many of the different structures (commits and branches especially), include a lot
+        of repeated data, just in case.
+    - Branches will also contain repeat commits to other commits.
+    - The Gitlet will remember everything through serialization.
