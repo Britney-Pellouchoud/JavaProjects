@@ -1,0 +1,9 @@
+> init
+<<<
++ g.txt wug.txt
++ f.txt wug.txt
+> add g.txt
+<<<
+>
+Please enter a command.
+<<<

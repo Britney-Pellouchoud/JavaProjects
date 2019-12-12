@@ -1,0 +1,9 @@
+> init
+<<<
++ g.txt wug.txt
++ f.txt wug.txt
+> add g.txt
+<<<
+> add y.txt
+File does not exist.
+<<<

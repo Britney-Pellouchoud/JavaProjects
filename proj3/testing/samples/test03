@@ -1,0 +1,15 @@
+> init
+<<<
++ g.txt wug.txt
++ f.txt wug.txt
+> add g.txt
+<<<
+> add f.txt
+<<<
+> commit "added f.txt"
+<<<
+> branch b
+<<<
+> checkout c
+No such branch exists.
+<<<

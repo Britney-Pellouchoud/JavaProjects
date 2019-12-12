@@ -1,0 +1,12 @@
+> init
+<<<
++ g.txt wug.txt
++ f.txt wug.txt
+> add g.txt
+<<<
+> commit "added f.txt"
+<<<
+> branch Branchie
+<<<
+> checkout Branchie
+<<<
