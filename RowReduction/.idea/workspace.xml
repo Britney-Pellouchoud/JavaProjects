@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="50b1a002-a156-4fe1-b68d-5430ed3901e9" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../hw5/CompactLinkedList.java" beforeDir="false" afterPath="$PROJECT_DIR$/../hw5/CompactLinkedList.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proj1/enigma/Machine.java" beforeDir="false" afterPath="$PROJECT_DIR$/../proj1/enigma/Machine.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proj1/enigma/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/../proj1/enigma/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proj1/enigma/output" beforeDir="false" afterPath="$PROJECT_DIR$/../proj1/enigma/output" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../proj3/gitlet/UnitTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/../proj3/gitlet/UnitTest.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -169,6 +166,7 @@
       <workItem from="1572227841890" duration="632000" />
       <workItem from="1572229404345" duration="525000" />
       <workItem from="1572388184330" duration="3000" />
+      <workItem from="1583372300468" duration="12000" />
     </task>
     <servers />
   </component>

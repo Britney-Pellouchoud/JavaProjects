@@ -2,10 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="63c78df5-2ed0-4359-b394-7a18ea7fc806" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../hw5/CompactLinkedList.java" beforeDir="false" afterPath="$PROJECT_DIR$/../hw5/CompactLinkedList.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proj1/enigma/Machine.java" beforeDir="false" afterPath="$PROJECT_DIR$/../proj1/enigma/Machine.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proj1/enigma/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/../proj1/enigma/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proj1/enigma/output" beforeDir="false" afterPath="$PROJECT_DIR$/../proj1/enigma/output" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../RowReduction/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../RowReduction/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../proj3/gitlet/UnitTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/../proj3/gitlet/UnitTest.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -28,6 +27,7 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.0" />
@@ -74,6 +74,7 @@
       <workItem from="1572227616568" duration="1754000" />
       <workItem from="1572229404594" duration="539000" />
       <workItem from="1572388183599" duration="8000" />
+      <workItem from="1583372341188" duration="8000" />
     </task>
     <servers />
   </component>
@@ -92,19 +93,5 @@
         </entry>
       </map>
     </option>
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-method">
-          <url>file://$PROJECT_DIR$/src/com/company/Main.java</url>
-          <line>32</line>
-          <properties class="com.company.Main" method="isreducedechelon">
-            <option name="EMULATED" value="true" />
-          </properties>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>
